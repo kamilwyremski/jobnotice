@@ -1,0 +1,244 @@
+
+{% extends "main.tpl" %}
+
+{% block content %}
+<div class="page-header">
+	<h1><i class="fas fa-user"></i> {{ 'Users'|trans }}</h1>
+	<p>{{ 'Here you can see the users. Moderator can edit classifieds'|trans }}</p>
+</div>
+
+{% include 'alert.tpl' %}
+
+<form method="get" class="form" role="form">
+	<input type="hidden" name="controller" value="users">
+	<input type="hidden" name="search">
+	<div class="form-group row">
+		<div class="col-xl-4 col-sm-6">
+			<label for="username">{{ 'Username'|trans }}:</label>
+			<input type="text" name="username" title="{{ 'Username'|trans }}" placeholder="{{ 'Username'|trans }}" value="{{ get.username }}" class="form-control">
+		</div>
+		<div class="col-xl-4 col-sm-6">
+			<label for="email">{{ 'Email'|trans }}:</label>
+			<input type="text" name="email" title="{{ 'Email'|trans }}" placeholder="{{ 'Email'|trans }}" value="{{ get.email }}" class="form-control">
+		</div>
+		<div class="col-xl-2 col-sm-6">
+			<label for="active">{{ 'Actives'|trans }}:</label>
+			<select name="active" title="{{ 'Search by active users'|trans }}" class="form-control">
+				<option value="">{{ 'All users'|trans }}</option>
+				<option value="yes" {% if get.active=='yes' %}selected{% endif %}>{{ 'Yes'|trans }}</option>
+				<option value="no" {% if get.active=='no' %}selected{% endif %}>{{ 'No'|trans }}</option>
+			</select>
+		</div>
+		<div class="col-xl-2 col-sm-6">
+			<label for="moderator">{{ 'Moderator'|trans }}:</label>
+			<select name="moderator" title="{{ 'Search by moderators'|trans }}" class="form-control">
+				<option value="">{{ 'All users'|trans }}</option>
+				<option value="yes" {% if get.moderator=='yes' %}selected{% endif %}>{{ 'Yes'|trans }}</option>
+				<option value="no" {% if get.moderator=='no' %}selected{% endif %}>{{ 'No'|trans }}</option>
+			</select>
+		</div>
+	</div>
+	<div class="form-group row">
+		<div class="col-xl-2 col-sm-6">
+			<label for="register_fb">{{ 'Register by FB'|trans }}:</label>
+			<select name="register_fb" title="{{ 'Search by registered by Facebook'|trans }}" class="form-control">
+				<option value="">{{ 'All users'|trans }}</option>
+				<option value="yes" {% if get.register_fb=='yes' %}selected{% endif %}>{{ 'Yes'|trans }}</option>
+				<option value="no" {% if get.register_fb=='no' %}selected{% endif %}>{{ 'No'|trans }}</option>
+			</select>
+		</div>
+		<div class="col-xl-2 col-sm-6">
+			<label for="register_google">{{ 'Register by Google'|trans }}:</label>
+			<select name="register_google" title="{{ 'Search by registered by Google'|trans }}" class="form-control">
+				<option value="">{{ 'All users'|trans }}</option>
+				<option value="yes" {% if get.register_google=='yes' %}selected{% endif %}>{{ 'Yes'|trans }}</option>
+				<option value="no" {% if get.register_google=='no' %}selected{% endif %}>{{ 'No'|trans }}</option>
+			</select>
+		</div>
+		<div class="col-xl-3 col-sm-6">
+			<label for="date">{{ 'Registration date'|trans }}: </label>
+			<div class="input-group">
+				<input name="date_from" title="{{ 'Select the starting date'|trans }}" type="text" max="{{ 'now'|date('Y-m-d') }}" value="{{ get.date_from }}" class="form-control datepicker">
+				<div class="input-group-append input-group-prepend">
+					<span class="input-group-text"> - </span>
+				</div>
+				<input name="date_to" title="{{ 'Select the end date'|trans }}" type="text" max="{{ 'now'|date('Y-m-d') }}" value="{{ get.date_to }}" class="form-control datepicker">
+			</div>
+		</div>
+		<div class="col-xl-3 col-sm-6">
+			<label for="register_ip">{{ 'Registration IP'|trans }}:</label>
+			<input type="text" name="register_ip" title="{{ 'IP address'|trans }}" placeholder="{{ 'IP address'|trans }}" value="{{ get.register_ip }}"{ class="form-control">
+		</div>
+		<div class="col-xl-2 col-sm-6">
+			<label>&nbsp;</label><br>
+			<input type="submit" value="{{ 'Search'|trans }}" class="btn btn-primary text-uppercase btn-block">
+		</div>
+	</div>
+</form>
+<br>
+{% if users %}
+	<div class="table-responsive">
+		<table class="table parent_select_checkbox table-striped table-bordered table-sm">
+			<tr>
+				<th class="text-center"><input type="checkbox" class="select_checkbox" title="{{ 'Select all'|trans }}"></th>
+				<th class="text-center">{{ 'ID'|trans }}<br>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=id" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=id&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+				</th>
+				<th class="text-center">{{ 'Activate'|trans }}
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=active" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=active&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+					<br>{{ 'FB'|trans }}
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=register_fb" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=register_fb&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+					<br>{{ 'Google'|trans }}
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=register_google" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=register_google&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+				</th>
+				<th>{{ 'Username'|trans }}
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=username" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=username&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+					<br>{{ 'Email'|trans }}
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=email" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=email&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+				</th>
+				<th class="text-center">{{ 'Moderator'|trans }}<br>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=moderator" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=moderator&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+				</th>
+				<th>{{ 'Account Type'|trans }}<br>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=type" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=type&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+				</th>
+				<th class="text-center">{{ 'Number of classifieds'|trans }}
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=amount_classifieds" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=amount_classifieds&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+					<br>
+					({{ 'active'|trans }})
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=amount_active_classifieds" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=amount_active_classifieds&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+				</th>
+				<th class="text-center">{{ 'Number of logins'|trans }}
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=amount_logins" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=amount_logins&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+					<br>
+					{{ 'Last'|trans }}
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=last_login" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=last_login&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+				</th>
+				<th>{{ 'Activation date'|trans }}
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=activation_date" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=activation_date&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+					<br>
+					{{ 'Activation IP'|trans }}
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=activation_ip" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=activation_ip&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+				</th>
+				<th>{{ 'Registration date'|trans }}
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=date" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=date&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+					<br>
+					{{ 'Registration IP'|trans }}
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=register_ip" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=register_ip&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+				</th>
+				<th class="text-center">{{ 'Delete'|trans }}</th>
+			</tr>
+			{% for item in users %}
+				<tr>
+					<td class="text-center"><input type="checkbox" name="users[]" value="{{ item.id }}" form="form_selected_users"></td>
+					<td class="text-center">{{ item.id }}</td>
+					<td class="text-center">
+						{% if not item.active %}
+							<form method="post">
+								<input type="hidden" name="action" value="activate_user">
+								<input type="hidden" name="id" value="{{ item.id }}">
+								<input type="hidden" name="token" value="{{ generateToken('activate_user') }}">
+								<button type="submit" class="btn btn-link fas fa-plus-square"></button>
+							</form><br>
+						{% endif %}
+						{% if item.register_fb %}<img src="images/fb-icon.gif" alt="Facebook"><br>{% endif %}
+						{% if item.register_google %}<img src="images/google-icon.ico" alt="Google">{% endif %}
+					</td>
+					<td><b>{% if item.username %}<a href="{{ path('profile',0,item.username) }}" title="{{ 'Profile of'|trans }}: {{ item.username }}" target="_blank">{{ item.username }}</a>{% endif %}</b><br>{% if _ADMIN_TEST_MODE_ %}TEST{% else %}<a href="mailto:{{ item.email }}" title="{{ 'Write to:'|trans }} {{ item.email }}">{{ item.email }}</a>{% endif %}</td>
+					<td class="text-center">
+						{% if item.moderator %}
+							<form method="post">
+								<input type="hidden" name="action" value="unset_moderator">
+								<input type="hidden" name="id" value="{{ item.id }}">
+								<input type="hidden" name="token" value="{{ generateToken('unset_moderator') }}">
+								<button type="submit" class="btn btn-link"><b>{{ 'YES'|trans }}</b></button>
+							</form>
+						{% else %}
+							<form method="post">
+								<input type="hidden" name="action" value="set_moderator">
+								<input type="hidden" name="id" value="{{ item.id }}">
+								<input type="hidden" name="token" value="{{ generateToken('set_moderator') }}">
+								<button type="submit" class="btn btn-link">{{ 'NO'|trans }}</button>
+							</form>
+						{% endif %}
+					</td>
+					<td>{{ item.type|trans }}<br>
+						{% if item.name %}{{ item.name }}<br>{% endif %}
+						{% if item.nip %}{{ item.nip }}<br>{% endif %}
+						{% if item.address %}{{ item.address }}<br>{% endif %}
+					</td>
+					<td class="text-center">{{ item.amount_classifieds }}<br>(<b>{{ item.amount_active_classifieds }}</b>)</td>
+					<td class="text-center"><b>{{ item.amount_logins }}</b><br>{{ item.last_login|date('Y-m-d') }}</td>
+					<td class="text-center">{{ item.activation_date|date('Y-m-d') }}<br>{{ item.activation_ip }}</td>
+					<td class="text-center">{{ item.date|date('Y-m-d') }}<br>{{ item.register_ip }}</td>
+					<td class="text-center"><button class="btn btn-link fas fa-trash-alt text-danger" title="{{ 'Delete user'|trans }}" data-toggle="modal" data-target="#remove_{{ item.id }}"></button></td>
+				</tr>
+
+				<div class="modal fade" id="remove_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Delete user'|trans }}: {{ item.username }}">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">{{ 'Delete user'|trans }}</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							</div>
+							<form method="post">
+								<input type="hidden" name="action" value="remove_user">
+								<input type="hidden" name="id" value="{{ item.id }}">
+								<input type="hidden" name="email" value="{{ item.email }}">
+								<input type="hidden" name="register_ip" value="{{ item.register_ip }}">
+								<input type="hidden" name="activation_ip" value="{{ item.activation_ip }}">
+								<input type="hidden" name="token" value="{{ generateToken('admin_remove_user') }}">
+								<div class="modal-body">
+									<p>{{ 'Do you really want to delete'|trans }}: "{{ item.username }}"?</p>
+									<p>{{ 'All classifieds of user will be deleted'|trans }}</p>
+									<label><input type="checkbox" name="add_email_black_list"> {{ 'Add email to black list'|trans }}</label><br>
+									<label><input type="checkbox" name="add_ip_black_list"> {{ 'Add IP to black list'|trans }}</label>
+								</div>
+								<div class="modal-footer">
+									<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+									<input type="submit" class="btn btn-danger" value="{{ 'Delete'|trans }}">
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</table>
+	</div>
+	<br>
+	<form method="post" id="form_selected_users" class="form-inline">
+		<input type="hidden" name="token" value="{{ generateToken('admin_action_users') }}">
+		<label for="action" class="my-1 mr-2">{{ 'Selected'|trans }}: </label>
+		<select name="action" required title="{{ 'Select the appropriate action'|trans }}" class="form-control my-1 mr-sm-2">
+			<option value="">-- {{ 'select'|trans }} --</option>
+			<option value="remove_users">{{ 'Delete users'|trans }}</option>
+			<option value="activate_users">{{ 'Activate users'|trans }}</option>
+			<option value="set_moderators">{{ 'Set moderator'|trans }}</option>
+			<option value="unset_moderators">{{ 'Unset moderator'|trans }}</option>
+		</select>
+		<input type="submit" value="{{ 'Execute'|trans }}!" class="btn btn-danger my-1">
+	</form>
+	<br>
+
+	{% include 'pagination.tpl' %}
+
+{% else %}
+	<h4 class="text-danger">{{ 'Nothing found'|trans }}</h4>
+{% endif %}
+{% endblock %}

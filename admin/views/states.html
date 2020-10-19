@@ -1,0 +1,143 @@
+
+{% extends "main.tpl" %}
+
+{% block content %}
+<div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="{{ 'Add state'|trans }}">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">{{ 'Add state'|trans }}</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			</div>
+			<form method="post">
+				<input type="hidden" name="action" value="add_state">
+				<input type="hidden" name="token" value="{{ generateToken('admin_add_state') }}">
+				<div class="modal-body">
+					<label>{{ 'The name'|trans }}</label>
+					<input type="text" name="name" required maxlength="64" placeholder="{{ 'The name'|trans }}" title="{{ 'The name'|trans }}" class="form-control">
+				</div>
+				<div class="modal-footer">
+					<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+					<input type="submit" class="btn btn-primary" value="{{ 'Execute'|trans }}">
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="page-header">
+	<h1><i class="fas fa-th"></i> {% if state %}{{ 'States in'|trans }} {{ state.name }}{% else %}{{ 'States'|trans }}{% endif %}</h1>
+	<p>{{ 'Here you can edit the states on the site'|trans }}</p>
+</div>
+
+{% include 'alert.tpl' %}
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add">{{ 'Add state'|trans }}</button>
+{% if state %}<br><br><a href="?controller=states" title="{{ 'Return to the list of states'|trans }}">{{ 'Return to the list of states'|trans }}</a>{% endif %}
+<br><br>
+ {% if states %}
+	<table class="table parent_select_checkbox table-striped table-bordered table-sm">
+		<tr>
+			<th></th>
+			<th>{{ 'The name'|trans }}</th>
+			<th class="text-center" style="width:55px">{{ 'Position'|trans }}</th>
+			{% if not state %}<th class="text-center">{{ 'Edit substates'|trans }}</th>{% endif %}
+			<th class="text-center">{{ 'Edit'|trans }}</th>
+			<th class="text-center">{{ 'Delete'|trans }}</th>
+		</tr>
+
+		{% for item in states %}
+			<tr>
+				<td>{{ loop.index }}</td>
+				<td><a href="{{ path('classifieds') }}?state={% if state %}{{ state.slug }}&state2={{ item.slug }}{% else %}{{ item.slug }}{% endif %}" target="_blank" title="{{ item.name }}">{{ item.name }}</a></td>
+				<td class="text-center">
+					<form method="post">
+						<input type="hidden" name="action" value="position">
+						<input type="hidden" name="id" value="{{ item.id }}">
+						<input type="hidden" name="position" value="{{ item.position }}">
+						<input type="hidden" name="token" value="{{ generateToken('position') }}">
+						<button type="submit" class="btn btn-link fas fa-arrow-up {% if loop.first %}inactive{% endif %}"   name="+"></button>
+						<button type="submit" class="btn btn-link fas fa-arrow-down {% if loop.last %}inactive{% endif %}" name="-"></button>
+					</form>
+				</td>
+				{% if not state %}<td class="text-center"><a href="?controller=states&state_id={{ item.id }}" title="{{ 'Edit substates'|trans }}" class="fas fa-edit"></a></td>{% endif %}
+				<td class="text-center"><button class="btn btn-link fas fa-edit" title="{{ 'Edit'|trans }}" data-toggle="modal" data-target="#edit_{{ item.id }}"></button></td>
+				<td class="text-center"><button class="btn btn-link fas fa-trash-alt text-danger" title="{{ 'Delete'|trans }}" data-toggle="modal" data-target="#remove_{{ item.id }}"></button></td>
+			</tr>
+
+			<div class="modal fade" id="edit_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Edit'|trans }}: {{ item.name }}">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">{{ 'Edit'|trans }}: {{ item.name }}</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						</div>
+						<form method="post">
+							<input type="hidden" name="action" value="edit_state">
+							<input type="hidden" name="id" value="{{ item.id }}">
+							<input type="hidden" name="token" value="{{ generateToken('admin_edit_state') }}">
+							<div class="modal-body">
+								<label>{{ 'The name'|trans }}</label>
+								<input type="text" name="name" required maxlength="64" placeholder="{{ 'The name'|trans }}" title="{{ 'The name'|trans }}" value="{{ item.name }}" class="form-control">
+							</div>
+							<div class="modal-footer">
+								<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+								<input type="submit" class="btn btn-primary" value="{{ 'Execute'|trans }}">
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal fade" id="remove_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Delete state'|trans }}: {{ item.name }}">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">{{ 'Delete state'|trans }}</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						</div>
+						<form method="post">
+							<input type="hidden" name="action" value="remove_state">
+							<input type="hidden" name="id" value="{{ item.id }}">
+							<input type="hidden" name="token" value="{{ generateToken('admin_remove_state') }}">
+							<div class="modal-body">
+								<p>{{ 'Do you really want to delete'|trans }}: "{{ item.name }}"?</p>
+							</div>
+							<div class="modal-footer">
+								<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+								<input type="submit" class="btn btn-danger" value="{{ 'Delete'|trans }}">
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</table>
+	<p><button class="btn btn-link" data-toggle="modal" data-target="#arrange_alphabetically">{{ 'Arrange alphabetically'|trans }}</button>
+
+	<div class="modal fade" id="arrange_alphabetically" tabindex="-1" role="dialog" aria-labelledby="{{ 'Arrange alphabetically'|trans }}">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">{{ 'Arrange alphabetically'|trans }}</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				</div>
+				<form method="post" class="form">
+					<input type="hidden" name="action" value="arrange_alphabetically">
+					<input type="hidden" name="token" value="{{ generateToken('arrange_alphabetically') }}">
+					<div class="modal-body">
+						<p>{{ 'Do you really want to arrange alphabetically?'|trans }}</p>
+					</div>
+					<div class="modal-footer">
+						<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+						<input type="submit" class="btn btn-danger" value="{{ 'Execute'|trans }}">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+{% else %}
+	<h4 class="text-danger">{{ 'Nothing found'|trans }}</h4>
+{% endif %}
+{% endblock %}

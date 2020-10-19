@@ -1,0 +1,148 @@
+
+{% extends "main.tpl" %}
+
+{% block content %}
+<div class="page-header">
+	<h1><i class="fas fa-cog"></i> {{ 'Appearance settings'|trans }}</h1>
+	<p class="mb-0">{{ 'Here you can edit the settings of the service'|trans }}</p>
+	<p class="text-danger">{{ 'Folder and file names should not contain spaces or Polish letters'|trans }}</p>
+</div>
+
+{% include 'alert.tpl' %}
+
+<form method="post" class="form" role="form">
+	<input type="hidden" name="action" value="save_settings_appearance">
+	<input type="hidden" name="token" value="{{ generateToken('admin_save_settings_appearance') }}">
+	<div class="form-group row">
+		<label for="template" class="col-sm-2 col-form-label">{{ 'Template'|trans }}:</label>
+		<div class="col-sm-10">
+			<select name="template" title="{{ 'Template'|trans }}" required class="form-control">
+				{% for item in templates %}
+					<option value="{{ item }}" {% if item==settings.template %}selected{% endif %}>{{ item }}</option>
+				{% endfor %}
+			</select>
+		</div>
+	</div>
+	<hr>
+	<div class="form-group row">
+		<div class="col-sm-10 offset-sm-2">
+			<label><input type="checkbox" name="search_box_category" title="{{ 'Show in search box:'|trans }} {{ 'Categories'|trans }}" {% if settings.search_box_category %}checked{% endif %}> {{ 'Show in search box:'|trans }} {{ 'Categories'|trans }}</label>
+			<br>
+			<label><input type="checkbox" name="search_box_address" title="{{ 'Show in search box:'|trans }} {{ 'Address'|trans }}" {% if settings.search_box_address %}checked{% endif %}> {{ 'Show in search box:'|trans }} {{ 'Address'|trans }}</label>
+			<br>
+			<label><input type="checkbox" name="search_box_distance" title="{{ 'Show in search box:'|trans }} {{ 'Distance'|trans }}" {% if settings.search_box_distance %}checked{% endif %}> {{ 'Show in search box:'|trans }} {{ 'Distance'|trans }}</label>
+			<br>
+			<label><input type="checkbox" name="search_box_keywords" title="{{ 'Show in search box:'|trans }} {{ 'Keywords'|trans }}" {% if settings.search_box_keywords %}checked{% endif %}> {{ 'Show in search box:'|trans }} {{ 'Keywords'|trans }}</label>
+			<br>
+			<label><input type="checkbox" name="search_box_salary" title="{{ 'Show in search box:'|trans }} {{ 'Salary'|trans }}" {% if settings.search_box_salary %}checked{% endif %}> {{ 'Show in search box:'|trans }} {{ 'Salary'|trans }}</label>
+			<br>
+			<label><input type="checkbox" name="search_box_state" title="{{ 'Show in search box:'|trans }} {{ 'State'|trans }}" {% if settings.search_box_state %}checked{% endif %}> {{ 'Show in search box:'|trans }} {{ 'State'|trans }}</label>
+			<br>
+			<label><input type="checkbox" name="search_box_type" title="{{ 'Show in search box:'|trans }} {{ 'Type'|trans }}" {% if settings.search_box_type %}checked{% endif %}> {{ 'Show in search box:'|trans }} {{ 'Type'|trans }}</label>
+			<br>
+			<label><input type="checkbox" name="search_box_options" title="{{ 'Show in side search box:'|trans }} {{ 'Options'|trans }}" {% if settings.search_box_options %}checked{% endif %}> {{ 'Show in side search box:'|trans }} {{ 'Options'|trans }}</label>
+			<br>
+			<label><input type="checkbox" name="search_box_photos" title="{{ 'Show in side search box:'|trans }} {{ 'Only classifieds with photos'|trans }}" {% if settings.search_box_photos %}checked{% endif %}> {{ 'Show in side search box:'|trans }} {{ 'Only classifieds with photos'|trans }}</label>
+			<br>
+			<label><input type="checkbox" name="search_box_promoted" title="{{ 'Show in side search box:'|trans }} {{ 'Only promoted classifieds'|trans }}" {% if settings.search_box_promoted %}checked{% endif %}> {{ 'Show in side search box:'|trans }} {{ 'Only promoted classifieds'|trans }}</label>
+		</div>
+	</div>
+	<hr>
+	<div class="form-group row">
+		<div class="col-sm-10 offset-sm-2">
+			<label><input type="checkbox" name="show_contact_form_classified" title="{{ 'Show the contact form on classified page'|trans }}" {% if settings.show_contact_form_classified %}checked{% endif %}> {{ 'Show the contact form on classified page'|trans }}</label>
+			<br>
+			<label><input type="checkbox" name="show_contact_form_profile" title="{{ 'Show the contact form on profile page'|trans }}" {% if settings.show_contact_form_profile %}checked{% endif %}> {{ 'Show the contact form on profile page'|trans }}</label>
+		</div>
+	</div>
+	<hr>
+	<div class="form-group row">
+		<div class="col-sm-10 offset-sm-2">
+			<label><input type="checkbox" name="show_breadcrumbs" title="{{ 'Show breadcrumbs'|trans }}" {% if settings.show_breadcrumbs %}checked{% endif %}> {{ 'Show breadcrumbs'|trans }}</label>
+		</div>
+		<div class="col-sm-10 offset-sm-2">
+			<label><input type="checkbox" name="index_box_subcategories" title="{{ 'Show the category box on the index page'|trans }}" {% if settings.index_box_subcategories %}checked{% endif %}> {{ 'Show the category box on the index page'|trans }}</label>
+		</div>
+		<div class="col-sm-10 offset-sm-2">
+			<label><input type="checkbox" name="show_number_classifieds_in_categories" title="{{ 'Show the number of classifieds in categories'|trans }}" {% if settings.show_number_classifieds_in_categories %}checked{% endif %}> {{ 'Show the number of classifieds in categories'|trans }}</label>
+		</div>
+	</div>
+	<hr>
+	<div class="form-group row">
+		<label for="logo" class="col-sm-2 col-form-label">{{ 'Logo'|trans }}:</label>
+		<div class="col-sm-10">
+			<button class="btn btn-link open_roxy" data-target="#roxySelectFile">
+				<img data-roxy_name="logo" src="{% if settings.logo %}{{ settings.logo }}{% else %}images/no_image.png{% endif %}" onerror="this.src='images/no_image.png'" alt="{{ 'Logo'|trans }}" style="max-height: 100px">
+			</button><br><br>
+			<input type="text" name="logo" value="{{ settings.logo }}" placeholder="{{ 'Logo'|trans }}" title="{{ 'Logo'|trans }}" class="form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="logo_facebook" class="col-sm-2 col-form-label">{{ 'Logo - Facebook'|trans }}:</label>
+		<div class="col-sm-10">
+			<button class="btn btn-link open_roxy" data-target="#roxySelectFile">
+				<img data-roxy_name="logo_facebook" src="{% if settings.logo_facebook %}{{ settings.logo_facebook }}{% else %}images/no_image.png{% endif %}" onerror="this.src='images/no_image.png'" alt="{{ 'Logo - Facebook'|trans }}" style="max-height: 100px">
+			</button><br><br>
+			<input type="text" name="logo_facebook" value="{{ settings.logo_facebook }}" placeholder="{{ 'Logo - Facebook'|trans }}" title="{{ 'Logo - Facebook'|trans }}" class="form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="watermark" class="col-sm-2 col-form-label">{{ 'Watermark'|trans }}:</label>
+		<div class="col-sm-10">
+			<button class="btn btn-link open_roxy" data-target="#roxySelectFile">
+				<img data-roxy_name="watermark" src="{% if settings.watermark %}{{ settings.watermark }}{% else %}images/no_image.png{% endif %}" onerror="this.src='images/no_image.png'" alt="{{ 'Watermark'|trans }}" style="max-height: 100px">
+			</button><br><br>
+			<input type="text" name="watermark" value="{{ settings.watermark }}" placeholder="{{ 'Watermark'|trans }}" title="{{ 'Watermark'|trans }}" class="form-control" pattern="[a-z0-9-_/\.]+">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="favicon" class="col-sm-2 col-form-label">{{ 'Favicon'|trans }}:</label>
+		<div class="col-sm-10">
+			<button class="btn btn-link open_roxy" data-target="#roxySelectFile">
+				<img data-roxy_name="favicon" src="{% if settings.favicon %}{{ settings.favicon }}{% else %}images/no_image.png{% endif %}" onerror="this.src='images/no_image.png'" alt="{{ 'Favicon'|trans }}" style="max-height: 100px">
+			</button><br><br>
+			<input type="text" name="favicon" value="{{ settings.favicon }}" placeholder="{{ 'Favicon'|trans }}" title="{{ 'Favicon'|trans }}" class="form-control">
+		</div>
+	</div>
+	<hr>
+	<div class="form-group">
+		<label><input type="checkbox" name="rodo_alert" title="{{ 'Show message about personal data processing (RODO)'|trans }}" {% if settings.rodo_alert %}checked{% endif %}> {{ 'Show message about personal data processing (RODO)'|trans }}</label><br>
+		<label for="rodo_alert_text">{{ 'Content of alert about processing personal data'|trans }}:</label>
+		<textarea name="rodo_alert_text" title="{{ 'Content of alert about processing personal data'|trans }}" class="form-control">{{ settings.rodo_alert_text|raw }}</textarea>
+		<script>
+			run_ckeditor('rodo_alert_text',100);
+		</script>
+	</div>
+	<hr>
+	<div class="form-group">
+		<label for="footer_top">{{ 'Footer - top'|trans }}:</label>
+		<textarea name="footer_top" title="{{ 'Footer - top'|trans }}" class="form-control">{{ settings.footer_top|raw }}</textarea>
+		<script>
+			run_ckeditor('footer_top',100);
+		</script>
+	</div>
+	<div class="form-group">
+		<label for="footer_bottom">{{ 'Footer - bottom'|trans }}:</label>
+		<textarea id="footer_bottom_textarea" name="footer_bottom" title="{{ 'Footer - bottom'|trans }}" class="form-control">{{ settings.footer_bottom|raw }}</textarea>
+		<script>
+			run_ckeditor('footer_bottom_textarea',100);
+		</script>
+	</div>
+	<hr>
+	<div class="form-group">
+		<label for="code_style">{{ 'Additional CSS'|trans }}</label>
+		<textarea name="code_style" title="{{ 'Additional CSS'|trans }}" class="form-control">{{ settings.code_style|raw }}</textarea>
+	</div>
+	<div class="form-group">
+		<label for="code_head">{{ 'Additional code in the HEAD'|trans }}</label>
+		<textarea name="code_head" title="{{ 'Additional code in the HEAD'|trans }}" class="form-control">{{ settings.code_head|raw }}</textarea>
+	</div>
+	<div class="form-group">
+		<label for="code_body">{{ 'Additional code in the BODY'|trans }}</label>
+		<textarea name="code_body" title="{{ 'Additional code in the BODY'|trans }}" class="form-control">{{ settings.code_body|raw }}</textarea>
+	</div>
+	<div class="form-group">
+		<input type="submit" value="{{ 'Save'|trans }}" class="btn btn-primary">
+	</div>
+</form>
+{% endblock %}

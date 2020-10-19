@@ -1,0 +1,70 @@
+
+{% extends "main.tpl" %}
+
+{% block content %}
+<div class="page-header">
+	<h1><i class="fas fa-edit"></i> {{ 'Mails'|trans }}</h1>
+	<p>{{ 'Edit the content of messages sent from your site'|trans }}</p>
+	<p>{{ 'You should always insert links and image paths along with the domain address (starting with http://) or the {base_url} tag'|trans }}</p>
+</div>
+
+{% include 'alert.tpl' %}
+
+<h5>{{ 'You can use these tags (depending on e-mail)'|trans }}:</h5>
+<ul class="no-bullet">
+	<li><b>{title}</b> - {{ 'Title of website'|trans }}</li>
+	<li><b>{base_url}</b> - {{ 'Base URL'|trans }}</li>
+	<li><b>{link_logo}</b> - {{ 'Link to logo'|trans }}</li>
+	<li><b>{date}</b> - {{ 'The current date'|trans }}</li>
+	<li><b>{username}</b> - {{ 'Username'|trans }}</li>
+	<li><b>{activation_link}</b> - {{ 'Activation link'|trans }}</li>
+	<li><b>{password}</b> - {{ 'Hasło'|trans }}</li>
+	<li><b>{reset_password_link}</b> - {{ 'Link to generate new password'|trans }}</li>
+	<li><b>{name}</b> - {{ 'Name of the sender'|trans }}</li>
+	<li><b>{email}</b> - {{ 'Email of the sender'|trans }}</li>
+	<li><b>{message}</b> - {{ 'Message from the sender'|trans }}</li>
+	<li><b>{classified_name}</b> - {{ 'Classified name'|trans }}</li>
+	<li><b>{classified_url}</b> - {{ 'Classified URL'|trans }}</li>
+	<li><b>{classified_edit_link}</b> - {{ 'Link to edit classified'|trans }}</li>
+	<li><b>{classified_activate_link}</b> - {{ 'Link to activate classified'|trans }}</li>
+	<li><b>{classifieds_list}</b> - {{ 'List of classifieds'|trans }}</li>
+	<li><b>{newsletter_activation_link}</b> - {{ 'Link to activate mail in newsletter'|trans }}</li>
+</ul>
+<br><br>
+<form role="form" class="form-horizontal" method="post">
+	<input type="hidden" name="action" value="save_template_offer">
+	<input type="hidden" name="token" value="{{ generateToken('save_template_offer') }}">
+	<div class="form-group row">
+		<label for="email_template_offer" class="col-sm-3 col-form-label">{{ 'Email template for the offer contact form'|trans }}:</label>
+		<div class="col-sm-9">
+			<textarea name="email_template_offer" title="{{ 'Email template for the offer contact form'|trans }}" class="form-control" style="height:200px">{{ settings.email_template_offer }}</textarea>
+		</div>
+	</div>
+	<div class="form-group row">
+		<div class="col-sm-9 offset-sm-3">
+			<input type="submit" value="{{ 'Save'|trans }}" class="btn btn-primary">
+		</div>
+	</div>
+</form>
+<br><br>
+<form role="form" class="form-horizontal" method="post">
+	<input type="hidden" name="action" value="save_mails">
+	<input type="hidden" name="token" value="{{ generateToken('admin_save_mails') }}">
+	{% for item in mails %}
+		<div class="form-group">
+			<h4>{{ item.full_name|trans }}</h4>
+			<input type="text" name="mails[{{ item.name }}][subject]" value="{{ item.subject }}" title="{{ 'Enter the message title'|trans }}" placeholder="{{ 'Title'|trans }}" class="form-control">
+		</div>
+		<div class="form-group">
+			<textarea name="mails[{{ item.name }}][message]" id="message_{{ item.name }}" class="form-control">{{ item.message }}</textarea>
+			<script>
+				run_ckeditor('message_{{ item.name }}');
+			</script>
+		</div>
+		<br>
+	{% endfor %}
+	<div class="form-group">
+		<input type="submit" value="{{ 'Save'|trans }}" class="btn btn-primary">
+	</div>
+</form>
+{% endblock %}

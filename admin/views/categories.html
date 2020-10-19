@@ -1,0 +1,271 @@
+
+{% extends "main.tpl" %}
+
+{% block content %}
+<div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="{{ 'Add category'|trans }}">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">{{ 'Add category'|trans }}</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			</div>
+			<form method="post" class="form">
+				<input type="hidden" name="action" value="add_category">
+				<input type="hidden" name="token" value="{{ generateToken('admin_add_category') }}">
+				<div class="modal-body">
+					<div class="form-group">
+						<label for="name">{{ 'The name'|trans }}</label>
+						<input type="text" name="name" required maxlength="64" placeholder="{{ 'The name'|trans }}" title="{{ 'The name'|trans }}" class="form-control">
+					</div>
+					<div class="form-group">
+						<label for="cost">{{ 'Charge'|trans }}</label>
+						<div class="input-group">
+							<input type="number" name="cost" min="0" step="0.01" class="form-control">
+							<div class="input-group-append">
+								<span class="input-group-text">{{ settings.currency }}</span>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="thumb">{{ 'Thumb'|trans }}</label><br>
+						<button class="btn btn-link open_roxy" data-target="#roxySelectFile">
+							<img data-roxy_name="thumb" src="images/no_image.png" alt="{{ 'Thumb'|trans }}" style="max-height: 100px">
+						</button><br><br>
+						<input type="text" name="thumb" placeholder="{{ 'Thumb'|trans }}" title="{{ 'Thumb'|trans }}" class="form-control">
+					</div>
+					<div class="form-group">
+						<label for="content">{{ 'Content'|trans }}</label>
+						<textarea id="content" name="content" placeholder="{{ 'Content'|trans }}" title="{{ 'Content'|trans }}" class="form-control"></textarea>
+						<script>
+							run_ckeditor('content',100);
+						</script>
+					</div>
+					<div class="form-group">
+						<label for="h1">{{ 'Header h1'|trans }}</label>
+						<input type="text" name="h1" title="{{ 'Header h1'|trans }}" placeholder="{{ 'Header h1'|trans }}" maxlength="512" class="form-control">
+					</div>
+					<div class="form-group">
+						<label for="title">{{ 'Title SEO'|trans }}</label>
+						<input type="text" name="title" title="{{ 'Title SEO'|trans }}" placeholder="{{ 'Title SEO'|trans }}" maxlength="512" class="form-control">
+					</div>
+					<div class="form-group">
+						<label for="keywords">{{ 'Keywords SEO'|trans }}</label>
+						<input type="text" name="keywords" title="{{ 'Keywords SEO'|trans }}" placeholder="{{ 'Keywords SEO'|trans }}" maxlength="512" class="form-control">
+					</div>
+					<div class="form-group">
+						<label for="description">{{ 'Description SEO'|trans }}</label>
+						<textarea name="description" title="{{ 'Description SEO'|trans }}" placeholder="{{ 'Description SEO'|trans }}" maxlength="512" class="form-control"></textarea>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+					<input type="submit" class="btn btn-primary" value="{{ 'Execute'|trans }}">
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="page-header">
+	<h1><i class="fas fa-th"></i> {% if category %}{{ 'Subcategories in'|trans }}: {{ category.name }}{% else %}{{ 'Categories'|trans }}{% endif %}</h1>
+	<p>{{ 'Here you can edit the categories'|trans }}</p>
+	{% if category %}
+		<h5>
+			<a href="?controller=categories" title="{{ 'Main Page'|trans }}">{{ 'Main Page'|trans }}</a> >
+			{% for item in category.breadcrumbs %}
+				<a href="?controller=categories&category_id={{ item.id }}&category_name={{ item.slug }}" title="{{ 'Category'|trans }}: {{ item.name }}">{{ item.name }}</a>
+				{% if not loop.last %} > {% endif %}
+			{% endfor %}
+		</h5>
+	{% endif %}
+</div>
+
+{% include 'alert.tpl' %}
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add">{{ 'Add category'|trans }}</button>
+<br><br>
+{% if categories %}
+	<div class="table-responsive">
+		<table class="table table-striped table-bordered table-sm">
+			<tr>
+				<th></th>
+				<th>{{ 'Thumb'|trans }}</th>
+				<th>{{ 'The name'|trans }}</th>
+				<th class="text-center" style="width:55px">{{ 'Position'|trans }}</th>
+				<th class="text-center">{{ 'Charge'|trans }}</th>
+				<th class="text-center">{{ 'Number of classifieds'|trans }}</th>
+				<th class="text-center">{{ 'Edit subcategories'|trans }}</th>
+				<th class="text-center">{{ 'Edit'|trans }}</th>
+				<th class="text-center">{{ 'Delete'|trans }}</th>
+			</tr>
+
+			{% for item in categories %}
+				<tr>
+					<td>{{ loop.index }}</td>
+					<td>{% if item.thumb %}<img src="{{ item.thumb }}" onerror="this.src='images/no_image.png'" alt="{{ 'Thumb'|trans }}" style="max-height: 40px">{% endif %}</td>
+					<td><a href="{{ path('classifieds') }}?category={{ item.id }}" target="_blank" title="{{ item.name }}">{{ item.name }}</a></td>
+					<td class="text-center">
+						<form method="post">
+							<input type="hidden" name="action" value="position">
+							<input type="hidden" name="id" value="{{ item.id }}">
+							<input type="hidden" name="position" value="{{ item.position }}">
+							<input type="hidden" name="token" value="{{ generateToken('position') }}">
+							<button type="submit" class="btn btn-link fas fa-arrow-up {% if loop.first %}inactive{% endif %}"   name="+"></button>
+							<button type="submit" class="btn btn-link fas fa-arrow-down {% if loop.last %}inactive{% endif %}" name="-"></button>
+						</form>
+					</td>
+					<td class="text-center">{{ item.cost|showCurrency }}</td>
+					<td class="text-center">{{ item.number_classifieds }}</td>
+					<td class="text-center"><a href="?controller=categories&category_id={{ item.id }}&category_name={{ item.slug }}" title="{{ 'Edit subcategories'|trans }}" class="fas fa-edit" ></a></td>
+					<td class="text-center"><button class="btn btn-link fas fa-edit" title="{{ 'Edit'|trans }}" data-toggle="modal" data-target="#edit_{{ item.id }}"></button></td>
+					<td class="text-center"><button class="btn btn-link fas fa-trash-alt text-danger" title="{{ 'Delete'|trans }}" data-toggle="modal" data-target="#remove_{{ item.id }}"></button></td>
+				</tr>
+
+				<div class="modal fade" id="edit_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Edit'|trans }}: {{ item.name }}">
+					<div class="modal-dialog modal-lg" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">{{ 'Edit'|trans }}: {{ item.name }}</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							</div>
+							<form method="post" class="form">
+								<input type="hidden" name="action" value="edit_category">
+								<input type="hidden" name="token" value="{{ generateToken('admin_edit_category') }}">
+								<input type="hidden" name="id" value="{{ item.id }}">
+								<div class="modal-body">
+									<div class="form-group">
+										<label for="name">{{ 'The name'|trans }}</label>
+										<input type="text" name="name" required maxlength="64" placeholder="{{ 'The name'|trans }}" title="{{ 'The name'|trans }}" value="{{ item.name }}" class="form-control">
+									</div>
+									<div class="form-group">
+										<label for="cost">{{ 'Charge'|trans }}</label>
+										<div class="input-group">
+											<input type="number" name="cost" min="0" step="0.01" class="form-control" value="{{ item.cost/100 }}">
+											<div class="input-group-append">
+												<span class="input-group-text">{{ settings.currency }}</span>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="thumb">{{ 'Thumb'|trans }}</label><br>
+										<button class="btn btn-link open_roxy" data-target="#roxySelectFile">
+											<img data-roxy_name="thumb" src="{% if item.thumb %}{{ item.thumb }}{% else %}images/no_image.png{% endif %}" onerror="this.src='images/no_image.png'" alt="{{ 'Thumb'|trans }}" style="max-height: 100px">
+										</button><br><br>
+										<input type="text" name="thumb" placeholder="{{ 'Thumb'|trans }}" title="{{ 'Thumb'|trans }}" value="{{ item.thumb }}" class="form-control">
+									</div>
+									<div class="form-group">
+										<label for="content">{{ 'Content'|trans }}</label>
+										<textarea id="content_{{ item.id }}" name="content" placeholder="{{ 'Content'|trans }}" title="{{ 'Content'|trans }}" class="form-control">{{ item.content|raw }}</textarea>
+										<script>
+											run_ckeditor('content_{{ item.id }}',100);
+										</script>
+									</div>
+									<div class="form-group">
+										<label for="h1">{{ 'Header h1'|trans }}</label>
+										<input type="text" name="h1" title="{{ 'Header h1'|trans }}" placeholder="{{ 'Header h1'|trans }}" maxlength="512" class="form-control" value="{{ item.h1 }}">
+									</div>
+									<div class="form-group">
+										<label for="title">{{ 'Title SEO'|trans }}</label>
+										<input type="text" name="title" title="{{ 'Title SEO'|trans }}" placeholder="{{ 'Title SEO'|trans }}" maxlength="512" class="form-control" value="{{ item.title }}">
+									</div>
+									<div class="form-group">
+										<label for="keywords">{{ 'Keywords SEO'|trans }}</label>
+										<input type="text" name="keywords" title="{{ 'Keywords SEO'|trans }}" placeholder="{{ 'Keywords SEO'|trans }}" maxlength="512" value="{{ item.keywords }}" class="form-control">
+									</div>
+									<div class="form-group">
+										<label for="description">{{ 'Description SEO'|trans }}</label>
+										<textarea name="description" title="{{ 'Description SEO'|trans }}" placeholder="{{ 'Description SEO'|trans }}" maxlength="512" class="form-control">{{ item.description }}</textarea>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+									<input type="submit" class="btn btn-primary" value="{{ 'Execute'|trans }}">
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal fade" id="remove_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Delete category'|trans }}: {{ item.name }}">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">{{ 'Delete category'|trans }}</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							</div>
+							<form method="post">
+								<input type="hidden" name="action" value="remove_category">
+								<input type="hidden" name="id" value="{{ item.id }}">
+								<input type="hidden" name="token" value="{{ generateToken('admin_remove_category') }}">
+								<div class="modal-body">
+									<p>{{ 'Do you really want to delete'|trans }}: "{{ item.name }}"?</p>
+									<p>{{ 'All subcategories will be deleted'|trans }}</p>
+								</div>
+								<div class="modal-footer">
+									<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+									<input type="submit" class="btn btn-danger" value="{{ 'Execute'|trans }}">
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</table>
+	</div>
+	<br>
+	<p><button class="btn btn-link" data-toggle="modal" data-target="#arrange_alphabetically">{{ 'Arrange alphabetically'|trans }}</button></p>
+	<p><button class="btn btn-link" data-toggle="modal" data-target="#reload">{{ 'Reload all subcategories'|trans }}</button><p>
+
+	<div class="modal fade" id="arrange_alphabetically" tabindex="-1" role="dialog" aria-labelledby="{{ 'Arrange alphabetically'|trans }}">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">{{ 'Arrange alphabetically'|trans }}</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				</div>
+				<form method="post" class="form">
+					<input type="hidden" name="action" value="arrange_alphabetically">
+					<input type="hidden" name="token" value="{{ generateToken('arrange_alphabetically') }}">
+					<div class="modal-body">
+						<p>{{ 'Do you really want to arrange alphabetically?'|trans }}</p>
+					</div>
+					<div class="modal-footer">
+						<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+						<input type="submit" class="btn btn-danger" value="{{ 'Execute'|trans }}">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="reload" tabindex="-1" role="dialog" aria-labelledby="{{ 'Reload all subcategories'|trans }}">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">{{ 'Reload all subcategories'|trans }}</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				</div>
+				<form method="post" class="form">
+					<input type="hidden" name="action" value="reload_category">
+					<input type="hidden" name="category" value="{% if category %}{{ category.id }}{% else %}0{% endif %}">
+					<input type="hidden" name="token" value="{{ generateToken('admin_reload_category') }}">
+					<div class="modal-body">
+						<p class="text-danger">{{ 'This operation may take several minutes to very use database. Use this function only when the links to subcategory are incorrect.'|trans }}</p>
+					</div>
+					<div class="modal-footer">
+						<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+						<input type="submit" class="btn btn-danger" value="{{ 'Execute'|trans }}">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+{% else %}
+	<h4 class="text-danger">{{ 'Nothing found'|trans }}</h4>
+{% endif %}
+
+{% if category %}
+	<p><a href="?controller=categories&category_id={{ category.category_id }}" title="{{ 'Return to the previous category'|trans }}">{{ 'Return to the previous category'|trans }}</a></p>
+{% endif %}
+
+{% endblock %}

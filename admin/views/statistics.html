@@ -1,0 +1,106 @@
+
+{% extends "main.tpl" %}
+
+{% block content %}
+<link rel="stylesheet" href="js/jqplot/jquery.jqplot.css" />
+<script src="js/jqplot/jquery.jqplot.min.js"></script>
+<script src="js/jqplot/jqplot.highlighter.min.js"></script>
+<script src="js/jqplot/jqplot.dateAxisRenderer.min.js"></script>
+<script src="js/jqplot.statistics.js"></script>
+
+<div class="page-header">
+	<h1><i class="fas fa-check-circle"></i> {{ 'Site statistics'|trans }}</h1>
+</div>
+
+<div class="table-responsive">
+	<table class="table table-striped">
+		<tr>
+			<td><b>{{ 'Users'|trans }}:</b></td>
+			<td><b>{{ statistics.users }}</b></td>
+			<td><b>{{ 'Classifieds'|trans }}:</b></td>
+			<td><b>{{ statistics.classifieds }}</b></td>
+		</tr>
+		<tr>
+			<td> - {{ 'by Facebook'|trans }}:</td>
+			<td>{{ statistics.users_register_fb }}</td>
+			<td> - {{ 'active'|trans }}:</td>
+			<td>{{ statistics.classifieds_active }}</td>
+		</tr>
+		<tr>
+			<td> - {{ 'by Google'|trans }}:</td>
+			<td>{{ statistics.users_register_google }}</td>
+			<td><b>{{ 'Views classifieds'|trans }}:</b></td>
+			<td><b>{{ statistics.logs_classifieds }}</b></td>
+		</tr>
+		<tr>
+			<td>{{ 'Sends mails'|trans }}:</td>
+			<td>{{ statistics.logs_mails }}</td>
+			<td>{{ 'Photos'|trans }}:</td>
+			<td>{{ statistics.photos }}</td>
+		</tr>
+		<tr>
+			<td>{{ 'Categories'|trans }}:</td>
+			<td>{{ statistics.categories }}</td>
+			<td>{{ 'Reset password'|trans }}:</td>
+			<td>{{ statistics.reset_password }}</td>
+		</tr>
+		<tr>
+			<td>{{ 'Mails in queue'|trans }}:</td>
+			<td>{{ statistics.mails_queue }}</td>
+			<td><b>{{ 'User logins'|trans }}:</b></td>
+			<td><b>{{ statistics.logs_users }}</b></td>
+		</tr>
+		<tr>
+			<td><b>{{ 'Subscribed to the newsletter'|trans }}:</b></td>
+			<td><b>{{ statistics.newsletter }}</b></td>
+			<td></td>
+			<td></td>
+		</tr>
+	</table>
+</div>
+<br><br>
+<div class="form container">
+	<div class="form-group row">
+		<div class="col-xl-3 col-sm-6">
+			<label>{{ 'Blue line'|trans }}: </label>
+			<select id="statitics_select_1" title="{{ 'Choose what should present the blue line'|trans }}" class="form-control">
+				<option value=""> -- </option>
+				<option value="logins">{{ 'Logins'|trans }}</option>
+				<option value="unique_logins" selected>{{ 'Unique logins'|trans }}</option>
+				<option value="registration">{{ 'Registration users'|trans }}</option>
+				<option value="activation_users">{{ 'Activation users'|trans }}</option>
+				<option value="classifieds">{{ 'Added classifieds'|trans }}</option>
+				<option value="views_classifieds">{{ 'Views classifieds'|trans }}</option>
+				<option value="newsletter">{{ 'Subscribed to the newsletter'|trans }}</option>
+			</select>
+		</div>
+		<div class="col-xl-3 col-sm-6">
+			<label>{{ 'Orange line'|trans }}: </label>
+			<select id="statitics_select_2" title="{{ 'Choose what should present the orange line'|trans }}" class="form-control">
+				<option value=""> -- </option>
+				<option value="logins">{{ 'Logins'|trans }}</option>
+				<option value="unique_logins">{{ 'Unique logins'|trans }}</option>
+				<option value="registration">{{ 'Registration users'|trans }}</option>
+				<option value="activation_users">{{ 'Activation users'|trans }}</option>
+				<option value="classifieds" selected>{{ 'Added classifieds'|trans }}</option>
+				<option value="views_classifieds">{{ 'Views classifieds'|trans }}</option>
+				<option value="newsletter">{{ 'Subscribed to the newsletter'|trans }}</option>
+			</select>
+		</div>
+		<div class="col-xl-2 col-sm-4">
+			<label>{{ 'Date start'|trans }}: </label>
+			<input id="statistics_date_from" title="{{ 'Select the starting date for analysis'|trans }}" type="text" value="{{ 'now'|date_modify('-30 day')|date('Y-m-d') }}" max="{{ 'now'|date('Y-m-d') }}" class="form-control datepicker">
+		</div>
+		<div class="col-xl-2 col-sm-4">
+			<label>{{ 'Date finish'|trans }}: </label>
+			<input id="statistics_date_to" title="{{ 'Select the end date for analysis'|trans }}" type="text" value="{{ 'now'|date('Y-m-d') }}" max="{{ 'now'|date('Y-m-d') }}" class="form-control datepicker">
+		</div>
+		<div class="col-xl-2 col-sm-4">
+			<label>&nbsp;</label><br>
+			<input id="statistics_generate" type="submit" value="{{ 'Generate'|trans }}" class="btn btn-primary text-uppercase">
+		</div>
+	</div>
+	<div id="jqplot"></div>
+</div>
+<br><br>
+{% endblock %}

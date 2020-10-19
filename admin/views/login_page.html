@@ -1,0 +1,24 @@
+
+{% extends "main.tpl" %}
+
+{% block content %}
+<div class="page-header">
+	<h1><i class="fas fa-edit"></i> {{ 'Login page'|trans }}</h1>
+	<p>{{ 'Here you can edit content of page'|trans }}</p>
+</div>
+
+{% include 'alert.tpl' %}
+
+<form method="post" class="form-horizontal" role="form">
+	<input type="hidden" name="action" value="save_login_page">
+	<input type="hidden" name="token" value="{{ generateToken('admin_save_login_page') }}">
+	<label class="control-label">{{ 'Content'|trans }}:</label>
+	<textarea name="login_page" placeholder="{{ 'Content'|trans }}" title="{{ 'Content'|trans }}" class="form-control">{{ settings.login_page|raw }}</textarea>
+	<script>
+		run_ckeditor('login_page');
+	</script>
+	<br>
+	<input type="submit" value="{{ 'Save'|trans }}" class="btn btn-primary text-uppercase">
+</form>
+
+{% endblock %}

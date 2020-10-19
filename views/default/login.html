@@ -1,0 +1,197 @@
+
+{% extends "main.tpl" %}
+
+{% block content %}
+<div class="page_box">
+	<br>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<div id="login_box">
+					<ul class="nav nav-tabs" role="tablist">
+						<li class="nav-item {% if tab_active=='login' %}active{% endif %}"><a href="#login" class="nav-link main-color-1 {% if tab_active=='login' %}active{% endif %}"  data-toggle="tab" role="tab" aria-controls="login" aria-selected="{% if tab_active=='login' %}true{% else %}false{% endif %}">{{ 'Log in'|trans }}</a></li>
+						<li class="nav-item {% if tab_active=='register' %}active{% endif %}"><a href="#register" class="nav-link main-color-1 {% if tab_active=='register' %}active{% endif %}" data-toggle="tab" role="tab" aria-controls="register" aria-selected="{% if tab_active=='register' %}true{% else %}false{% endif %}">{{ 'Register'|trans }}</a></li>
+						<li class="nav-item {% if tab_active=='reset_password' %}active{% endif %}"><a href="#reset_password" class="nav-link main-color-1 {% if tab_active=='reset_password' %}active{% endif %}" data-toggle="tab" role="tab" aria-controls="reset_password" aria-selected="{% if tab_active=='reset_password' %}true{% else %}false{% endif %}">{{ 'Reset password'|trans }}</a></li>
+					 </ul>
+					 {% if alert_success or alert_danger %}<br>{% endif %}
+					 {% include 'partial/alert.tpl' %}
+					 <div class="tab-content">
+						<div class="tab-pane container {% if tab_active=='login' %}active{% else %}fade{% endif %}" id="login" role="tabpanel" aria-labelledby="login-tab">
+							{% if form_complete_data %}
+								<form method="post">
+									<input type="hidden" name="action" value="complete_data">
+									<h3>{{ 'Complete data'|trans }}</h3>
+									<h5>{{ 'To continue, enter the login you want to use on the site'|trans }}</h5><br>
+									<div class="form-group">
+										<label for="email">{{ 'E-mail address'|trans }}</label>
+										<input type="email" class="form-control" name="email" disabled value="{{ form_complete_data.email }}">
+									</div>
+									<div class="form-group">
+										<label for="username">{{ 'Username'|trans }}</label>
+										<input type="text" class="form-control" name="username" placeholder="{{ 'Username'|trans }}" required maxlength="64" value="{{ input.username }}" title="{{ 'Enter your username. Use only characters:'|trans }} a-zA-Z0-9-_" pattern="[a-zA-Z0-9-_]+">
+									</div>
+									{% if error.type %}
+										<div class="alert alert-danger" role="alert"><i class="fas fa-exclamation"></i> {{ error.type }}</div>
+									{% endif %}
+									<div class="form-group">
+										<label for="type">{{ 'Account Type'|trans }}</label>
+										<select class="form-control select_account_type" name="type" id="type" required>
+											<option value="">{{ '-- select --'|trans }}</option>
+											{% for item in account_types %}
+												<option value="{{ item }}" {% if input.type==item %}selected{% endif %}>{{ item|trans }}</option>
+											{% endfor %}
+										</select>
+									</div>
+									{% include 'partial/account_employer.tpl' %}
+									<div class="custom-control custom-checkbox">
+										<input type="checkbox" name="rules" class="custom-control-input" id="complete_rules" required {% if input.rules %}checked{% endif %}>
+										<label class="custom-control-label" for="complete_rules">{{ 'Accepts the terms and conditions and the privacy policy'|trans }}</label>
+										<p><a href="{{ path('rules') }}" title="{{ 'Terms of service'|trans }}" target="_blank" class="main-color-2">{{ 'Terms of service'|trans }}</a> - <a href="{{ path('privacy_policy') }}" title="{{ 'Privacy policy'|trans }}" target="_blank" class="main-color-2">{{ 'Privacy policy'|trans }}</a></p>
+	               					 </div>
+									<input type="submit" class="btn btn-1 text-uppercase" value="{{ 'Save'|trans }}">
+								</form>
+							{% else %}
+								<form method="post" action="{{ path('login') }}{% if get.redirect %}?redirect={{ get.redirect }}{% endif %}">
+									<input type="hidden" name="action" value="login">
+									<input type="hidden" name="session_code" value="{{ session_code }}">
+									<h3>{{ 'Log in'|trans }}</h3><br>
+									<div class="form-group">
+										<label for="username"><i class="fas fa-user"></i> {{ 'Username / email'|trans }}</label>
+										<input type="text" class="form-control" name="username" placeholder="{{ 'example@example.com'|trans }}" required value="{{ post.username }}" title="{{ 'Enter your username or e-mail'|trans }}">
+									</div>
+									<div class="form-group">
+										<label for="password"><i class="fas fa-key"></i> {{ 'Password'|trans }}</label>
+										<input type="password" class="form-control" name="password" placeholder="****" required title="{{ 'Password'|trans }}">
+									</div>
+									<input type="submit" class="btn btn-1 text-uppercase" value="{{ 'Log in'|trans }}">
+									{% if facebook_redirect_uri or google_redirect_uri %}<br><br>{% endif %}
+									{% if facebook_redirect_uri %}
+										<a href="{{ facebook_redirect_uri }}" title="{{ 'Log in by FB'|trans }}" class="btn btn-fb text-uppercase btn-sm">{{ 'Log in by FB'|trans }}</a>
+									{% endif %}
+									{% if google_redirect_uri %}
+										<a href="{{ google_redirect_uri }}" title="{{ 'Log in by Google'|trans }}" class="btn btn-danger text-uppercase btn-sm">{{ 'Log in by Google'|trans }}</a>
+									{% endif %}
+								</form>
+							{% endif %}
+						</div>
+						<div class="tab-pane container {% if tab_active=='register' %}active{% else %}fade{% endif %}" id="register" role="tabpanel" aria-labelledby="register-tab">
+							<form method="post" action="{{ path('login') }}">
+								<input type="hidden" name="action" value="register">
+								<h3>{{ 'Register'|trans }}</h3><br>
+								{% if error.type %}
+									<div class="alert alert-danger" role="alert"><i class="fas fa-exclamation"></i> {{ error.type }}</div>
+								{% endif %}
+								<div class="form-group">
+									<label for="type">{{ 'Account Type'|trans }}</label>
+									<select class="form-control select_account_type" name="type" id="type" required>
+										<option value="">{{ '-- select --'|trans }}</option>
+										{% for item in account_types %}
+											<option value="{{ item }}" {% if input.type==item %}selected{% endif %}>{{ item|trans }}</option>
+										{% endfor %}
+									</select>
+								</div>
+								{% include 'partial/account_employer.tpl' %}
+								{% if error.email %}
+									<div class="alert alert-danger" role="alert"><i class="fas fa-exclamation"></i> {{ error.email }}</div>
+								{% endif %}
+								<div class="form-group">
+									<label for="email">{{ 'E-mail address'|trans }}</label>
+									<input type="email" class="form-control" name="email" placeholder="{{ 'example@example.com'|trans }}" id="email" required maxlength="64" value="{{ input.email }}" title="{{ 'E-mail address'|trans }}">
+								</div>
+								{% if error.username %}
+									<div class="alert alert-danger" role="alert"><i class="fas fa-exclamation"></i> {{ error.username }}</div>
+								{% endif %}
+								<div class="form-group">
+									<label for="username">{{ 'Username'|trans }}</label>
+									<input type="text" class="form-control" name="username" placeholder="{{ 'Username'|trans }}" required maxlength="64" value="{{ input.username }}"title="{{ 'Enter your username. Use only characters:'|trans }} a-zA-Z0-9-_" pattern="[a-zA-Z0-9-_]+">
+								</div>
+								{% if error.password %}
+									<div class="alert alert-danger" role="alert"><i class="fas fa-exclamation"></i> {{ error.password }}</div>
+								{% endif %}
+								<div class="form-group">
+									<label for="password">{{ 'Password'|trans }}</label>
+									<input type="password" class="form-control" name="password" placeholder="****" required maxlength="32" value="{{ input.password }}" title="{{ 'Password'|trans }}">
+								</div>
+								<div class="form-group">
+									<label for="password_repeat">{{ 'Repeat password'|trans }}</label>
+									<input type="password" class="form-control" name="password_repeat" placeholder="****" id="password_repeat" required maxlength="32" title="{{ 'Repeat password'|trans }}">
+								</div>
+								{% if error.rules %}
+									<div class="alert alert-danger" role="alert"><i class="fas fa-exclamation"></i> {{ error.rules }}</div>
+								{% endif %}
+								<div class="custom-control custom-checkbox">
+									<input type="checkbox" name="rules" class="custom-control-input" id="register_rules" required {% if input.rules %}checked{% endif %}>
+									<label class="custom-control-label" for="register_rules">{{ 'Accepts the terms and conditions and the privacy policy'|trans }}</label>
+									<p><a href="{{ path('rules') }}" title="{{ 'Terms of service'|trans }}" target="_blank" class="main-color-2">{{ 'Terms of service'|trans }}</a> - <a href="{{ path('privacy_policy') }}" title="{{ 'Privacy policy'|trans }}" target="_blank" class="main-color-2">{{ 'Privacy policy'|trans }}</a></p>
+								</div>
+								{% if error.captcha %}
+									<div class="alert alert-danger" role="alert"><i class="fas fa-exclamation"></i> {{ error.captcha }}</div>
+								{% endif %}
+								{% if settings.recaptcha_site_key and settings.recaptcha_secret_key %}
+									<input type="hidden" name="recaptcha_response" class="recaptchaResponse">
+									<p><small>This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy" target="_blank" rel="nofollow">Privacy Policy</a> and <a href="https://policies.google.com/terms" target="_blank" rel="nofollow">Terms of Service</a> apply.</small></p>
+								{% else %}
+									<div class="form-group">
+										<label for="captcha">{{ 'Enter the code Captcha'|trans }}</label>
+										<br>
+										<img src="{{ path('captcha') }}" alt="captcha">
+										<input type="text" class="form-control" placeholder="abc123" title="{{ 'Enter the code Captcha'|trans }}" name="captcha" required maxlength="32" autocomplete="off">
+									</div>
+								{% endif %}
+								<input type="submit" class="btn btn-1 text-uppercase" value="{{ 'Register'|trans }}">
+							</form>
+						</div>
+						<div class="tab-pane container {% if tab_active=='reset_password' %}active{% else %}{% endif %}" id="reset_password" role="tabpanel" aria-labelledby="reset_password-tab">
+							{% if form_new_password %}
+								<h3>{{ 'Enter a new password'|trans }}</h3><br>
+								<form method="post">
+									<input type="hidden" name="action" value="new_password">
+									<div class="form-group">
+										<input type="text" class="form-control" disabled value="{{ form_new_password.username }}">
+									</div>
+									<div class="form-group">
+										<input type="email" class="form-control" disabled value="{{ form_new_password.email }}">
+									</div>
+									<div class="form-group">
+										<label for="password">{{ 'Enter a new password'|trans }}</label>
+										<input type="password" class="form-control" name="password" placeholder="****" title="{{ 'Enter a new password'|trans }}" required value="{{ input.password }}" maxlength="32">
+									</div>
+									<div class="form-group">
+										<label for="password_repeat">{{ 'Repeat new password'|trans }}</label>
+										<input type="password" class="form-control" name="password_repeat" placeholder="****" id="password_repeat" title="{{ 'Repeat new password'|trans }}" required maxlength="32">
+									</div>
+									<input type="submit" class="btn btn-1 text-uppercase" value="{{ 'Confirm password'|trans }}">
+								</form>
+							{% else %}
+								<h3>{{ 'Reset password'|trans }}</h3><br>
+								<form method="post" action="{{ path('login') }}">
+									<input type="hidden" name="action" value="reset_password">
+									<div class="form-group">
+										<label for="username">{{ 'Username / email'|trans }}</label>
+										<input type="text" class="form-control" name="username" placeholder="{{ 'example@example.com'|trans }}" required maxlength="64" value="{{ input.username }}">
+									</div>
+									{% if settings.recaptcha_site_key and settings.recaptcha_secret_key %}
+										<input type="hidden" name="recaptcha_response" class="recaptchaResponse">
+										<p><small>This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy" target="_blank" rel="nofollow">Privacy Policy</a> and <a href="https://policies.google.com/terms" target="_blank" rel="nofollow">Terms of Service</a> apply.</small></p>
+									{% else %}
+										<div class="form-group">
+											<label for="captcha">{{ 'Enter the code Captcha'|trans }}</label><br>
+											<img src="{{ path('captcha') }}" alt="captcha">
+											<input type="text" class="form-control" placeholder="abc123" title="{{ 'Enter the code Captcha'|trans }}" name="captcha" required maxlength="32" title="{{ 'Enter the code Captcha'|trans }}" autocomplete="off">
+										</div>
+									{% endif %}
+									<input type="submit" class="btn btn-1 text-uppercase" value="{{ 'Reset password'|trans }}">
+								</form>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				{{ settings.login_page|raw }}
+			</div>
+		</div>
+	</div>
+	<br><br>
+</div>
+{% endblock %}

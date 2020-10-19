@@ -1,0 +1,277 @@
+
+{% extends "main.tpl" %}
+
+{% block javascript %}
+	{{ parent() }}
+	{% if classifieds_show_map %}
+		<script>
+			function displayMap() {
+				autocomplete2 = new google.maps.places.Autocomplete((document.getElementById('search_box_address')), {types: ['geocode']});
+			}
+			function displayMapClassifieds(){
+				var map = new google.maps.Map(document.getElementById('google_maps'), {
+					center: new google.maps.LatLng({{ settings.google_maps_lat }},{{ settings.google_maps_long }}),
+					zoom: 6,
+					mapTypeId: google.maps.MapTypeId.ROADMAP,
+					scrollwheel:  false
+				});
+				var locations = [
+					{% for classified in classifieds %}
+						{% if classified.address_lat!=0 and classified.address_long!=0 %}
+							{name:'{{ classified.name }}', lat:{{ classified.address_lat }}, long:{{ classified.address_long }}, index:{{ loop.index }}, content:'<a href="{{ path('classified',classified.id,classified.slug) }}" title="{{ classified.name }}"><p class="google_maps_p">{{ classified.name|slice(0,40) }}</p>{% if classified.thumb %}<img src="upload/photos/{{ classified.thumb }}" alt="{{ classified.name }}" onerror="this.src=\'{{ settings.base_url }}/views/{{ settings.template }}/images/no_image.png\'" class="google_maps_img">{% endif %}</a>'}{% if not loop.last %},{% endif %}
+						{% endif %}
+					{% endfor %}
+				]
+				var point, before_infoWindows;
+				var bounds = new google.maps.LatLngBounds();
+				var markers = [];
+				for (i = 0; i < locations.length; i++) {
+					latlngset = new google.maps.LatLng(locations[i].lat, locations[i].long);
+					var punkt = new google.maps.Marker({
+						map: map, title: locations[i].name, position: latlngset
+					});
+					markers.push(punkt);
+					var content = locations[i].content;
+					var infowindow = new google.maps.InfoWindow()
+					google.maps.event.addListener(punkt,'click', (function(punkt,content,infowindow){
+						return function() {
+							if(before_infoWindows){
+								before_infoWindows.close();
+							}
+							infowindow.setContent(content);
+							infowindow.open(map,punkt);
+							before_infoWindows = infowindow;
+						};
+					})(punkt,content,infowindow));
+					bounds.extend(punkt.position);
+				}
+				google.maps.event.addListener(map, 'zoom_changed', function() {
+					zoomChangeBoundsListener =
+						google.maps.event.addListener(map, 'bounds_changed', function(event) {
+							if (this.getZoom() > 16 && this.initialZoom == true) {
+								this.setZoom(16);
+								this.initialZoom = false;
+							}
+						google.maps.event.removeListener(zoomChangeBoundsListener);
+					});
+				});
+				map.initialZoom = true;
+				map.fitBounds(bounds);
+				var markerCluster = new MarkerClusterer(map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+			}
+		</script>
+		<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+		<script src="https://maps.googleapis.com/maps/api/js?key={{ settings.google_maps_api }}&v=3.exp&libraries=places&callback=initGoogleMap" async defer></script>
+	{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="page_box" id="classifieds_page">
+	<div class="container d-flex">
+		<h1>{% if settings.h1 %}{{ settings.h1 }}{% else %}{{ 'Classifieds'|trans }}{% endif %}</h1>
+		{% if classifieds_show_map %}
+			<button class="btn btn-link" id="button_clasifieds_show_map"><i class="fas fa-map-marked-alt"></i></button>
+		{% endif %}
+	</div>
+	{% if classifieds_show_map %}
+		<div id="google_maps" style="display: none"></div>
+	{% endif %}
+	{% if settings.ads_1 %}<div class="ads d-print-none">{{ settings.ads_1|raw }}</div>{% endif %}
+	<br>
+	<div class="container">
+		<div class="row">
+			{% if breadcrumbs %}
+				<div class="col-12">
+					<nav class="breadcrumbs">
+						<ul itemscope itemtype="http://schema.org/BreadcrumbList">
+							<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="{{ settings.base_url }}" title="{{ 'Main Page'|trans }}" class="main-color-2" itemprop="item"><span itemprop="name">{{ 'Main Page'|trans }}</span><meta itemprop="position" content="1" /></a></li>
+							{% for item in breadcrumbs %}
+								<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">> <a href="{{ item.path }}" title="{{ item.name }}" class="main-color-2" itemprop="item"><span itemprop="name">{{ item.name }}</span><meta itemprop="position" content="{{ loop.index+1 }}" /></a></li>
+							{% endfor %}
+						</ul>
+					</nav>
+				</div>
+			{% endif %}
+			<div class="col-lg-3">
+				{% if settings.ads_side_1 %}<div class="ads d-print-none">{{ settings.ads_side_1|raw }}</div>{% endif %}
+
+				<div class="d-block d-lg-none text-center">
+					<button data-toggle="collapse" data-target="#form_search_classifieds" class="btn btn-outline-1 collapsed" id="show_form_search_classifieds">{{ 'Show / hide search box'|trans }}</button><br><br>
+				</div>
+
+				<form class="form-search collapse show" method="get" id="form_search_classifieds">
+					<input type="hidden" name="search">
+					{% if get.category>0 %}
+						<input type="hidden" name="category" value="{{ get.category }}">
+					{% endif %}
+					{% if categories %}
+						<div class="form-group">
+							<nav>
+								<h4>{{ 'Categories'|trans }}
+									<a href="{{ path('classifieds') }}" title="{{ 'Main Page'|trans }}" class="float-right"><i class="fas fa-home"></i></a>
+									{% if overCategory %}
+										<a href="{{ overCategory.search_path }}" title="{{ overCategory.name }}" class="float-right"><i class="fas fa-arrow-up"></i></a>
+									{% endif %}
+								</h4>
+								<ul class="list-unstyled">
+								{% for cat in categories %}
+									<li {% if get.category==cat.id %}class="active"{% endif %}><a href="{{ cat.search_path }}" title="{{ 'Category'|trans }}: {{ cat.name }}">{% if cat.thumb %}<img src="views/{{ settings.template }}/images/no_image.png" data-src="{{ cat.thumb }}" class="lazy" alt="{{ cat.name }}"> {% endif %}{{ cat.name }}{% if settings.show_number_classifieds_in_categories and not get.search is defined and not get.state and not get.type %} <span class="badge badge-secondary">{{ cat.number_classifieds }}</span>{% endif %}</a></li>
+								{% endfor %}
+								</ul>
+							</nav>
+						</div>
+					{% endif %}
+					{% if get.username %}
+						<div class="form-group">
+							<label for="username" class="control-label">{{ 'User'|trans }}: </label>
+							<select name="username" id="username" class="form-control">
+								<option value="">{{ 'All users'|trans }}</option>
+								<option value="{{ get.username }}" selected>{{ get.username }}</option>
+							</select>
+						</div>
+					{% endif %}
+					{% if settings.search_box_keywords %}
+						<div class="form-group">
+							<label for="search_keywords" class="control-label">{{ 'Keywords'|trans }}: </label>
+							<input class="form-control" type="text" name="keywords" id="search_keywords" placeholder="{{ 'Enter your keywords...'|trans }}" title="{{ 'Enter your keywords...'|trans }}" value="{{ get.keywords }}">
+							<div class="custom-control custom-checkbox">
+								<input type="checkbox" name="exact_phrase" class="custom-control-input" id="search_exact_phrase" {% if get.exact_phrase %}checked{% endif %}>
+								<label class="custom-control-label" for="search_exact_phrase">{{ 'Exact phrase'|trans }}</label>
+							</div>
+						</div>
+					{% endif %}
+					{% if settings.search_box_photos %}
+						<div class="form-group">
+							<div class="custom-control custom-checkbox">
+			          <input type="checkbox" name="classifieds_with_photos" class="custom-control-input" id="classifieds_with_photos" {% if get.classifieds_with_photos %}checked{% endif %}>
+			          <label class="custom-control-label" for="classifieds_with_photos">{{ 'Only classifieds with photos'|trans }}</label>
+			        </div>
+						</div>
+					{% endif %}
+					{% if settings.search_box_promoted %}
+						<div class="form-group">
+							<div class="custom-control custom-checkbox">
+			          <input type="checkbox" name="promoted" class="custom-control-input" id="search_classifieds_promoted" {% if get.promoted=='yes' %}checked{% endif %} value="yes">
+			          <label class="custom-control-label" for="search_classifieds_promoted">{{ 'Only promoted classifieds'|trans }}</label>
+			        </div>
+						</div>
+					{% endif %}
+					{% if types %}
+						<div class="form-group">
+							<label for="type" class="control-label">{{ 'Classified type'|trans }}:</label>
+							<div class="custom-control custom-radio">
+								<input type="radio" name="type" value="" {% if not get.type %}checked{% endif %} id="search_type_all" class="custom-control-input">
+								<label class="custom-control-label" for="search_type_all">{{ 'All'|trans }}</label>
+							</div>
+							{% for type in types %}
+								<div class="custom-control custom-radio">
+									<input type="radio" name="type" value="{{ type.slug }}" {% if get.type==type.slug %}checked{% endif %} id="search_type_{{ type.id }}" class="custom-control-input">
+									<label class="custom-control-label" for="search_type_{{ type.id }}">{{ type.name }}</label>
+								</div>
+							{% endfor %}
+						</div>
+					{% endif %}
+					{% if states %}
+						<div class="form-group">
+							<label for="state" class="control-label">{{ 'State'|trans }}:</label>
+							<select class="form-control select_state" name="state" id="state" title="{{ 'Select the appropriate state'|trans }}">
+								<option value="">{{ 'All'|trans }}</option>
+								<option disabled>──────────</option>
+								{% for state in states %}
+									<option value="{{ state.slug }}" {% if get.state==state.slug %}selected{% endif %}>{{ state.name }}</option>
+								{% endfor %}
+							</select>
+						</div>
+						{% for key,state in states %}
+							{% if state.states %}
+								<div class="form-group substates substate_{{ state.slug }}" {% if get.state!=state.slug %}style="display: none"{% endif %}>
+									<select class="form-control" name="state2" title="{{ 'Select the appropriate state'|trans }}" {% if get.state!=state.slug %}disabled{% endif %}>
+										<option value="">{{ '-- select --'|trans }}</option>
+										{% for key2,state2 in state.states %}
+											<option value="{{ state2.slug }}" {% if get.state2==state2.slug %}selected{% endif %}>{{ state2.name }}</option>
+										{% endfor %}
+									</select>
+								</div>
+							{% endif %}
+						{% endfor %}
+					{% endif %}
+					{% if settings.search_box_address %}
+						<div class="form-group">
+							<label for="search_box_address">{{ 'Address'|trans }}:</label>
+							<input type="text" name="address" class="form-control" placeholder="{{ '1600 Pennsylvania Avenue NW, Washington, D.C. 20500'|trans }}" title="{{ 'Enter the address'|trans }}" value="{{ get.address }}" id="search_box_address" autocomplete="off">
+						</div>
+						{% if settings.search_box_distance and settings.google_maps_api %}
+							<div class="form-group">
+								<div class="form-inline text-right">
+									<div class="input-group">
+										<div class="input-group-prepend">
+											<span class="input-group-text">{{ 'Distance'|trans }}</span>
+										</div>
+										<input type="number" name="distance" class="form-control text-right" placeholder="20" title="{{ 'Enter the distance from the searched address'|trans }}" value="{% if get.distance>=0 %}{{ get.distance }}{% else %}10{% endif %}" min="0" step="1">
+										<div class="input-group-append">
+											<span class="input-group-text">{{ 'km'|trans }}</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						{% endif %}
+					{% endif %}
+					{% if settings.search_show_salary %}
+						<div class="form-group">
+							<label for="search_salary_from" class="control-label">{{ 'Salary'|trans }}: </label>
+							<div class="input-group">
+								<input class="form-control text-right" type="number" name="salary_from" id="search_salary_from" placeholder="{{ 'Min...'|trans }} " title="{{ 'Enter the min value'|trans }}" value="{{ get.salary_from }}" min="0" step="0.01">
+								<div class="input-group-append input-group-prepend">
+									<span class="input-group-text"> - </span>
+								</div>
+								<input class="form-control text-right" type="number" name="salary_to" id="search_salary_to" placeholder="{{ 'Max...'|trans }} " title="{{ 'Enter the max value'|trans }}" value="{{ get.salary_to }}" min="0" step="0.01">
+							</div>
+						</div>
+					{% endif %}
+					{% if options %}
+						{% for option in options %}
+							<div class="form-group">
+								<label for="options[{{ option.name }}]" class="control-label">{{ option.name }}: </label>
+								{% if option.kind=='text' %}
+									<input class="form-control" type="text" name="options[{{ option.id }}]" value="{{ get.options[option.id] }}">
+								{% elseif option.kind=='number' %}
+									<div class="input-group">
+										<input class="form-control text-right" type="number" name="options[{{ option.id }}][from]" placeholder="{{ 'Min...'|trans }}" title="{{ 'Enter the min value'|trans }}" value="{{ get.options[option.id].from }}">
+										<div class="input-group-append input-group-prepend">
+											<span class="input-group-text"> - </span>
+										</div>
+										<input class="form-control text-right" type="number" name="options[{{ option.id }}][to]" placeholder="{{ 'Max...'|trans }}" title="{{ 'Enter the max value'|trans }}" value="{{ get.options[option.id].to }}">
+									</div>
+								{% elseif (option.kind=='select' or option.kind=='checkbox') and option.choices %}
+									<div class="group_checkbox">
+										{% for choice in option.choices %}
+											<div class="custom-control custom-checkbox">
+												<input type="checkbox" name="options[{{ option.id }}][]" value="{{ choice }}" {% if choice in get.options[option.id] %}checked{% endif %} class="custom-control-input" id="search_options_{{ option.id }}_{{ loop.index }}">
+												<label class="custom-control-label" for="search_options_{{ option.id }}_{{ loop.index }}">{{ choice }}</label>
+											</div>
+										{% endfor %}
+									</div>
+								{% endif %}
+							</div>
+						{% endfor %}
+					{% endif %}
+					<div class="form-group">
+						<button type="reset" class="reset_form form-control btn btn-danger text-uppercase"><i class="fas fa-eraser"></i> {{ 'Clear'|trans }}</button>
+					</div>
+					<div class="form-group">
+						<button type="submit" class="form-control btn btn-1 text-uppercase"><i class="fas fa-search"></i> {{ 'Search'|trans }}</button>
+					</div>
+				</form>
+
+				{% if settings.ads_side_2 %}<div class="ads d-print-none">{{ settings.ads_side_2|raw }}</div>{% endif %}
+			</div>
+			<div class="col-lg-9">
+				{% if settings.content %}{{ settings.content|raw }}{% endif %}
+				{% include 'partial/classifieds.tpl' %}
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

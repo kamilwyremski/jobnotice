@@ -1,0 +1,353 @@
+
+{% extends "main.tpl" %}
+
+{% block content %}
+<div class="page-header">
+	<h1><i class="fas fa-cog"></i> {{ 'General settings'|trans }}</h1>
+	<p class="mb-0">{{ 'Here you can edit the settings of the service'|trans }}</p>
+	<p class="text-danger mb-0">{{ 'Warning! Certain changes can cause problems with your site!'|trans }}</p>
+	<p class="text-danger">{{ 'For the system to function properly, you must configure cron tasks for the files'|trans }}: /cron-daily.php /cron-10min.php</p>
+</div>
+
+{% include 'alert.tpl' %}
+
+<form method="post" class="form-horizontal" role="form">
+	<input type="hidden" name="action" value="save_settings">
+	<input type="hidden" name="token" value="{{ generateToken('admin_save_settings') }}">
+	<div class="form-group row">
+		<label for="base_url" class="col-sm-3 col-form-label">{{ 'Base URL'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="text" name="base_url" placeholder="http://example.com" title="{{ 'Enter the url of the site'|trans }}" required value="{{ settings.base_url }}" class="form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="email" class="col-sm-3 col-form-label">{{ 'E-mail Administrator'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="email" name="email" placeholder="example@example.com" title="{{ 'E-mail Administrator'|trans }}" required value="{{ settings.email }}" class="form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="lang" class="col-sm-3 col-form-label">{{ 'Website language'|trans }}:</label>
+		<div class="col-sm-9">
+			<select name="lang" title="{{ 'Website language'|trans }}" class="form-control">
+			{% for item in lang_list %}
+				<option value="{{ item }}" {% if item==settings.lang %}selected{% endif %}>{{ item }}</option>
+			{% endfor %}
+		</select>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="title" class="col-sm-3 col-form-label">{{ 'Page title'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="text" name="title" placeholder="..." title="{{ 'Page title'|trans }}" required value="{{ settings.title }}" class="form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="keywords" class="col-sm-3 col-form-label">{{ 'Keywords SEO'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="text" name="keywords" title="{{ 'Keywords SEO'|trans }}" value="{{ settings.keywords }}" class="form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="description" class="col-sm-3 col-form-label">{{ 'Description SEO'|trans }}:</label>
+		<div class="col-sm-9">
+			<textarea name="description" title="{{ 'Description SEO'|trans }}" class="form-control">{{ settings.description }}</textarea>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="analytics" class="col-sm-3 col-form-label">{{ 'Google Analytics code'|trans }}:<br><small><a href="https://analytics.google.com/analytics/web/" target="_blank">analytics.google.com/analytics/web</a></small></label>
+		<div class="col-sm-9">
+			<textarea name="analytics" title="{{ 'Google Analytics code'|trans }}" class="form-control">{{ settings.analytics }}</textarea>
+		</div>
+	</div>
+	<hr>
+	<div class="form-group row">
+		<label for="recaptcha_site_key" class="col-sm-3 col-form-label">{{ 'Recaptcha v3 Site Key'|trans }}:<br><small><a href="https://www.google.com/recaptcha/admin#list" target="_blank">google.com/recaptcha/admin</a></small></label>
+		<div class="col-sm-9">
+			<input type="text" name="recaptcha_site_key" title="{{ 'Recaptcha v3 Site Key'|trans }}" value="{{ settings.recaptcha_site_key }}" class="form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="recaptcha_secret_key" class="col-sm-3 col-form-label">{{ 'Recaptcha v3 Secret Key'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="text" name="recaptcha_secret_key" title="{{ 'Recaptcha v3 Secret Key'|trans }}" value="{% if _ADMIN_TEST_MODE_ %}test{% else %}{{ settings.recaptcha_secret_key }}{% endif %}" class="form-control">
+		</div>
+	</div>
+	<hr>
+	<div class="form-group row">
+		<label for="add_classifieds" class="col-sm-3 col-form-label">{{ 'Who can post classifieds'|trans }}:</label>
+		<div class="col-sm-9">
+			<select name="add_classifieds" class="form-control" title="{{ 'Who can post classifieds'|trans }}">
+				<option value="all" {% if settings.add_classifieds=='all' %}selected{% endif %}>{{ 'Everyone, also not logged in'|trans }}</option>
+				<option value="only_logged" {% if settings.add_classifieds=='only_logged' %}selected{% endif %}>{{ 'Only logged'|trans }}</option>
+				<option value="only_employer" {% if settings.add_classifieds=='only_employer' %}selected{% endif %}>{{ 'Only logged employer'|trans }}</option>
+			</select>
+		</div>
+	</div>
+	<hr>
+	<div class="form-group row">
+		<div class="col-sm-9 offset-sm-3">
+			<label><input type="checkbox" name="automatically_activate_classifieds" title="{{ 'Automatically activate added classifieds'|trans }}" {% if settings.automatically_activate_classifieds %}checked{% endif %}> {{ 'Automatically activate added classifieds'|trans }}</label><br>
+			<label><input type="checkbox" name="enable_articles" title="{{ 'Enable the display of articles'|trans }}" {% if settings.enable_articles %}checked{% endif %}> {{ 'Enable the display of articles'|trans }}</label><br>
+			<label><input type="checkbox" name="rss" title="{{ 'Enable RSS channel'|trans }}" {% if settings.rss %}checked{% endif %}> {{ 'Enable RSS channel'|trans }}</label><br>
+			<label><input type="checkbox" name="generate_sitemap" title="{{ 'Automatically generate a site map (sitemap.xml)'|trans }}" {% if settings.generate_sitemap %}checked{% endif %}> {{ 'Automatically generate a site map (sitemap.xml)'|trans }}</label><br>
+			<label><input type="checkbox" name="check_ip_user" title="{{ 'Check IP of user when logging and adding classifieds'|trans }}" {% if settings.check_ip_user %}checked{% endif %}> {{ 'Check IP of user when logging and adding classifieds'|trans }}</label>
+		</div>
+	</div>
+	<hr>
+	<div class="form-group row">
+		<label for="number_char_title" class="col-sm-3 col-form-label">{{ 'Maximum number of characters in the title of the classified'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="number" name="number_char_title" title="{{ 'Maximum number of characters in the title of the classified'|trans }}" value="{{ settings.number_char_title }}" class="form-control" min="1" max="512" required>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-3 col-form-label">{{ 'When you add classified'|trans }}:</label>
+		<div class="col-sm-9">
+			<label><input type="checkbox" name="required_type" title="{{ 'Type required'|trans }}" {% if settings.required_type %}checked{% endif %}> {{ 'Type required'|trans }}</label><br>
+			<label><input type="checkbox" name="required_category" title="{{ 'Category required'|trans }}" {% if settings.required_category %}checked{% endif %}> {{ 'Category required'|trans }}</label><br>
+			<label><input type="checkbox" name="required_subcategory" title="{{ 'Subcategory required'|trans }}" {% if settings.required_subcategory %}checked{% endif %}> {{ 'Subcategory required'|trans }}</label><br>
+			<label><input type="checkbox" name="required_phone" title="{{ 'Phone required'|trans }}" {% if settings.required_phone %}checked{% endif %}> {{ 'Phone required'|trans }}</label><br>
+			<label><input type="checkbox" name="required_address" title="{{ 'Address required'|trans }}" {% if settings.required_address %}checked{% endif %}> {{ 'Address required'|trans }}</label><br>
+			<label><input type="checkbox" name="required_state" title="{{ 'State required'|trans }}" {% if settings.required_state %}checked{% endif %}> {{ 'State required'|trans }}</label><br>
+			<label><input type="checkbox" name="required_salary" title="{{ 'Salary required'|trans }}" {% if settings.required_salary %}checked{% endif %}> {{ 'Salary required'|trans }}</label><br>
+		</div>
+	</div>
+	<hr>
+	<div class="form-group row">
+		<div class="col-sm-9 offset-sm-3">
+			<label><input type="checkbox" name="google_maps" title="{{ 'Show Google Maps'|trans }}" {% if settings.google_maps %}checked{% endif %} class="set_required" data-target="target_google_maps"> {{ 'Show Google Maps'|trans }}</label>
+			<p><a href="https://developers.google.com/maps/documentation/javascript/get-api-key" title="Google Maps API KEY" target="_blank">https://developers.google.com/maps/documentation/javascript/get-api-key</a></p>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="google_maps_api" class="col-sm-3 col-form-label">{{ 'Google Maps API'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="text" name="google_maps_api" title="{{ 'Google Maps API'|trans }}" value="{% if _ADMIN_TEST_MODE_ %}test{% else %}{{ settings.google_maps_api }}{% endif %}" class="target_google_maps form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="google_maps_api2" class="col-sm-3 col-form-label">{{ 'Google Maps API (for "show on the map")'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="text" name="google_maps_api2" title="{{ 'Google Maps API'|trans }}" value="{% if _ADMIN_TEST_MODE_ %}test{% else %}{{ settings.google_maps_api2 }}{% endif %}" class="form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="google_maps_lat" class="col-sm-3 col-form-label">{{ 'Latitude'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="number" step="0.000001" min="-90" max="90" name="google_maps_lat" title="{{ 'Latitude'|trans }}" value="{{ settings.google_maps_lat }}" class="target_google_maps form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="google_maps_long" class="col-sm-3 col-form-label">{{ 'Longitude'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="number" step="0.000001" min="-180" max="180" name="google_maps_long" title="{{ 'Longitude'|trans }}" value="{{ settings.google_maps_long }}" class="target_google_maps form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="google_maps_zoom_add" class="col-sm-3 col-form-label">{{ 'Zoom level (add and edit classified)'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="number" step="1" min="0" max="19" name="google_maps_zoom_add" title="{{ 'Zoom level (add and edit classified)'|trans }}" value="{{ settings.google_maps_zoom_add }}" class="target_google_maps form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="google_maps_zoom_classified" class="col-sm-3 col-form-label">{{ 'Zoom level (show classified)'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="number" step="1" min="0" max="19" name="google_maps_zoom_classified" title="{{ 'Zoom level (show classified)'|trans }}" value="{{ settings.google_maps_zoom_classified }}" class="target_google_maps form-control">
+		</div>
+	</div>
+	<hr>
+	<div class="form-group row">
+		<label for="limit_page" class="col-sm-3 col-form-label">{{ 'Limit classifieds per page'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="number" step="1" min="1" name="limit_page"  title="{{ 'Limit classifieds per page'|trans }}" value="{{ settings.limit_page }}" class="form-control" required>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="limit_page_index" class="col-sm-3 col-form-label">{{ 'Limit classifieds on the home page'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="number" step="1" min="1" name="limit_page_index" title="{{ 'Limit classifieds on the home page'|trans }}" value="{{ settings.limit_page_index }}" class="form-control" required>
+		</div>
+	</div>
+	<div class="form-group row">
+		<div class="col-sm-9 offset-sm-3">
+			<label><input type="checkbox" name="show_similar_classifieds" title="{{ 'Show similar classifieds'|trans }}" {% if settings.show_similar_classifieds %}checked{% endif %}> {{ 'Show similar classifieds'|trans }}</label>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="limit_similar" class="col-sm-3 col-form-label">{{ 'Limit similar classifieds'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="number" step="1" min="1" name="limit_similar" title="{{ 'Limit similar classifieds'|trans }}" value="{{ settings.limit_similar }}" class="form-control" required>
+		</div>
+	</div>
+	<hr>
+	<div class="form-group row">
+		<div class="col-sm-9 offset-sm-3">
+			<label><input type="checkbox" name="photo_add" title="{{ 'Allow uploading photos'|trans }}" {% if settings.photo_add %}checked{% endif %}> {{ 'Allow uploading photos'|trans }}</label>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="photo_max" class="col-sm-3 col-form-label">{{ 'The maximum number of photos (0 - unlimited)'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="number" step="1" min="0" name="photo_max" title="{{ 'The maximum number of photos (0 - unlimited)'|trans }}" value="{{ settings.photo_max }}" class="form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="photo_max_size" class="col-sm-3 col-form-label">{{ 'The maximum size of photo (0 - unlimited)'|trans }}:<br><small>{{ 'Photos exceeding the size will be rejected'|trans }}</small></label>
+		<div class="col-sm-9">
+			<div class="input-group">
+				<input type="number" step="1" min="0" name="photo_max_size" title="{{ 'The maximum size of photo (0 - unlimited)'|trans }}" value="{{ settings.photo_max_size }}" class="form-control">
+				<div class="input-group-append">
+					<span class="input-group-text">kB</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="photo_max_height" class="col-sm-3 col-form-label">{{ 'Maximum height of pictures (0 - unlimited)'|trans }}:<br><small>{{ 'Photos exceeding the size will be reduced'|trans }}</small></label>
+		<div class="col-sm-9">
+			<div class="input-group">
+				<input type="number" step="1" min="0" name="photo_max_height" title="{{ 'Maximum height of pictures (0 - unlimited)'|trans }}" value="{{ settings.photo_max_height }}" class="form-control">
+				<div class="input-group-append">
+					<span class="input-group-text">px</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="photo_max_width" class="col-sm-3 col-form-label">{{ 'Maximum width of pictures (0 - unlimited)'|trans }}:<br><small>{{ 'Photos exceeding the size will be reduced'|trans }}</small></label>
+		<div class="col-sm-9">
+			<div class="input-group">
+				<input type="number" step="1" min="0" name="photo_max_width" title="{{ 'Maximum width of pictures (0 - unlimited)'|trans }}" value="{{ settings.photo_max_width }}" class="form-control">
+				<div class="input-group-append">
+					<span class="input-group-text">px</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="photo_quality" class="col-sm-3 col-form-label">{{ 'Picture JPG quality (scale 0 - 100)'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="number" step="1" min="0" max="100" name="photo_quality" title="{{ 'Picture JPG quality (scale 0 - 100)'|trans }}" value="{{ settings.photo_quality }}" class="form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<div class="col-sm-9 offset-sm-3">
+			<label><input type="checkbox" name="watermark_add" title="{{ 'Add a watermark to photos'|trans }}" {% if settings.watermark_add %}checked{% endif %}> {{ 'Add a watermark to photos'|trans }}</label>
+		</div>
+	</div>
+	<hr>
+	<div class="form-group row">
+		<div class="col-sm-9 offset-sm-3">
+			<label><input type="checkbox" name="hide_data_not_logged" title="{{ 'Hide contact information for not logged'|trans }}" {% if settings.hide_data_not_logged %}checked{% endif %}> {{ 'Hide contact information for not logged'|trans }}</label><br>
+			<label><input type="checkbox" name="hide_phone" title="{{ 'Hide phone number'|trans }}" {% if settings.hide_phone %}checked{% endif %}> {{ 'Hide phone number'|trans }}</label><br>
+			<label><input type="checkbox" name="hide_email" title="{{ 'Do not show email address'|trans }}" {% if settings.hide_email %}checked{% endif %}> {{ 'Do not show email address'|trans }}</label><br>
+			<label><input type="checkbox" name="hide_views" title="{{ 'Do not show the number of views'|trans }}" {% if settings.hide_views %}checked{% endif %}> {{ 'Do not show the number of views'|trans }}</label><br>
+		</div>
+	</div>
+	<hr>
+	<div class="form-group row">
+		<div class="col-sm-9 offset-sm-3">
+			<label><input type="checkbox" name="mail_attachment" title="{{ 'Allow to post attachments to e-mails'|trans }}" {% if settings.mail_attachment %}checked{% endif %}> {{ 'Allow to post attachments to e-mails'|trans }}</label>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="attachment_max_size" class="col-sm-3 col-form-label">{{ 'Maximum attachment size'|trans }}:</label>
+		<div class="col-sm-9">
+			<div class="input-group">
+				<input type="number" step="1" min="0" name="attachment_max_size" title="{{ 'Maximum attachment size'|trans }}" value="{{ settings.attachment_max_size }}" class="form-control">
+				<div class="input-group-append">
+					<span class="input-group-text">kB</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="form-group row">
+		<div class="col-sm-9 offset-sm-3">
+			<label><input type="checkbox" name="smtp" title="{{ 'Send emails via SMTP'|trans }}" {% if settings.smtp %}checked{% endif %} class="set_required" data-target="target_smtp"> {{ 'Send emails via SMTP'|trans }}</label>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="smtp_host" class="col-sm-3 col-form-label">{{ 'SMTP host'|trans }}: </label>
+		<div class="col-sm-9">
+			<input type="text" name="smtp_host" title="{{ 'SMTP host'|trans }}" value="{{ settings.smtp_host }}" class="target_smtp form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="smtp_mail" class="col-sm-3 col-form-label">{{ 'SMTP e-mail'|trans }}: </label>
+		<div class="col-sm-9">
+			<input type="email" name="smtp_mail" title="{{ 'SMTP e-mail'|trans }}" value="{{ settings.smtp_mail }}" class="target_smtp form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="smtp_user" class="col-sm-3 col-form-label">{{ 'SMTP user'|trans }}: </label>
+		<div class="col-sm-9">
+			<input type="text" name="smtp_user" title="{{ 'SMTP user'|trans }}" value="{{ settings.smtp_user }}" class="target_smtp form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="smtp_password" class="col-sm-3 col-form-label">{{ 'SMTP password'|trans }}: </label>
+		<div class="col-sm-9">
+			<input type="text" name="smtp_password" title="{{ 'SMTP password'|trans }}" value="{{ settings.smtp_password }}" class="target_smtp form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="smtp_port" class="col-sm-3 col-form-label">{{ 'SMTP port'|trans }}: </label>
+		<div class="col-sm-9">
+			<input type="number" min="0" name="smtp_port" title="{{ 'SMTP port'|trans }}" value="{{ settings.smtp_port }}" class="target_smtp form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="smtp_secure" class="col-sm-3 col-form-label">{{ 'SMTP secure'|trans }}: </label>
+		<div class="col-sm-9">
+			<input type="text" name="smtp_secure" title="{{ 'SMTP secure'|trans }}" value="{{ settings.smtp_secure }}" class="target_smtp form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<div class="col-sm-9 offset-sm-3">
+			<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#test_message">{{ 'Send a test message'|trans }}</button>
+		</div>
+	</div>
+	<hr>
+	<div class="form-group row">
+		<div class="col-sm-9 offset-sm-3">
+			<input type="submit" value="{{ 'Save'|trans }}" class="btn btn-primary">
+		</div>
+	</div>
+</form>
+
+<div class="modal fade" id="test_message" tabindex="-1" role="dialog" aria-labelledby="{{ 'Send a test message'|trans }}">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">{{ 'Send a test message'|trans }}</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			</div>
+			<form method="post" class="form">
+				<input type="hidden" name="action" value="send_test_message">
+				<input type="hidden" name="token" value="{{ generateToken('admin_send_test_message') }}">
+				<div class="modal-body">
+					<p>{{ 'If you make changes to the SMTP settings, first save the settings!'|trans }}</p>
+					<div class="form-group">
+						<label>{{ 'Email'|trans }}</label>
+						<input type="email" name="email" required value="{{ settings.email }}" class="form-control">
+					</div>
+					<div class="form-group">
+						<label>{{ 'Subject'|trans }}</label>
+						<input type="text" name="subject" required value="{{ 'Test message'|trans }}" class="form-control">
+					</div>
+					<div class="form-group">
+						<label>{{ 'Content'|trans }}</label>
+						<textarea name="message" required class="form-control">{{ 'Test message'|trans }}</textarea>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+					<input type="submit" class="btn btn-danger" value="{{ 'Execute'|trans }}">
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

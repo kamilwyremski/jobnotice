@@ -1,0 +1,91 @@
+
+{% extends "main.tpl" %}
+
+{% block content %}
+<div class="page-header">
+	<h1><i class="fas fa-edit"></i> {{ 'Info'|trans }}</h1>
+	<p>{{ 'Here you can edit content of page'|trans }}</p>
+</div>
+
+{% include 'alert.tpl' %}
+
+<a href="?controller=info_page" title="{{ 'Add info page'|trans }}" class="btn btn-success">{{ 'Add info page'|trans }}</a>
+<br><br>
+{% if info %}
+	<table class="table table-striped table-bordered table-sm">
+		<tr>
+			<th>{{ 'Title'|trans }}</th>
+			<th class="text-center" style="width:55px">{{ 'Position'|trans }}</th>
+			<th class="text-center">{{ 'Edit'|trans }}</th>
+			<th class="text-center">{{ 'Delete'|trans }}</th>
+		</tr>
+
+		{% for item in info %}
+			<tr>
+				<td><a href="{% if item.page=='contact' %}{{ path('contact') }}{% else %}{{ path('info',item.id,item.slug) }}{% endif %}" title="{{ item.name }}" target="_blank">{{ item.name }}</a></td>
+				<td class="text-center">
+					<form method="post">
+						<input type="hidden" name="action" value="position">
+						<input type="hidden" name="id" value="{{ item.id }}">
+						<input type="hidden" name="position" value="{{ item.position }}">
+						<input type="hidden" name="token" value="{{ generateToken('position') }}">
+						<button type="submit" class="btn btn-link fas fa-arrow-up {% if loop.first %}inactive{% endif %}"   name="+"></button>
+						<button type="submit" class="btn btn-link fas fa-arrow-down {% if loop.last %}inactive{% endif %}" name="-"></button>
+					</form>
+				</td>
+				<td class="text-center"><a href="?controller=info_page&id={{ item.id }}" title="{{ 'Edit info page'|trans }}" class="fas fa-edit"></a></td>
+				<td class="text-center">{% if not item.page %}<button class="btn btn-link fas fa-trash-alt text-danger" title="{{ 'Delete info page'|trans }}" data-toggle="modal" data-target="#remove_{{ item.id }}"></button>{% endif %}</td>
+			</tr>
+
+			<div class="modal fade" id="remove_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Delete info page'|trans }}: {{ item.name }}">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">{{ 'Delete info page'|trans }}</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							</div>
+							<form method="post">
+								<input type="hidden" name="action" value="remove_info">
+								<input type="hidden" name="id" value="{{ item.id }}">
+								<input type="hidden" name="token" value="{{ generateToken('admin_remove_info') }}">
+								<div class="modal-body">
+									<p>{{ 'Do you really want to delete'|trans }}: "{{ item.name }}"?</p>
+								</div>
+								<div class="modal-footer">
+									<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+									<input type="submit" class="btn btn-danger" value="{{ 'Execute'|trans }}">
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+		{% endfor %}
+	</table>
+	<p><button class="btn btn-link" data-toggle="modal" data-target="#arrange_alphabetically">{{ 'Arrange alphabetically'|trans }}</button></p>
+
+	<div class="modal fade" id="arrange_alphabetically" tabindex="-1" role="dialog" aria-labelledby="{{ 'Arrange alphabetically'|trans }}">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">{{ 'Arrange alphabetically'|trans }}</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				</div>
+				<form method="post" class="form">
+					<input type="hidden" name="action" value="arrange_alphabetically">
+					<input type="hidden" name="token" value="{{ generateToken('arrange_alphabetically') }}">
+					<div class="modal-body">
+						<p>{{ 'Do you really want to arrange alphabetically?'|trans }}</p>
+					</div>
+					<div class="modal-footer">
+						<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+						<input type="submit" class="btn btn-danger" value="{{ 'Execute'|trans }}">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+{% else %}
+	<h4 class="text-danger">{{ 'Nothing found'|trans }}</h4>
+{% endif %}
+{% endblock %}

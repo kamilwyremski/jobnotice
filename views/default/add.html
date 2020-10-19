@@ -1,0 +1,302 @@
+
+{% extends "main.tpl" %}
+
+{% block javascript %}
+	{{ parent() }}
+	<script src="js/vue.min.js"></script>
+	<script src="js/axios.min.js"></script>
+	<script src="js/ckeditor/ckeditor.js"></script>
+	<script src="js/jquery-sortable.js"></script>
+	<script>
+		var photo_max = {{ settings.photo_max|escape('js') }};
+		var list_categories = list_options = list_photos = [];
+		{% if classified %}
+			list_categories = {{ classified.categories|json_encode()|raw }};
+			{% if classified.options %}list_options = {{ classified.options|json_encode()|raw }}{% endif %};
+			{% if classified.photos %}list_photos = {{ classified.photos|json_encode()|raw }}{% endif %};
+		{% endif %}
+		var required_category = "{{ settings.required_category|escape('js') }}";
+		var required_subcategory = "{{ settings.required_subcategory|escape('js') }}";
+		var trans = {'Photo limit exceeded':"{{ 'Photo limit exceeded'|trans }}"};
+	</script>
+	<script src="views/{{ settings.template }}/js/add.js?{{ settings.assets_version }}"></script>
+	{% if settings.google_maps %}
+		<script>
+			var google_maps, google_maps_marker;
+			function displayMap() {
+				autocomplete = new google.maps.places.Autocomplete((document.getElementById('add_address')), {types: ['geocode']});
+				google.maps.event.addDomListener(window, "load", function() {
+					{% if classified and (classified.address_lat!=0 or classified.address_long!=0) %}var myLatlng = new google.maps.LatLng({{ classified.address_lat }},{{ classified.address_long }});{% endif %}
+					google_maps = new google.maps.Map(document.getElementById("google_maps"), {
+						center: new google.maps.LatLng( {% if classified and (classified.address_lat!=0 or classified.address_long!=0) %}{{ classified.address_lat }},{{ classified.address_long }}{% else %}{{ settings.google_maps_lat }},{{ settings.google_maps_long }}{% endif %}),
+						zoom: {{ settings.google_maps_zoom_add|default(8) }},
+						scrollwheel:  false
+					});
+					google_maps_marker = new google.maps.Marker({
+						draggable: true,
+						{% if classified and (classified.address_lat!=0 or classified.address_long!=0) %}position: myLatlng,{% endif %}
+						map: google_maps
+					});
+					google.maps.event.addListener(google_maps_marker, 'dragend', function (event) {
+						$('input[name=address_lat]').val(this.getPosition().lat());
+						$('input[name=address_long]').val(this.getPosition().lng());
+					});
+					google.maps.event.addListener(google_maps, 'click', function (mapEvent) {
+						google_maps.panTo(mapEvent.latLng);
+						google_maps_marker.setPosition(google_maps.getCenter());
+						$('input[name=address_lat]').val(google_maps_marker.getPosition().lat());
+						$('input[name=address_long]').val(google_maps_marker.getPosition().lng());
+					});
+				});
+			}
+		</script>
+		<script src="https://maps.googleapis.com/maps/api/js?key={{ settings.google_maps_api }}&v=3.exp&libraries=places&callback=initGoogleMap" async defer></script>
+	{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page_box background_grey">
+	<div class="container background_white" id="box_add_classified">
+		<br>
+		{% if classified and not classified.add_similar %}
+			<h1>{{ 'Edit classified'|trans }}</h1>
+			<h3>{{ 'Here you can edit classified'|trans }}</h3>
+			<h4><a href="{{ path('classified',classified.id,classified.slug) }}{% if not classified.user_id %}?code={{ classified.code }}{% endif %}" title="{{ classified.name }}" class="text-primary" target="_blank">{{ 'See classified'|trans }}</a></h4>
+			<p><button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#remove_classified">{{ 'Delete classified'|trans }}</button></p>
+		{% else %}
+			<h1>{{ 'Add classified'|trans }}</h1>
+			<h3>{{ 'Here you can add a new classified to the system'|trans }}</h3>
+		{% endif %}
+		{% include 'partial/alert.tpl' %}
+		<br>
+		<form method="post" id="add_classified">
+			<input type="hidden" name="action" value="{% if classified and not get.add_similar %}edit{% else %}add{% endif %}">
+			<input type="hidden" name="session_code" value="{{ session_code }}">
+			<div class="form-group">
+				<label for="input_name">{{ 'Title'|trans }}:<span class="text-danger">&nbsp;*</span></label>
+				<input type="text" class="form-control" name="name" placeholder="{{ 'Title'|trans }}" id="input_name" maxlength="{{ settings.number_char_title }}" required value="{{ classified.name }}" title="{{ 'Title'|trans }}" v-model="inputName">
+				<p class="text-muted small" style="margin:2px 2px 0">{{ 'Chars'|trans }}: {{ '{{inputName.length}}' }} / {{ settings.number_char_title }}</p>
+			</div>
+			
+			{% if types %}
+				<div class="form-group">
+					<label for="type_id">{{ 'Classified type'|trans }}:{% if settings.required_type %}<span class="text-danger">&nbsp;*</span>{% endif %}</label>
+					<div class="row">
+						<div class="col-lg-4 col-md-6">
+							<select class="form-control" name="type_id" id="type_id" title="{{ 'Select the appropriate classified type'|trans }}" {% if settings.required_type %}required{% endif %}>
+								<option value="">{{ '-- select --'|trans }}</option>
+								{% for type in types %}
+									<option value="{{ type.id }}" {% if classified and classified.type_id==type.id %}selected{% endif %}>{{ type.name }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+				</div>
+			{% endif %}
+			
+			<div v-show="list_categories">
+				<label for="category_id">{{ 'Category'|trans }}:{% if settings.required_category or settings.required_subcategory %}<span class="text-danger">&nbsp;*</span>{% endif %}</label>
+				<div class="row">
+					<div class="col-lg-4 col-md-6 form-group" v-for="(cat,parent_index) in list_categories">
+						<select class="form-control" name="category_id" title="{{ 'Select the appropriate category'|trans }}" @change="selectCategories(parent_index)" v-model="cat.selected_id" :required="cat.required == 1">
+							<option v-bind:value="cat.parent_id">{{ '-- select --'|trans }}</option>
+							<option v-bind:value="category.id" v-for="category in cat.categories">{{ '{{category.name}}' }}</option>
+						</select>
+					</div>
+					<div class="col-lg-4 col-md-6" id="icon_load_categories" v-show="waiting_for_load_categories"><span class="fas fa-spinner fa-spinner-animate"></span></div>
+				</div>
+			</div>
+			
+			<div v-show="list_options.length > 0" :class="{'row': list_options.length > 0}">
+				<div v-for="option in list_options" :class="{'col-12': option.kind == 'checkbox', 'col-lg-4 col-md-6': option.kind != 'checkbox'}" class="form-group">
+					<label for="options[{{ '{{option.id}}' }}]">{{ '{{option.name}}' }}:<span class="text-danger" v-show="option.required == 1">&nbsp;*</span></label>
+					<input v-if="option.kind == 'text'" class="form-control" type="text" :name="'options['+option.id+']'" :required="option.required == 1" v-model="option.value">
+					<input v-if="option.kind == 'number'" class="form-control" type="number" :name="'options['+option.id+']'" :required="option.required == 1" v-model="option.value">
+					<select v-if="option.kind == 'select'" class="form-control" :name="'options['+option.id+']'" :required="option.required == 1" v-model="option.value">
+						<option value="">{{ '-- select --'|trans }}</option>
+						<option v-bind:value="choice" v-for="choice in option.choices">{{ '{{choice}}' }}</option>
+					</select>
+					<div v-if="option.kind == 'checkbox'" class="row">
+						<div class="col-sm-6 col-md-4" v-for="(choice, index) in option.choices">
+							<div class="custom-control custom-checkbox">
+								<input type="checkbox" :name="'options['+option.id+'][]'" v-bind:value="choice" :checked="option.value.indexOf(choice) > -1" class="custom-control-input" :id="'options_'+option.id+'_'+index">
+								<label class="custom-control-label" :for="'options_'+option.id+'_'+index">{{' {{choice}}' }}</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="salary" class="col-form-label">{{ 'Salary'|trans }}:{% if settings.required_salary %}<span class="text-danger">&nbsp;*</span>{% endif %}</label>
+				<div class="row">
+					<div class="col-lg-4 col-md-6">
+						<div class="input-group">
+							<input type="number" name="salary" min="0" max="999999999" class="form-control" step="0.01" value="{{ classified.salary/100 }}" {% if settings.required_salary %}required{% endif %} v-model="inputSalary" id="input_salary">
+							<div class="input-group-append">
+								<span class="input-group-text">{{ settings.currency }}</span>
+							</div>
+						</div>
+						<div class="custom-control custom-checkbox" v-show="inputSalary != 0">
+							<input type="checkbox" name="salary_negotiate" class="custom-control-input" id="salary_negotiate" {% if classified.salary_negotiate %}checked{% endif %} :disabled="!inputSalary">
+							<label class="custom-control-label" for="salary_negotiate">{{ 'To negotiate'|trans }}</label>
+						</div>
+					</div>
+					<div class="col-lg-4 col-md-6" v-show="inputSalary != 0">
+						<select name="salary_net" :disabled="!inputSalary" class="form-control">
+							<option value="">{{ '-- select --'|trans }}</option>
+							<option value="net" {% if classified.salary_net=='net' %}selected{% endif %}>{{ 'netto'|trans }}</option>
+							<option value="gross" {% if classified.salary_net=='gross' %}selected{% endif %}>{{ 'brutto'|trans }}</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			
+			{% if not classified.active or classified.add_similar %}
+				<div class="form-group">
+					<label for="duration_id">{{ 'The length of the display'|trans }}:</label>
+					<div class="row">
+						<div class="col-lg-4 col-md-6">
+							<select name="duration_id" class="form-control" required>
+								{% if durations %}
+									{% for duration in durations %}
+										<option value="{{ duration.id }}" {% if classified.duration_id==duration.id %}selected{% endif %}>{{ duration.length }} {{ 'days'|trans }} - {{ duration.cost|showCurrency }}</option>
+									{% endfor %}
+								{% else %}
+									<option value="0">{{ settings.days_default }} {{ 'days'|trans }}</option>
+								{% endif %}
+							</select>
+						</div>
+					</div>
+				</div>
+			{% endif %}
+			<hr>
+			
+			<div class="form-group">
+				<label for="description">{{ 'Classified description'|trans }}:</label>
+				<textarea id="description" name="description" class="form-control" style="height: 250px">{{ classified.description|raw }}</textarea>
+			</div>
+			
+			{% if settings.photo_add %}
+				<hr>
+				<div class="form-group">
+					<label>{{ 'Photos / logos / graphics'|trans }}:{% if settings.photo_max %} <span class="small">{{ 'Limit of files'|trans }}: {{ settings.photo_max }}</span>{% endif %}</label>
+					<div class="progress" v-show="photos_is_loading">
+						<div class="progress-bar progress-bar-striped active" role="progressbar" :aria-valuenow="photos_progress" aria-valuemin="0" aria-valuemax="100" :style="'width:'+photos_progress+'%'">
+							{{ '{{photos_progress}}' }}%
+						</div>
+					</div>
+					<div class="alert alert-danger" role="alert" v-show="photos_alert">{{ '{{photos_alert}}' }}</div>
+					<div id="preview_photos">
+						<div class="img-thumbnail" v-for="(photo, index) in photos">
+							<img :src="'upload/photos/'+photo.folder+photo.thumb">
+							<br>
+							<button class="btn btn-link text-danger" type="button" v-on:click.prevent.stop="removePhoto(index)">{{ 'Delete'|trans }}</button>
+							<input type="hidden" name="photos[]" v-bind:value="photo.id">
+						</div>
+						<div v-show="photos_is_loading" id="preview_load"><span class="fas fa-spinner fa-spinner-animate"></span></div>
+					</div>
+					<br>
+					<input class="form-control-file" @change="loadPhotos" type="file" title="{{ 'Photos'|trans }}" multiple accept=".jpg,.jpeg,.png,.webp" v-model="button_load_photos">
+				</div>
+			{% endif %}
+			<hr>
+			<div class="form-group">
+				<label for="email">{{ 'E-mail address'|trans }}:<span class="text-danger">&nbsp;*</span></label>
+				<input type="email" class="form-control" name="email" placeholder="{{ 'example@example.com'|trans }}" id="email" maxlength="64" required value="{% if classified %}{{ classified.email }}{% elseif user.id %}{{ user.email }}{% endif %}" title="{{ 'E-mail address'|trans }}" {% if (user.id and not user.moderator) or (classified and not user.moderator) %}readonly{% endif %}>
+			</div>
+			<div class="form-group">
+				<label for="phone">{{ 'Phone'|trans }}:{% if settings.required_phone %}<span class="text-danger">&nbsp;*</span>{% endif %}</label>
+				<input type="text" class="form-control" name="phone" placeholder="{{ '+12 345 678 901'|trans }}" id="phone" maxlength="32" value="{% if classified %}{{ classified.phone }}{% elseif user.id %}{{ user.phone }}{% endif %}" title="{{ 'Phone'|trans }}" {% if settings.required_phone %}required{% endif %}>
+			</div>
+			<div class="form-group">
+				<label for="facebook_url">{{ 'Link to Facebook profile (contact by Messenger)'|trans }}:</label>
+				<input type="text" class="form-control" name="facebook_url" placeholder="{{ 'Link to Facebook profile (contact by Messenger)'|trans }}" id="facebook_url" maxlength="256" value="{% if classified %}{{ classified.facebook_url }}{% else %}{{ user.facebook_url }}{% endif %}" title="{{ 'Link to Facebook profile (contact by Messenger)'|trans }}">
+			</div>
+			<label for="add_address">{{ 'Address'|trans }}:{% if settings.required_address %}<span class="text-danger">&nbsp;*</span>{% endif %}</label>
+			<div class="row">
+				<div class="{% if settings.google_maps and settings.google_maps_api2 %}col-lg-10 col-md-9 col-sm-8{% else %}col-12{% endif %} form-group">
+					<input type="text" class="form-control" name="address" placeholder="{{ '1600 Pennsylvania Avenue NW, Washington, D.C. 20500'|trans }}" id="add_address" maxlength="512" value="{% if classified %}{{ classified.address }}{% elseif user.id %}{{ user.address }}{% endif %}" title="{{ 'Enter the address'|trans }}" {% if settings.required_address %}required{% endif %} autocomplete="off">
+				</div>
+				{% if settings.google_maps and settings.google_maps_api2 %}
+					<div class="col-lg-2 col-md-3 col-sm-4 form-group">
+						<input type="button" class="btn btn-secondary" value="{{ 'Show on map'|trans }}" v-on:click.prevent.stop="getCoordinates();$event.target.blur()">
+					</div>
+				{% endif %}
+			</div>
+			{% if states %}
+				<label for="state_id">{{ 'State'|trans }}:{% if settings.required_state %}<span class="text-danger">&nbsp;*</span>{% endif %}</label>
+				<div class="row">
+					<div class="col-sm-4">
+						<select class="form-control select_state form-group" name="state_id" id="state_id" title="{{ 'Select the appropriate state'|trans }}" {% if settings.required_state %}required{% endif %}>
+							<option value="">{{ '-- select --'|trans }}</option>
+							{% for key,state in states %}
+								<option value="{{ key }}" {% if (classified and classified.state_id==key) or (not classified and user.id and user.state_id==key) %}selected{% endif %}>{{ state.name }}</option>
+							{% endfor %}
+						</select>
+					</div>
+					{% for key,state in states %}
+						{% if state.states %}
+							<div class="col-sm-4 substates substate_{{ state.id }} form-group" {% if not ((classified and classified.state_id==key) or (not classified and user.id and user.state_id==key)) %}style="display: none"{% endif %}>
+								<select class="form-control" name="state2_id" title="{{ 'Select the appropriate state'|trans }}" {% if not ((classified and classified.state_id==key) or (not classified and user.id and user.state_id==key)) %}disabled{% endif %}>
+									<option value="">{{ '-- select --'|trans }}</option>
+									{% for state2 in state.states %}
+										<option value="{{ state2.id }}" {% if (classified and classified.state2_id==state2.id) or (not classified and user.state2_id==state2.id) %}selected{% endif %}>{{ state2.name }}</option>
+									{% endfor %}
+								</select>
+							</div>
+						{% endif %}
+					{% endfor %}
+				</div>
+			{% endif %}
+			{% if settings.google_maps %}
+				<div id="google_maps" style="height: 300px"></div>
+			{% endif %}
+			<input type="hidden" name="address_lat" id="input_address_lat" value="{{ classified.address_lat }}" v-model="inputAddressLat">
+			<input type="hidden" name="address_long" id="input_address_long" value="{{ classified.address_long }}" v-model="inputAddressLong">
+			<hr>
+			{% if not user.id and not classified %}
+				<div class="form-group">
+					<div class="custom-control custom-checkbox">
+						<input type="checkbox" name="rules" class="custom-control-input" id="add_rules" required>
+						<label class="custom-control-label" for="add_rules">{{ 'Accepts the terms and conditions and the privacy policy'|trans }} (<a href="{{ path('rules') }}" title="{{ 'Terms of service'|trans }}" target="_blank" class="main-color-2">{{ 'Terms of service'|trans }}</a> - <a href="{{ path('privacy_policy') }}" title="{{ 'Privacy policy'|trans }}" target="_blank" class="main-color-2">{{ 'Privacy policy'|trans }}</a>)<span class="text-danger">&nbsp;*</span></label>
+					</div>
+				</div>
+			{% endif %}
+			<div class="form-group">
+				<input type="submit" class="btn btn-1 text-uppercase" value="{{ 'Save'|trans }}" :disabled="waiting_for_load_categories || photos_is_loading">
+			</div>
+			<br>
+			<p><span class="text-danger">*</span> - {{ 'required field'|trans }}</p>
+			<br>
+		</form>
+	</div>
+</div>
+
+{% if classified and not classified.add_similar %}
+	<div class="modal fade" id="remove_classified">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">{{ 'Delete classified'|trans }}: {{ classified.name }}</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				</div>
+				<form method="post" class="form">
+					<input type="hidden" name="action" value="remove_classified">
+					<input type="hidden" name="id" value="{{ classified.id }}">
+					<input type="hidden" name="code" value="{{ get.code }}">
+					<input type="hidden" name="token" value="{{ generateToken('remove_classified') }}">
+					<div class="modal-body">
+						<p>{{ 'Do you really want to delete'|trans }} {{ classified.name }}?</p>
+					</div>
+					<div class="modal-footer">
+						<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+						<input type="submit" class="btn btn-danger" value="{{ 'Delete'|trans }}">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+{% endif %}
+
+{% endblock %}

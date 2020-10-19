@@ -1,0 +1,179 @@
+
+{% extends "main.tpl" %}
+
+{% block content %}
+<div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="{{ 'Add display length'|trans }}">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">{{ 'Add display length'|trans }}</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			</div>
+			<form method="post" class="form">
+				<input type="hidden" name="action" value="add_day">
+				<input type="hidden" name="token" value="{{ generateToken('admin_add_day') }}">
+				<div class="modal-body">
+					<div class="form-group form-inline">
+						<label for="length" class="my-1 mr-2">{{ 'Length'|trans }}</label>
+						<div class="input-group">
+							<input type="number" name="length" required min="1" title="{{ 'Number of days'|trans }}" class="form-control">
+							<div class="input-group-append">
+								<span class="input-group-text">{{ 'days'|trans }}</span>
+							</div>
+						</div>
+					</div>
+					<div class="form-group form-inline">
+						<label for="cost" class="my-1 mr-2">{{ 'Charge'|trans }}</label>
+						<div class="input-group">
+							<input type="number" name="cost" min="0" step="0.01" class="form-control">
+							<div class="input-group-append">
+								<span class="input-group-text">{{ settings.currency }}</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+					<input type="submit" class="btn btn-danger" value="{{ 'Execute'|trans }}">
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="page-header">
+	<h1><i class="fas fa-cog"></i> {{ 'Settings: length of display'|trans }}</h1>
+	<p>{{ 'Here you can edit the settings of the service'|trans }}</p>
+</div>
+
+{% include 'alert.tpl' %}
+
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#add">{{ 'Add display length'|trans }}</button>
+<br><br>
+{% if durations %}
+	<table class="table-striped table-bordered table-sm">
+		<tr>
+			<th class="text-center">{{ 'Length'|trans }}</th>
+			<th class="text-center">{{ 'Charge'|trans }}</th>
+			<th class="text-center">{{ 'Edit'|trans }}</th>
+			<th class="text-center">{{ 'Delete'|trans }}</th>
+		</tr>
+
+		{% for item in durations %}
+			<tr>
+				<td class="text-center">{{ item.length }}</td>
+				<td class="text-center">{{ item.cost|showCurrency }}</td>
+				<td class="text-center"><button class="btn btn-link fas fa-edit" title="{{ 'Edit'|trans }}" data-toggle="modal" data-target="#edit_{{ item.id }}"></button></td>
+				<td class="text-center"><button class="btn btn-link fas fa-trash-alt text-danger" title="{{ 'Delete display length'|trans }}" data-toggle="modal" data-target="#remove_{{ item.id }}"></button></td>
+			</tr>
+
+			<div class="modal fade" id="edit_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Edit display length'|trans }}">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">{{ 'Edit display length'|trans }}</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						</div>
+						<form method="post" class="form">
+							<input type="hidden" name="action" value="edit_day">
+							<input type="hidden" name="id" value="{{ item.id }}">
+							<input type="hidden" name="token" value="{{ generateToken('admin_edit_day') }}">
+							<div class="modal-body">
+								<div class="form-group form-inline">
+									<label for="length" class="my-1 mr-2">{{ 'Length'|trans }}</label>
+									<div class="input-group">
+										<input type="number" name="length" required min="1" title="{{ 'Number of days'|trans }}" class="form-control" value="{{ item.length }}">
+										<div class="input-group-append">
+											<span class="input-group-text">{{ 'days'|trans }}</span>
+										</div>
+									</div>
+								</div>
+								<div class="form-group form-inline">
+									<label for="cost" class="my-1 mr-2">{{ 'Charge'|trans }}</label>
+									<div class="input-group">
+										<input type="number" name="cost" min="0" step="0.01" class="form-control" value="{{ item.cost/100 }}">
+										<div class="input-group-append">
+											<span class="input-group-text">{{ settings.currency }}</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+								<input type="submit" class="btn btn-danger" value="{{ 'Execute'|trans }}">
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal fade" id="remove_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Delete display length'|trans }}">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">{{ 'Delete display length'|trans }}</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						</div>
+						<form method="post">
+							<input type="hidden" name="action" value="remove_day">
+							<input type="hidden" name="id" value="{{ item.id }}">
+							<input type="hidden" name="token" value="{{ generateToken('admin_remove_day') }}">
+							<div class="modal-body">
+								<p>{{ 'Do you really want to delete'|trans }}: "{{ item.length }}"?</p>
+							</div>
+							<div class="modal-footer">
+								<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+								<input type="submit" class="btn btn-danger" value="{{ 'Execute'|trans }}">
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</table>
+{% endif %}
+<br><br>
+<form method="post" class="form" role="form">
+	<input type="hidden" name="action" value="save_settings_duration">
+	<input type="hidden" name="token" value="{{ generateToken('admin_save_settings_duration') }}">
+	<div class="form-group">
+		<label><input type="checkbox" name="allow_refresh_classifieds" title="{{ 'Allow refresh classifieds'|trans }}" {% if settings.allow_refresh_classifieds %}checked{% endif %}> {{ 'Allow refresh classifieds'|trans }}</label><br>
+	</div>
+	<div class="form-group form-inline">
+		<label class="my-1 mr-2">{{ 'Refresh extends classified'|trans }}:&nbsp;</label>
+		<div class="input-group">
+			<input type="number" step="1" min="1" name="days_refresh" title="{{ 'Number of days'|trans }}" value="{{ settings.days_refresh }}" class="form-control" required>
+			<div class="input-group-append">
+				<span class="input-group-text">{{ 'days'|trans }}</span>
+			</div>
+		</div>
+	</div>
+	<div class="form-group form-inline">
+		<label class="my-1 mr-2">{{ 'Refresh is available'|trans }}:</label>
+		<input type="number" step="1" min="0" name="days_before_refresh" title="{{ 'Number of days'|trans }}" value="{{ settings.days_before_refresh }}" class="form-control" required>
+		<label>&nbsp;{{ 'days before the end of classified'|trans }}</label>
+	</div>
+	<p>({{ 'The following setting is only active if not determined length of display'|trans }})</p>
+	<div class="form-group form-inline">
+		<label class="my-1 mr-2">{{ 'Default length'|trans }}:</label>
+		<div class="input-group">
+			<input type="number" step="1" min="1" name="days_default" title="{{ 'Number of days'|trans }}" value="{{ settings.days_default }}" class="form-control" required>
+			<div class="input-group-append">
+				<span class="input-group-text">{{ 'days'|trans }}</span>
+			</div>
+		</div>
+	</div>
+	<div class="form-group form-inline">
+		<label class="my-1 mr-2">{{ 'Automatically remove inactive classified after'|trans }}:</label>
+		<div class="input-group">
+			<input type="number" step="1" min="1" name="days_to_remove" title="{{ 'Number of days'|trans }}" value="{{ settings.days_to_remove }}" class="form-control" required>
+			<div class="input-group-append">
+				<span class="input-group-text">{{ 'days'|trans }}</span>
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<input type="submit" value="{{ 'Save'|trans }}" class="btn btn-primary">
+	</div>
+</form>
+{% endblock %}

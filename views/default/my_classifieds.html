@@ -1,0 +1,45 @@
+
+{% extends "main.tpl" %}
+
+{% block content %}
+
+<div class="page_box">
+	<div class="container">
+		<h1>{{ 'My classifieds'|trans }}</h1>
+		{% include 'partial/alert.tpl' %}
+		<div class="row">
+			<div class="col-md-3">
+				<br><br>
+				{% if settings.ads_side_1 %}<div class="ads d-print-none">{{ settings.ads_side_1|raw }}</div>{% endif %}
+				<form class="form-horizontal form-search" method="get" id="form_search_classifieds">
+					<input type="hidden" name="search">
+					<div class="form-group">
+						<label for="active">{{ 'Active'|trans }}:</label>
+						<select name="active" title="{{ 'Search by active classifieds'|trans }}" class="form-control">
+							<option value="">{{ 'All'|trans }}</option>
+							<option value="yes" {% if get.active=='yes' %}selected{% endif %}>{{ 'Yes'|trans }}</option>
+							<option value="no" {% if get.active=='no' %}selected{% endif %}>{{ 'No'|trans }}</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="keywords" class="control-label">{{ 'Keywords'|trans }}: </label>
+						<input class="form-control" type="text" name="keywords" id="keywords" placeholder="{{ 'Enter your keywords...'|trans }}" title="{{ 'Enter your keywords...'|trans }}" value="{{ get.keywords }}">
+						<div class="custom-control custom-checkbox">
+			          <input type="checkbox" name="exact_phrase" class="custom-control-input" id="search_exact_phrase" {% if get.exact_phrase %}checked{% endif %}>
+			          <label class="custom-control-label" for="search_exact_phrase">{{ 'Exact phrase'|trans }}</label>
+			        </div>
+					</div>
+					<div class="form-group">
+						<button class="form-control btn-1 text-uppercase" type="submit"><i class="fas fa-search"></i> {{ 'Search'|trans }}</button>
+					</div>
+				</form>
+				{% if settings.ads_side_2 %}<div class="ads d-print-none">{{ settings.ads_side_2|raw }}</div>{% endif %}
+			</div>
+			<div class="col-md-9">
+				{% include 'partial/classifieds.tpl' %}
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

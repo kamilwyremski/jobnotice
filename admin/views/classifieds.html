@@ -1,0 +1,293 @@
+
+{% extends "main.tpl" %}
+
+{% block content %}
+<div class="page-header">
+	<h1><i class="fas fa-list-alt"></i> {{ 'Classifieds'|trans }}</h1>
+	<p>{{ 'Here you can see the classified from website. To edit it, you must be an moderator'|trans }}</p>
+</div>
+
+{% include 'alert.tpl' %}
+
+<form method="get" class="form" role="form">
+	<input type="hidden" name="controller" value="classifieds">
+	<input type="hidden" name="search">
+	<div class="form-group form-group-sm row">
+		<div class="col-xl-2 col-sm-4">
+			<label for="id">{{ 'ID'|trans }}:</label>
+			<input type="number" name="id" title="{{ 'ID'|trans }}" placeholder="{{ 'ID'|trans }}" value="{{ get.id }}" class="form-control">
+		</div>
+		<div class="col-xl-3 col-sm-4">
+			<label for="name">{{ 'Classified name'|trans }}:</label>
+			<input type="text" name="name" title="{{ 'Enter the name of the classified'|trans }}" placeholder="{{ 'Classified name'|trans }}" value="{{ get.name }}" class="form-control">
+		</div>
+		<div class="col-xl-2 col-sm-4">
+			<label for="active">{{ 'Active'|trans }}:</label>
+			<select name="active" title="{{ 'Search by active classifieds'|trans }}" class="form-control">
+				<option value="">{{ 'All'|trans }}</option>
+				<option value="yes" {% if get.active=='yes' %}selected{% endif %}>{{ 'Yes'|trans }}</option>
+				<option value="no" {% if get.active=='no' %}selected{% endif %}>{{ 'No'|trans }}</option>
+			</select>
+		</div>
+		<div class="col-xl-2 col-sm-6">
+			<label for="promoted">{{ 'Promoted'|trans }}:</label>
+			<select name="promoted" title="{{ 'Search by promoted classifieds'|trans }}" class="form-control">
+				<option value="">{{ 'All'|trans }}</option>
+				<option value="yes" {% if get.promoted=='yes' %}selected{% endif %}>{{ 'Yes'|trans }}</option>
+				<option value="no" {% if get.promoted=='no' %}selected{% endif %}>{{ 'No'|trans }}</option>
+			</select>
+		</div>
+		<div class="col-xl-3 col-sm-6">
+			<label for="username_or_email">{{ 'Login or e-mail of user'|trans }}:</label>
+			<input type="text" name="username_or_email" title="{{ 'Login or e-mail of user'|trans }}" placeholder="{{ 'Login or e-mail of user'|trans }}" value="{{ get.username_or_email }}" class="form-control">
+		</div>
+	</div>
+	<div class="form-group form-group-sm row">
+		<div class="col-lg-4 col-sm-6">
+			<label for="date">{{ 'Date added'|trans }}: </label>
+			<div class="input-group">
+				<input name="date_from" title="{{ 'Select the starting date'|trans }}" type="text" max="{{ 'now'|date('Y-m-d') }}" value="{{ get.date_from }}" class="form-control datepicker">
+				<div class="input-group-append input-group-prepend">
+					<span class="input-group-text"> - </span>
+				</div>
+				<input name="date_to" title="{{ 'Select the end date'|trans }}" type="text" max="{{ 'now'|date('Y-m-d') }}" value="{{ get.date_to }}" class="form-control datepicker">
+			</div>
+		</div>
+		<div class="col-lg-4 col-sm-6">
+			<label for="date">{{ 'Date finish'|trans }}: </label>
+			<div class="input-group">
+				<input name="date_finish_from" title="{{ 'Select the starting date'|trans }}" type="text" value="{{ get.date_finish_from }}" class="form-control datepicker">
+				<div class="input-group-append input-group-prepend">
+					<span class="input-group-text"> - </span>
+				</div>
+				<input name="date_finish_to" title="{{ 'Select the end date'|trans }}" type="text" value="{{ get.date_finish_to }}" class="form-control datepicker">
+			</div>
+		</div>
+		<div class="col-lg-2 col-sm-6">
+			<label for="ip">{{ 'IP address'|trans }}:</label>
+			<input type="text" name="ip" title="{{ 'IP address'|trans }}" placeholder="{{ 'IP address'|trans }}" value="{{ get.ip }}" class="form-control">
+		</div>
+		<div class="col-lg-2 col-sm-6">
+			<label>&nbsp;</label><br>
+			<input type="submit" value="{{ 'Search'|trans }}" class="btn btn-primary text-uppercase btn-block">
+		</div>
+	</div>
+</form>
+<br>
+{% if classifieds %}
+	<div class="table-responsive">
+		<table class="table parent_select_checkbox table-striped table-bordered table-sm">
+			<tr>
+				<th class="text-center"><input type="checkbox" class="select_checkbox" title="{{ 'Select all'|trans }}"></th>
+				<th class="text-center">{{ 'ID'|trans }}<br>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=id" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=id&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+				</th>
+				<th class="text-center">{{ 'Active'|trans }}<br>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=active" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=active&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+				</th>
+				<th class="text-center">{{ 'Promoted'|trans }}<br>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=promoted" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=promoted&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+				</th>
+				<th>{{ 'The name'|trans }}<br>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=name" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=name&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+				</th>
+				<th>{{ 'User'|trans }}</th>
+				<th class="text-center">{{ 'Email confirmed'|trans }}
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=email_confirmed" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=email_confirmed&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+				</th>
+				<th class="text-center">{{ 'View count'|trans }}<br>{{ 'all'|trans }}
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=view_all" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=view_all&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+					 / {{ 'unique'|trans }}
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=view_unique" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=view_unique&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+				</th>
+				<th class="text-center">{{ 'Date added'|trans }}
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=date" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=date&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+					<br>{{ 'Date finish'|trans }}
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=date_finish" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=date_finish&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+				</th>
+				<th>{{ 'IP address'|trans }}<br>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=ip" title="{{ 'Sort'|trans }}" class="fas fa-sort-amount-up"></a>
+					<a href="?{{ pagination.page_url.sort_admin }}&sort=ip&sort_desc" title="{{ 'Sort descending'|trans }}" class="fas fa-sort-amount-down"></a>
+				</th>
+				<th class="text-center">{{ 'Edit'|trans }}</th>
+				<th class="text-center">{{ 'Delete'|trans }}</th>
+			</tr>
+
+			{% for item in classifieds %}
+				<tr>
+					<td class="text-center"><input type="checkbox" name="classifieds[]" value="{{ item.id }}" form="form_selected_classifieds"></td>
+					<td class="text-center">{{ item.id }}</td>
+					<td class="text-center">{% if item.active %}<button class="btn btn-link" title="{{ 'Deactivate classified'|trans }}" data-toggle="modal" data-target="#deactivate_{{ item.id }}">{{ 'YES'|trans }}</button>{% else %}<button class="btn btn-link" title="{{ 'Activate classified'|trans }}" style="color:grey" data-toggle="modal" data-target="#activate_{{ item.id }}">{{ 'NO'|trans }}</button>{% endif %}</td>
+					<td class="text-center">{% if item.promoted %}<button class="btn btn-link" title="{{ 'No promote classified'|trans }}" data-toggle="modal" data-target="#disable_promote_{{ item.id }}">{{ 'YES'|trans }}</button><br>{{ item.promoted_date_finish|date('Y-m-d') }}{% else %}<button class="btn btn-link" title="{{ 'Promote classified'|trans }}" style="color:grey" data-toggle="modal" data-target="#enable_promote_{{ item.id }}">{{ 'NO'|trans }}</button>{% endif %}</td>
+					<td><a href="{{ path('classified',item.id,item.slug) }}" title="{{ item.name }}" target="_blank">{{ item.name }}</a></td>
+					<td>
+						{% if item.username %}<a href="?controller=users&search&username={{ item.username }}" title="{{ item.username }}">{{ item.username }}</a><br>{% endif %}{% if _ADMIN_TEST_MODE_ %}TEST{% else %}<a href="mailto:{{ item.email }}" title="{{ item.email }}">{{ item.email }}</a>{% endif %}
+					</td>
+					<td class="text-center">{% if item.email_confirmed %}{{ 'YES'|trans }}{% else %}<span style="color:grey">{{ 'NO'|trans }}{% endif %}</td>
+					<td class="text-center">{{ item.view_all }} / {{ item.view_unique}}</td>
+					<td class="text-center">{{ item.date|date('Y-m-d') }}<br>{{ item.date_finish|date('Y-m-d') }}</td>
+					<td class="text-center">{{ item.ip }}</td>
+					<td class="text-center"><a href="{{ path('edit',item.id,item.slug) }}" title="{{ 'Edit classified'|trans }}" class="fas fa-edit" target="_blank"></a></td>
+					<td class="text-center"><button class="btn btn-link fas fa-trash-alt text-danger" title="{{ 'Delete classified'|trans }}" data-toggle="modal" data-target="#remove_{{ item.id }}"></button></td>
+				</tr>
+
+				<div class="modal fade" id="remove_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Delete classified'|trans }}: {{ item.name }}">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">{{ 'Delete classified'|trans }}</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							</div>
+							<form method="post">
+								<input type="hidden" name="action" value="remove_classified">
+								<input type="hidden" name="id" value="{{ item.id }}">
+								<input type="hidden" name="email" value="{{ item.email }}">
+								<input type="hidden" name="ip" value="{{ item.ip }}">
+								<input type="hidden" name="token" value="{{ generateToken('admin_remove_classified') }}">
+								<div class="modal-body">
+									<p>{{ 'Do you really want to delete'|trans }}: "{{ item.name }}"?</p>
+									<label><input type="checkbox" name="add_email_black_list"> {{ 'Add email to black list'|trans }}</label><br>
+									<label><input type="checkbox" name="add_ip_black_list"> {{ 'Add IP to black list'|trans }}</label>
+								</div>
+								<div class="modal-footer">
+									<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+									<input type="submit" class="btn btn-danger" value="{{ 'Execute'|trans }}">
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+
+				{% if item.active %}
+					<div class="modal fade" id="deactivate_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Deactivate classified'|trans }}: {{ item.name }}">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title">{{ 'Deactivate classified'|trans }}</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								</div>
+								<form method="post">
+									<input type="hidden" name="action" value="deactivate_classified">
+									<input type="hidden" name="id" value="{{ item.id }}">
+									<input type="hidden" name="token" value="{{ generateToken('admin_deactivate_classified') }}">
+									<div class="modal-body">
+										<p>{{ 'Do you really want to deactivate classified'|trans }}: "{{ item.name }}"?</p>
+									</div>
+									<div class="modal-footer">
+										<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+										<input type="submit" class="btn btn-danger" value="{{ 'Execute'|trans }}">
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				{% else %}
+					<div class="modal fade" id="activate_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Activate classified'|trans }}: {{ item.name }}">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title">{{ 'Activate classified'|trans }}</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								</div>
+								<form method="post">
+									<input type="hidden" name="action" value="activate_classified">
+									<input type="hidden" name="id" value="{{ item.id }}">
+									<input type="hidden" name="token" value="{{ generateToken('admin_activate_classified') }}">
+									<div class="modal-body">
+										<p>{{ 'Do you really want to activate classified'|trans }}: "{{ item.name }}"?</p>
+										<div class="form-group">
+											<label>{{ 'Date finish'|trans }}:</label>
+											<input type="text" name="date_finish" min="{{ 'now'|date('Y-m-d') }}" value="{{ item.date_finish|date('Y-m-d') }}" class="form-control datepicker" required></label>
+										</div>
+									</div>
+									<div class="modal-footer">
+										<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+										<input type="submit" class="btn btn-danger" value="{{ 'Execute'|trans }}">
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				{% endif %}
+
+				{% if item.promoted %}
+					<div class="modal fade" id="disable_promote_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'No promote classified'|trans }}: {{ item.name }}">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title">{{ 'No promote classified'|trans }}</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								</div>
+								<form method="post">
+									<input type="hidden" name="action" value="disable_promote_classified">
+									<input type="hidden" name="id" value="{{ item.id }}">
+									<input type="hidden" name="token" value="{{ generateToken('admin_disable_promote_classified') }}">
+									<div class="modal-body">
+										<p>{{ 'Do you really want to disable promote classified'|trans }}: "{{ item.name }}"?</p>
+									</div>
+									<div class="modal-footer">
+										<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+										<input type="submit" class="btn btn-danger" value="{{ 'Execute'|trans }}">
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				{% else %}
+					<div class="modal fade" id="enable_promote_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Promote classified'|trans }}: {{ item.name }}">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title">{{ 'Promote classified'|trans }}</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								</div>
+								<form method="post">
+									<input type="hidden" name="action" value="enable_promote_classified">
+									<input type="hidden" name="id" value="{{ item.id }}">
+									<input type="hidden" name="token" value="{{ generateToken('admin_enable_promote_classified') }}">
+									<div class="modal-body">
+										<p>{{ 'Do you really want to enable promote classified'|trans }}: "{{ item.name }}"?</p>
+										<label>{{ 'Choose final date'|trans }}: </label><input type="text" name="date" title="{{ 'Choose final date'|trans }}" value="{{ 'now'|date_modify('+30 day')|date('Y-m-d') }}" min="{{ 'now'|date('Y-m-d') }}" class="form-control datepicker">
+									</div>
+									<div class="modal-footer">
+										<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+										<input type="submit" class="btn btn-danger" value="{{ 'Execute'|trans }}">
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				{% endif %}
+
+			{% endfor %}
+		</table>
+	</div>
+	<br>
+	<form method="post" id="form_selected_classifieds" class="form-inline">
+		<input type="hidden" name="token" value="{{ generateToken('admin_action_classifieds') }}">
+		<label for="action" class="my-1 mr-2">{{ 'Selected'|trans }}: </label>
+		<select name="action" required title="{{ 'Select the appropriate action'|trans }}" class="form-control my-1 mr-sm-2">
+			<option value="">-- {{ 'select'|trans }} --</option>
+			<option value="remove_classifieds">{{ 'Delete classifieds'|trans }}</option>
+			<option value="active_classifieds">{{ 'Activate classifieds'|trans }}</option>
+			<option value="deactive_classifieds">{{ 'Deactivate classifieds'|trans }}</option>
+		</select>
+		<input type="submit" value="{{ 'Execute'|trans }}!" class="btn btn-danger my-1">
+	</form>
+	<br>
+
+	{% include 'pagination.tpl' %}
+
+{% else %}
+	<h4 class="text-danger">{{ 'Nothing found'|trans }}</h4>
+{% endif %}
+{% endblock %}

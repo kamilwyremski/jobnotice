@@ -1,0 +1,45 @@
+
+{% extends "main.tpl" %}
+
+{% block content %}	
+<div class="page-header">
+	<h1><i class="fas fa-cog"></i> {{ 'Ads settings'|trans }}</h1>
+	<p>{{ 'Here you can edit the ads of the service'|trans }}</p>
+</div>
+
+{% include 'alert.tpl' %}
+
+<form method="post" class="form" role="form">
+	<input type="hidden" name="action" value="save_settings_ads">
+	<input type="hidden" name="token" value="{{ generateToken('admin_save_settings_ads') }}">
+	<div class="form-group">
+		<label for="ads_1">{{ 'Ad code'|trans }} 1:</label>
+		<textarea name="ads_1" title="{{ 'Ad code'|trans }} 1" class="form-control">{{ settings.ads_1|raw }}</textarea>
+	</div>
+	<div class="form-group">
+		<label for="ads_2">{{ 'Ad code'|trans }} 2:</label>
+		<textarea name="ads_2" title="{{ 'Ad code'|trans }} 2" class="form-control">{{ settings.ads_2|raw }}</textarea>
+	</div>
+	<div class="form-group">
+		<label for="ads_3">{{ 'Ad code'|trans }} 3:</label>
+		<textarea name="ads_3" title="{{ 'Ad code'|trans }} 3" class="form-control">{{ settings.ads_3|raw }}</textarea>
+	</div>
+	<div class="form-group">
+		<label for="ads_4">{{ 'Ad code'|trans }} 4:</label>
+		<textarea name="ads_4" title="{{ 'Ad code'|trans }} 4" class="form-control">{{ settings.ads_4|raw }}</textarea>
+	</div>
+	<div class="form-group">
+		<label for="ads_side_1">{{ 'Side ad code'|trans }} 1:</label>
+		<textarea name="ads_side_1" title="{{ 'Side ad code'|trans }} 1" class="form-control">{{ settings.ads_side_1|raw }}</textarea>
+	</div>
+	<div class="form-group">
+		<label for="ads_side_2">{{ 'Side ad code'|trans }} 2:</label>
+		<textarea name="ads_side_2" title="{{ 'Side ad code'|trans }} 2" class="form-control">{{ settings.ads_side_2|raw }}</textarea>
+	</div>
+	<div class="form-group">
+		<input type="submit" value="{{ 'Save'|trans }}" class="btn btn-primary">
+	</div>
+</form>
+{% endblock %}
+	
+	

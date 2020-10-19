@@ -1,0 +1,16 @@
+
+
+{% extends "main.tpl" %}  
+
+{% block content %}
+
+<div class="text-center container page_box">
+	<h2 class="text-danger">{{ 'Error 404'|trans }}</h2>
+	{% if settings.ads_1 %}<div class="ads d-print-none">{{ settings.ads_1|raw }}</div>{% endif %}
+	<img src="{{ settings.base_url }}/views/{{ settings.template }}/images/404.png" alt="Error 404" class="img-fluid" style="margin: 40px auto">
+	<h3>{{ 'Page does not exist'|trans }}</h3>
+	<p>{{ 'The page you are looking for has been moved, deleted, or simply never existed.'|trans }}</p>
+</div>
+
+{% endblock %}
+

@@ -1,0 +1,23 @@
+
+{% extends "main.tpl" %}  
+
+{% block content %}
+
+<div class="page_box">
+	<div class="container">
+		<h2>{{ contact_page.name }}</h2>
+		<br>
+		{{ contact_page.content|raw }}
+		<br>
+		{% if settings.ads_1 %}<div class="ads d-print-none">{{ settings.ads_1|raw }}</div>{% endif %}
+		<br>
+		<h3 class="text-center">{{ 'Contact form'|trans }}</h3>
+		<br>
+		{% include 'partial/alert.tpl' %}
+		{% include 'partial/contact_form.tpl' %}
+		<br><br><br>
+	</div>
+</div>
+
+{% endblock %}
+

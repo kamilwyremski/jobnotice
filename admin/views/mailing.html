@@ -1,0 +1,66 @@
+
+{% extends "main.tpl" %}
+
+{% block content %}
+<div class="page-header">
+	<h1><i class="fas fa-envelope"></i> {{ 'Mailing'|trans }}</h1>
+	<p class="mb-0">{{ 'Here you can send mailing to users'|trans }}</p>
+	<p class="text-danger mb-0">{{ 'For the system to function properly, you must configure cron tasks for the files'|trans }}: /cron-daily.php /cron-10min.php</p>
+	<p>{{ 'You should always insert links and image paths along with the domain address (starting with http://) or the {base_url} tag'|trans }}</p>
+</div>
+
+{% include 'alert.tpl' %}
+
+{% if mails_queue %}
+
+	<div class="modal fade" id="modal_cancel_mailing" tabindex="-1" role="dialog" aria-labelledby="{{ 'Cancel mailing'|trans }}">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">{{ 'Cancel mailing'|trans }}</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				</div>
+				<form method="post">
+					<input type="hidden" name="action" value="cancel_mailing">
+					<input type="hidden" name="token" value="{{ generateToken('admin_cancel_mailing') }}">
+					<div class="modal-body">
+						<p>{{ 'Do you really want to empty the mail queue?'|trans }}</p>
+					</div>
+					<div class="modal-footer">
+						<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+						<input type="submit" class="btn btn-danger" value="{{ 'Execute'|trans }}">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal_cancel_mailing">{{ 'Cancel mailing'|trans }}</button>
+
+	<br><br>
+{% endif %}
+
+<form method="post" class="form" role="form">
+	<input type="hidden" name="action" value="send_mailing">
+	<input type="hidden" name="token" value="{{ generateToken('admin_send_mailing') }}">
+	<div class="form-group">
+		<select name="type" required class="form-control">
+			<option value="">{{ '-- select --'|trans }}</option>
+			<option value="newsletter">{{ 'Subscribed to the newsletter'|trans }}</option>
+			<option value="users">{{ 'Registered users'|trans }}</option>
+		</select>
+	</div>
+	<div class="form-group">
+		<input type="text" name="subject" title="{{ 'Enter the message title'|trans }}" placeholder="{{ 'Title'|trans }}" required class="form-control">
+	</div>
+	<div class="form-group">
+		<textarea name="message"></textarea>
+		<script>
+			run_ckeditor('message');
+		</script>
+	</div>
+	<div class="form-group">
+		<input type="submit" value="{{ 'Start sending emails'|trans }}" class="btn btn-primary">
+	</div>
+</form>
+{% endblock %}

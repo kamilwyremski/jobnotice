@@ -1,0 +1,204 @@
+
+{% extends "main.tpl" %}
+
+{% block content %}
+
+{% if slider %}
+	<div id="slider" class="carousel slide carousel-fade d-none d-md-block" data-ride="carousel">
+		<div class="carousel-inner">
+			{% for slide in slider %}
+				<div class="carousel-item {% if loop.first %}active{% endif %}">
+					{{ slide|raw }}
+				</div>
+			{% endfor %}
+		</div>
+		{% if slider|length > 1 %}
+			<a class="carousel-control-prev" href="#slider" role="button" data-slide="prev">
+				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				<span class="sr-only">Previous</span>
+			</a>
+			<a class="carousel-control-next" href="#slider" role="button" data-slide="next">
+				<span class="carousel-control-next-icon" aria-hidden="true"></span>
+				<span class="sr-only">Next</span>
+			</a>
+		{% endif %}
+	</div>
+{% endif %}
+
+<div class="background_grey">
+	<div id="search_box" class="container form-search {% if slider %}search_box_slider{% endif %} d-print-none">
+		<form action="{{ path('classifieds') }}" method="get">
+			<input type="hidden" name="search">
+			<div class="row">
+				{% if settings.search_box_keywords %}
+					<div class="col-12 col-sm">
+						<label for="search_keywords">{{ 'Keywords'|trans }}: </label>
+						<input class="form-control" type="text" name="keywords" id="search_keywords" placeholder="{{ 'Enter your keywords...'|trans }}" title="{{ 'Enter your keywords...'|trans }}">
+					</div>
+				{% endif %}
+				{% if settings.search_box_category and categories %}
+					<div class="col-12 col-sm d-none d-sm-block">
+						<label for="search_category">{{ 'Category'|trans }}:</label>
+						<select class="form-control" name="category" id="search_category" title="{{ 'Select the appropriate category'|trans }}">
+							<option value="">{{ 'All'|trans }}</option>
+							{% for cat in categories %}
+								<option value="{{ cat.id }}">{{ cat.name }}</option>
+							{% endfor %}
+						</select>
+					</div>
+				{% endif %}
+				<div class="w-100 d-block d-lg-none"></div>
+				{% if settings.search_box_type and types %}
+					<div class="col-12 col-sm d-none d-sm-block">
+						<label for="search_type">{{ 'Classified type'|trans }}:</label>
+						<select class="form-control" name="type" id="search_type" title="{{ 'Select the appropriate classified type'|trans }}">
+							<option value="">{{ 'All'|trans }}</option>
+							{% for type in types %}
+								<option value="{{ type.slug }}">{{ type.name }}</option>
+							{% endfor %}
+						</select>
+					</div>
+				{% endif %}
+				{% if settings.search_show_salary %}
+					<div class="col-12 col-sm d-none d-sm-block">
+						<label for="search_salary_from">{{ 'Salary'|trans }} ({{ settings.currency }}): </label>
+						<div class="input-group">
+							<input class="form-control text-right" type="number" name="salary_from" id="search_salary_from" placeholder="{{ 'Min...'|trans }}" title="{{ 'Enter the min value'|trans }}" min="0" step="0.01">
+							<div class="input-group-prepend input-group-append">
+								<span class="input-group-text"> - </span>
+							</div>
+							<input class="form-control text-right" type="number" name="salary_to" id="search_salary_to" placeholder="{{ 'Max...'|trans }}" title="{{ 'Enter the max value'|trans }}" min="0" step="0.01">
+						</div>
+					</div>
+				{% endif %}
+				<div class="w-100 d-block d-lg-none"></div>
+				{% if (settings.search_box_keywords + settings.search_box_category + settings.search_box_type + search_show_salary + settings.search_box_state + settings.search_box_address) > 3 %}
+					<div class="w-100 d-none d-lg-block"></div>
+				{% endif %}
+				{% if settings.search_box_state and states %}
+					<div class="{% if get.state %}col{% else %}col{% endif %} search_main_change_col">
+						<label for="search_state">{{ 'State'|trans }}:</label>
+						<select class="form-control select_state" name="state" id="search_state" title="{{ 'Select the appropriate state'|trans }}">
+							<option value="">{{ 'All'|trans }}</option>
+							{% for state in states %}
+								<option value="{{ state.slug }}">{{ state.name }}</option>
+							{% endfor %}
+						</select>
+					</div>
+					{% for key,state in states %}
+						{% if state.states %}
+							<div class="col substates substate_{{ state.slug }}" {% if get.state!=state.slug %}style="display:none"{% endif %} >
+								<label>&nbsp;</label>
+								<select class="form-control" name="state2" title="{{ 'Select the appropriate state'|trans }}" {% if get.state!=state.slug %}disabled{% endif %}>
+									<option value="">{{ '-- select --'|trans }}</option>
+									{% for key2,state2 in state.states %}
+										<option value="{{ state2.slug }}">{{ state2.name }}</option>
+									{% endfor %}
+								</select>
+							</div>
+						{% endif %}
+					{% endfor %}
+				{% endif %}
+				<div class="w-100 d-block d-lg-none"></div>
+				{% if settings.search_box_address %}
+					<div class="col-12 col-sm d-none d-sm-block">
+						<label for="search_main_address">{{ 'Address'|trans }}:</label>
+						<input type="text" name="address" class="form-control" placeholder="{{ '1600 Pennsylvania Avenue NW, Washington, D.C. 20500'|trans }}" title="{{ 'Enter the address'|trans }}" id="search_main_address">
+					</div>
+					{% if settings.search_box_distance and settings.google_maps_api %}
+						<div class="col-12 col-sm d-none d-sm-block">
+							<label for="search_distance">{{ 'Distance'|trans }}:</label>
+							<div class="form-inline text-right">
+								<div class="input-group">
+									<input type="number" name="distance" id="search_distance" class="form-control text-right" placeholder="20" title="{{ 'Enter the distance from the searched address'|trans }}" value="10" min="0" step="1">
+									<div class="input-group-append">
+										<span class="input-group-text">{{ 'km'|trans }}</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					{% endif %}
+				{% endif %}
+				<div class="col-12 d-block d-sm-none text-center">
+					<button class="btn btn-link btn-link-1" id="button_search_show_mobile">{{ 'Show more options'|trans }}</button>
+				</div>
+				<div class="col">
+					<label>&nbsp;</label>
+					<button type="submit" class="form-control btn btn-1 text-uppercase"><i class="fas fa-search"></i> {{ 'Search'|trans }}</button>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	{% if settings.index_box_subcategories and categories %}
+		<div id="index_categories">
+			<nav class="container">
+				<div class="row">
+					{% for item in categories %}
+						<div class="col-lg-3 col-md-4 col-sm-3 col-6 index_categories"><a href="{{ path('classifieds') }}?category={{ item.id }}" title="{{ 'Category'|trans }}: {{ item.name }}" class="{% if item.list_subcategories %}index_show_subcategories{% endif %}" data-id="{{ item.id }}" data-index="{{ loop.index }}">{% if item.thumb %}<img src="views/{{ settings.template }}/images/no_image.png" data-src="{{ item.thumb }}" alt="{{ item.name }}" class="lazy"> {% endif %}<span class="name">{{ item.name }}</span></a></div>
+					{% endfor %}
+				</div>
+				{% for item in categories %}
+					<div class="index_subcategories col-12" id="index_subcategory_{{ item.id }}">
+						<p>{{ 'See all classifieds in'|trans }} <a href="{{ path('classifieds') }}?category={{ item.id }}" title="{{ 'Category'|trans }}: {{ item.name }}"><span class="name">{{ item.name }}{% if settings.show_number_classifieds_in_categories %} ({{ item.number_classifieds }})</span>{% endif %}</a></p>
+						{% if item.list_subcategories %}
+							<hr>
+							<div class="row">
+								{% for item2 in item.list_subcategories %}
+									<div class="col-md-3 index_subcategories_list"><a href="{{ path('classifieds') }}?category={{ item2.id }}" title="{{ 'Category'|trans }}: {{ item2.name }}">> <span class="name">{{ item2.name }}{% if settings.show_number_classifieds_in_categories %} ({{ item2.number_classifieds }}){% endif %}</span></a></div>
+								{% endfor %}
+							</div>
+						{% endif %}
+					</div>
+				{% endfor %}
+			</nav>
+		</div>
+	{% else %}
+		<br><br>
+	{% endif %}
+</div>
+
+{% if settings.ads_1 %}<div class="ads d-print-none">{{ settings.ads_1|raw }}</div>{% endif %}
+
+{% if classifieds %}
+	<div class="container">
+		{% include 'partial/classifieds_index.tpl' %}
+		<br>
+		<div class="text-center">
+			<a href="{{ path('classifieds') }}" title="{{ 'Search the best classifieds'|trans }}" class="btn btn-1">{{ 'See all classifieds'|trans }}</a>
+		</div>
+	</div>
+{% endif %}
+
+{% if settings.ads_2 %}<div class="ads d-print-none">{{ settings.ads_2|raw }}</div>{% endif %}
+
+{% if settings.index_page %}
+	<div id="index_text">
+		<div class="container content">
+			{{ settings.index_page|raw }}
+		</div>
+	</div>
+{% endif %}
+
+{% if settings.ads_3 %}<div class="ads d-print-none">{{ settings.ads_3|raw }}</div>{% endif %}
+
+{% if articles %}
+	<div class="container" id="articles_index">
+		<h3 class="text-center">{{ 'Recent articles'|trans }}</h3>
+		<div class="row">
+			{% for article in articles %}
+				<div class="col-lg-3 col-sm-6 col-12">
+					<a href="{{ path('article',article.id,article.slug) }}" title="{{ article.name }}">
+						<img {% if article.thumb %}data-src="{{ article.thumb }}"{% endif %}
+						src="views/{{ settings.template }}/images/no_image.png"
+						alt="{{ article.name }}" class="img-fluid {% if article.thumb %}lazy{% endif %}" onerror="this.src='views/{{ settings.template }}/images/no_image.png'">
+					</a>
+					<h5><a href="{{ path('article',article.id,article.slug) }}" class="main-color-2">{{ article.name }}</a></h5>
+					<p class="text-muted small mb-3">{{ article.lid }}</p>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+{% endif %}
+
+{% endblock %}

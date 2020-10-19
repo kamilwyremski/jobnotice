@@ -1,0 +1,157 @@
+
+{% extends "main.tpl" %}
+
+{% block content %}
+<div class="page-header">
+	<h1><i class="fas fa-cog"></i> {{ 'Payment settings'|trans }}</h1>
+	<p>{{ 'Here you can edit the settings of the service'|trans }}</p>
+</div>
+
+{% include 'alert.tpl' %}
+
+<form method="post" class="form" role="form">
+	<input type="hidden" name="action" value="save_settings_payments">
+	<input type="hidden" name="token" value="{{ generateToken('admin_save_settings_payments') }}">
+	<div class="form-group row">
+		<label for="currency" class="col-sm-3 col-form-label">{{ 'Shortcut currency'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="text" name="currency" placeholder="zł" title="{{ 'Shortcut currency'|trans }}" value="{{ settings.currency }}" class="form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="add_cost" class="col-sm-3 col-form-label">{{ 'The cost of issuing classified'|trans }}:</label>
+		<div class="col-sm-9">
+			<div class="input-group">
+				<input type="number" min="0" step="0.01" name="add_cost" title="{{ 'The cost of issuing classified'|trans }}" value="{{ settings.add_cost }}" class="form-control">
+				<div class="input-group-append">
+					<span class="input-group-text">{{ settings.currency }}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="promote_days" class="col-sm-3 col-form-label">{{ 'Promoting - the number of days'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="number" min="1" step="1" name="promote_days" title="{{ 'Promoting - the number of days'|trans }}" value="{{ settings.promote_days }}" class="form-control" required>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="promote_cost" class="col-sm-3 col-form-label">{{ 'The cost of a promote'|trans }}:</label>
+		<div class="col-sm-9">
+			<div class="input-group">
+				<input type="number" min="0" step="0.01" name="promote_cost" title="{{ 'The cost of a promote'|trans }}" value="{{ settings.promote_cost }}" class="form-control">
+				<div class="input-group-append">
+					<span class="input-group-text">{{ settings.currency }}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="form-group row">
+		<div class="col-sm-9 offset-sm-3">
+			<label><input type="checkbox" name="promote_only_by_author" title="{{ 'Only logged user who added classified can promote it'|trans }}" {% if settings.promote_only_by_author %}checked{% endif %}> {{ 'Only logged user who added classified can promote it'|trans }}</label>
+		</div>
+	</div>
+	<hr>
+	<div class="form-group row">
+		<div class="col-sm-9 offset-sm-3">
+			<label><h5><input type="checkbox" name="pay_by_dotpay" title="{{ 'Pay by Dotpay'|trans }}" {% if settings.pay_by_dotpay %}checked{% endif %} class="set_required" data-target="target_pay_by_dotpay"> {{ 'Pay by Dotpay'|trans }}</h5></label>
+			<p class="mb-0"><a href="https://ssl.dotpay.pl/s2/login/cloudfs1/magellan_media/common_file/dotpay_instrukcja_techniczna_implementacji_platnosci.pdf" title="Dotpay" target="_blank">{{ 'Manual'|trans }}</a></p>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="dotpay_id" class="col-sm-3 col-form-label">{{ 'Dotpay ID'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="text" name="dotpay_id" title="{{ 'Dotpay ID'|trans }}" value="{{ settings.dotpay_id }}" class="target_pay_by_dotpay form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="dotpay_pin" class="col-sm-3 col-form-label">{{ 'Dotpay PIN'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="text" name="dotpay_pin" title="{{ 'Dotpay PIN'|trans }}" value="{% if _ADMIN_TEST_MODE_ %}test{% else %}{{ settings.dotpay_pin }}{% endif %}" class="target_pay_by_dotpay form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="dotpay_currency" class="col-sm-3 col-form-label">{{ 'Dotpay currency'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="text" name="dotpay_currency" title="{{ 'Dotpay currency'|trans }}" value="{{ settings.dotpay_currency }}" class="target_pay_by_dotpay form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<div class="col-sm-9 offset-sm-3">
+			<label><input type="checkbox" name="dotpay_test_mode" title="{{ 'Dotpay Test Mode'|trans }}" {% if settings.dotpay_test_mode %}checked{% endif %}> {{ 'Dotpay Test Mode'|trans }}</label>
+		</div>
+	</div>
+	<hr>
+	<div class="form-group row">
+		<div class="col-sm-9 offset-sm-3">
+			<label><h5><input type="checkbox" name="pay_by_paypal" title="{{ 'Pay by PayPal'|trans }}" {% if settings.pay_by_paypal %}checked{% endif %} class="set_required" data-target="target_pay_by_paypal"> {{ 'Pay by PayPal'|trans }}</h5></label>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="paypal_email" class="col-sm-3 col-form-label">{{ 'PayPal email'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="email" name="paypal_email" title="{{ 'PayPal email'|trans }}" value="{{ settings.paypal_email }}" class="target_pay_by_paypal form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="paypal_lc" class="col-sm-3 col-form-label">{{ 'PayPal location'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="text" name="paypal_lc" title="{{ 'PayPal location'|trans }}" value="{{ settings.paypal_lc }}" class="target_pay_by_paypal form-control">
+			<p class="mb-0"><a href="https://developer.paypal.com/docs/api/reference/country-codes/" title="Country Codes" target="_blank">https://developer.paypal.com/docs/api/reference/country-codes/</a></p>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="paypal_currency" class="col-sm-3 col-form-label">{{ 'PayPal currency'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="text" name="paypal_currency" title="{{ 'PayPal currency'|trans }}" value="{{ settings.paypal_currency }}" class="target_pay_by_paypal form-control">
+			<p class="mb-0"><a href="https://developer.paypal.com/docs/api/reference/currency-codes/" title="Currency" target="_blank">https://developer.paypal.com/docs/api/reference/currency-codes/</a></p>
+		</div>
+	</div>
+	<div class="form-group row">
+		<div class="col-sm-9 offset-sm-3">
+			<label><input type="checkbox" name="paypal_test_mode" title="{{ 'PayPal Test Mode'|trans }}" {% if settings.paypal_test_mode %}checked{% endif %}> {{ 'PayPal Test Mode'|trans }}</label>
+		</div>
+	</div>
+	<hr>
+	<div class="form-group row">
+		<div class="col-sm-9 offset-sm-3">
+			<label><h5><input type="checkbox" name="pay_by_p24" title="{{ 'Pay by Przelewy24'|trans }}" {% if settings.pay_by_p24 %}checked{% endif %} class="set_required" data-target="target_pay_p24"> {{ 'Pay by Przelewy24'|trans }}</h5></label>
+			<p class="mb-0"><a href="https://www.przelewy24.pl/storage/app/media/pobierz/Instalacja/przelewy24_dokumentacja_3.2.pdf" title="Przelewy24" target="_blank">{{ 'Manual'|trans }}</a></p>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="p24_merchant_id" class="col-sm-3 col-form-label">{{ 'Przelewy24 - Merchant ID'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="text" name="p24_merchant_id" title="{{ 'Przelewy24 - Merchant ID'|trans }}" value="{{ settings.p24_merchant_id }}" class="target_pay_p24 form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="p24_pos_id" class="col-sm-3 col-form-label">{{ 'Przelewy24 - Pos ID'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="text" name="p24_pos_id" title="{{ 'Przelewy24 - Pos ID'|trans }}" value="{{ settings.p24_pos_id }}" class="target_pay_p24 form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="p24_crc" class="col-sm-3 col-form-label">{{ 'Przelewy24 - CRC'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="text" name="p24_crc" title="{{ 'Przelewy24 - CRC'|trans }}" value="{% if _ADMIN_TEST_MODE_ %}test{% else %}{{ settings.p24_crc }}{% endif %}" class="target_pay_p24 form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label for="p24_currency" class="col-sm-3 col-form-label">{{ 'Przelewy24 - currency'|trans }}:</label>
+		<div class="col-sm-9">
+			<input type="text" name="p24_currency" title="{{ 'Przelewy24 - currency'|trans }}" value="{{ settings.p24_currency }}" class="target_pay_p24 form-control">
+		</div>
+	</div>
+	<div class="form-group row">
+		<div class="col-sm-9 offset-sm-3">
+			<label><input type="checkbox" name="p24_sandbox" title="{{ 'Przelewy24 - sandbox'|trans }}" {% if settings.p24_sandbox %}checked{% endif %}> {{ 'Przelewy24 - sandbox'|trans }}</label>
+		</div>
+	</div>
+	<div class="form-group row">
+		<div class="col-sm-9 offset-sm-3">
+			<input type="submit" value="{{ 'Save'|trans }}" class="btn btn-primary">
+		</div>
+	</div>
+</form>
+{% endblock %}
