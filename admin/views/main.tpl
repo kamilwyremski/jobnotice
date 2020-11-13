@@ -14,8 +14,8 @@
 	<link rel="stylesheet" href="views/css/style.css">
 	<link rel="shortcut icon" href="images/favicon.png"/>
 
-	<script src="js/jquery-3.3.1.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
+	<script src="../js/jquery-3.5.1.min.js"></script>
+	<script src="../js/bootstrap.min.js"></script>
 	<script src="js/bootstrap-datepicker.min.js"></script>
 	<script src="js/bootstrap-datepicker.pl.min.js"></script>
 	<script src="js/ckeditor/ckeditor.js"></script>

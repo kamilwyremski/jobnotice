@@ -1,6 +1,13 @@
 
 {% extends "main.tpl" %}
 
+{% block javascript %}
+	{{ parent() }}
+	{% if settings.search_box_address and settings.google_maps_api %}
+		<script src="https://maps.googleapis.com/maps/api/js?key={{ settings.google_maps_api }}&v=3.exp&libraries=places&callback=initGoogleMap&language={{ settings.lang }}" async defer></script>
+	{% endif %}
+{% endblock %}
+
 {% block content %}
 
 {% if slider %}

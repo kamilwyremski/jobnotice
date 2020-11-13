@@ -4,14 +4,14 @@
 {% block css %}
 	{{ parent() }}
 	{% if classified.photos %}
-		<link rel="stylesheet" href="views/{{ settings.template }}/css/lightbox.css"/>
+		<link rel="stylesheet" href="views/{{ settings.template }}/css/lightbox.min.css"/>
 	{% endif %}
 {% endblock %}
 
 {% block javascript %}
 	{{ parent() }}
 	{% if classified.photos %}
-		<script src="views/{{ settings.template }}/js/lightbox.js"></script>
+		<script src="views/{{ settings.template }}/js/lightbox.min.js"></script>
 		<script>
 			lightbox.option({
 				'albumLabel': "%1 / %2"

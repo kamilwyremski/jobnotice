@@ -6,7 +6,7 @@
 	{% if classifieds_show_map %}
 		<script>
 			function displayMap() {
-				autocomplete2 = new google.maps.places.Autocomplete((document.getElementById('search_box_address')), {types: ['geocode']});
+				new google.maps.places.Autocomplete((document.getElementById('search_box_address')), {types: ['geocode']});
 			}
 			function displayMapClassifieds(){
 				var map = new google.maps.Map(document.getElementById('google_maps'), {
@@ -61,7 +61,7 @@
 			}
 		</script>
 		<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
-		<script src="https://maps.googleapis.com/maps/api/js?key={{ settings.google_maps_api }}&v=3.exp&libraries=places&callback=initGoogleMap" async defer></script>
+		<script src="https://maps.googleapis.com/maps/api/js?key={{ settings.google_maps_api }}&v=3.exp&libraries=places&callback=initGoogleMap&language={{ settings.lang }}" async defer></script>
 	{% endif %}
 {% endblock %}
 
