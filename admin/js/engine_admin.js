@@ -117,3 +117,7 @@ function run_ckeditor(id,height=200){
 			removeDialogTabs: 'link:upload;image:upload'});
 	});
 }
+
+$(document).on({'show.bs.modal': function () {
+	$(this).removeAttr('tabindex');
+} }, '.modal');
