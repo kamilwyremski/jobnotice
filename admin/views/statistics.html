@@ -89,11 +89,11 @@
 		</div>
 		<div class="col-xl-2 col-sm-4">
 			<label>{{ 'Date start'|trans }}: </label>
-			<input id="statistics_date_from" title="{{ 'Select the starting date for analysis'|trans }}" type="text" value="{{ 'now'|date_modify('-30 day')|date('Y-m-d') }}" max="{{ 'now'|date('Y-m-d') }}" class="form-control datepicker">
+			<input id="statistics_date_from" title="{{ 'Select the starting date for analysis'|trans }}" type="date" value="{{ 'now'|date_modify('-30 day')|date('Y-m-d') }}" max="{{ 'now'|date('Y-m-d') }}" class="form-control">
 		</div>
 		<div class="col-xl-2 col-sm-4">
 			<label>{{ 'Date finish'|trans }}: </label>
-			<input id="statistics_date_to" title="{{ 'Select the end date for analysis'|trans }}" type="text" value="{{ 'now'|date('Y-m-d') }}" max="{{ 'now'|date('Y-m-d') }}" class="form-control datepicker">
+			<input id="statistics_date_to" title="{{ 'Select the end date for analysis'|trans }}" type="date" value="{{ 'now'|date('Y-m-d') }}" max="{{ 'now'|date('Y-m-d') }}" class="form-control">
 		</div>
 		<div class="col-xl-2 col-sm-4">
 			<label>&nbsp;</label><br>

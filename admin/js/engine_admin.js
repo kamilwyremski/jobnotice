@@ -58,8 +58,6 @@
 		return false;
 	})
 
-	$('.datepicker').datepicker({language: 'pl',  format: 'yyyy-mm-dd'});
-
 	$('.select_option').click(function(){
 		$this = $(this);
 		depth = $this.data('depth');
