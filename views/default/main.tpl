@@ -159,7 +159,6 @@
 		</div>
 		<div id="footer_bottom" class="text-center">
 			{{ settings.footer_bottom|raw }}
-			{{ settings.footer_text|raw }}
 		</div>
 	</footer>
 
