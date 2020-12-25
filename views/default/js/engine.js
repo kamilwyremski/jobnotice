@@ -53,17 +53,6 @@ $(document).ready(function(){
 		}
 	})
 
-	let $back_to_top = $('#back_to_top');
-	function scroll() {
-		if($(window).scrollTop() > 150){
-			$back_to_top.removeClass('back_to_top_hidden');
-		}else{
-			$back_to_top.addClass('back_to_top_hidden');
-		}
-	}
-	scroll();
-	document.onscroll = scroll;
-
 	function resize(){
 		if($(window).width()<992){
 			if($('#show_form_search_classifieds').hasClass('collapsed')){
@@ -81,7 +70,18 @@ $(document).ready(function(){
 		return false;
 	})
 
-	$('#back_to_top').on("click", function(){
+	const $back_to_top = $('#back_to_top');
+	function scroll() {
+		if($(window).scrollTop() > 150){
+			$back_to_top.removeClass('back_to_top_hidden');
+		}else{
+			$back_to_top.addClass('back_to_top_hidden');
+		}
+	}
+	scroll();
+	document.onscroll = scroll;
+
+	$back_to_top.on("click", function(){
 		$('html, body').stop().animate({scrollTop: 0}, 300);
 		$(this).blur();
 		return false;
