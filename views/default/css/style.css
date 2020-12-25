@@ -91,10 +91,7 @@
 .grecaptcha-badge { 
 	visibility: hidden; 
 }
-/* top & menu nav*/
-#top{
-	background-color: #525764; padding: 4px 20px;
-}
+/* menu nav */
 #menu_box{
 	background-color: white; border-bottom: solid 1px #e8e8e8;
 }

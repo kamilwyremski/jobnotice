@@ -33,9 +33,6 @@
 	{{ settings.code_head|raw }}
 </head>
 <body>
-	<div id="top" class="container-fluid">
-		<p class="text-right small text-white mb-0">JobNotice 1.1</p>
-	</div>
 	<nav class="navbar fixed-top navbar-expand-md navbar-light" id="menu_box">
 		<a class="navbar-brand" href="{{ settings.base_url }}" title="{{ settings.title }}">{% if settings.logo %}<img src="{{ settings.logo }}" alt="{{ settings.title }}">{% else %}{{ settings.title }}{% endif %}</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Toggle navigation">
