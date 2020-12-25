@@ -83,7 +83,7 @@ class settings {
 
 	public static function checkWordsBlackList(string $content){
 		global $settings;
-		$filtered_text = $content;
+		$filtered_text = str_replace("&nbsp;"," ",$content);
 		if($settings['black_list_words']){
 			$filter_terms = array_map('trim', array_filter(explode(',', $settings['black_list_words'])));
 			foreach($filter_terms as $word){
