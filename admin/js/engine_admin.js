@@ -107,7 +107,7 @@ function closeRoxySelectFile(){
 }
 
 function run_ckeditor(id,height=200){
-	var roxyFileman = 'js/ckeditor/fileman/php.html';
+	var roxyFileman = 'js/ckeditor/fileman/index.php';
 	$(function(){
 		CKEDITOR.replace( id,{height: height,
 			filebrowserBrowseUrl:roxyFileman,
