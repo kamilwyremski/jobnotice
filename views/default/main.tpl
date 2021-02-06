@@ -142,8 +142,8 @@
 							<li><a class="main-color-2" href="{{ path('classifieds') }}" title="{{ 'Search the best classifieds'|trans }}">{{ 'Classifieds'|trans }}</a></li>
 							<li><a class="main-color-2" href="{{ path('login') }}" title="{{ 'Log in on the website'|trans }}">{{ 'Log in'|trans }}</a></li>
 							<li><a class="main-color-2" href="{{ path('my_documents') }}" title="{{ 'My documents'|trans }}">{{ 'My documents'|trans }}</a></li>
-			   			<li><a class="main-color-2" href="{{ path('rules') }}" title="{{ 'Terms of service'|trans }}">{{ 'Terms of service'|trans }}</a><li>
-			        <li><a class="main-color-2" href="{{ path('privacy_policy') }}" title="{{ 'Privacy policy'|trans }}">{{ 'Privacy policy'|trans }}</a></li>
+							<li><a class="main-color-2" href="{{ path('rules') }}" title="{{ 'Terms of service'|trans }}">{{ 'Terms of service'|trans }}</a></li>
+							<li><a class="main-color-2" href="{{ path('privacy_policy') }}" title="{{ 'Privacy policy'|trans }}">{{ 'Privacy policy'|trans }}</a></li>
 							<li><a class="main-color-2" href="{{ path('contact') }}" title="{{ 'Contact us'|trans }}">{{ 'Contact'|trans }}</a></li>
 							<li><a class="main-color-2" href="{{ path('info') }}" title="{{ 'Info about us'|trans }}">{{ 'Info'|trans }}</a></li>
 							{% if settings.enable_articles %}<li><a class="main-color-2" href="{{ path('articles') }}" title="{{ 'Articles'|trans }}">{{ 'Articles'|trans }}</a></li>{% endif %}
