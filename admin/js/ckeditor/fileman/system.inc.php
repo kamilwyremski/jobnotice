@@ -20,6 +20,17 @@
 
   Contact: Lyubomir Arsov, liubo (at) web-lobby.com
 */
+
+session_start();
+
+require_once(realpath(dirname(__FILE__)).'/../../../../config/config.php');
+
+$admin = new admin();
+
+if(!$admin->is_logged()){
+	die('Access denied');
+}
+
 error_reporting(0);
 ini_set('display_errors', 'off');
 // You DON'T have to make any changes to this file. For Roxy Fileman user configuration see conf.json file.

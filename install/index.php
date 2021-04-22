@@ -78,7 +78,7 @@ if(!empty($_POST['base_url']) and !empty($_POST['server']) and !empty($_POST['us
 			file_put_contents('../config/db.php', '<?php
 $mysql_server = \''.$_POST['server'].'\';
 $mysql_user = \''.$_POST['user'].'\';
-$mysql_pass = \''.$_POST['password'].'\';
+$mysql_pass = \''.str_replace("'", "\'", $_POST['password']).'\';
 $mysql_db = \''.$_POST['name'].'\';
 
 define("_DB_PREFIX_", "'._DB_PREFIX_.'");
