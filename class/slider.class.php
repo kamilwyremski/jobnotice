@@ -33,8 +33,9 @@ class slider {
 		global $db;
 		$db->query('TRUNCATE `'._DB_PREFIX_.'slider`');
 		if(isset($data['content']) and is_array($data['content'])){
+			$contents = array_filter($data['content']);
 			$sth = $db->prepare('INSERT INTO `'._DB_PREFIX_.'slider`(content) VALUES (:content)');
-			foreach($data['content'] as $content){
+			foreach($contents as $content){
 				$sth->bindValue(':content', $content, PDO::PARAM_STR);
 				$sth->execute();
 			}

@@ -111,6 +111,9 @@
 #slider p{
 	margin:0;
 }
+#slider .carousel-item{
+    min-height: 250px;
+}
 #slider .carousel-control-prev, #slider .carousel-control-next{
     width: 5%;
 }
@@ -118,7 +121,7 @@
 	text-shadow: 0 1px 2px rgba(0,0,0,0.7);
 }
 #slider .carousel-caption {
-	bottom: 150px;
+	bottom: 150px; text-shadow: 0 1px 2px rgba(0,0,0,0.7);
 }
 #search_box{
 	z-index: 100; position: relative; padding-bottom:10px; padding-top: 80px;
