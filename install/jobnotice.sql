@@ -532,7 +532,7 @@ INSERT INTO `settings` (`name`, `value`) VALUES
 ('facebook_secret', ''),
 ('facebook_side_panel', ''),
 ('favicon', '/upload/images/favicon.png'),
-('footer_bottom', '<p>Strona pokazowa skryptu ofert pracy JobNotice</p>\r\n<p class=\"small\">JobNotice 1.1 &copy; Project 2020 - 2021 by <a href=\"https://itworksbetter.net\" target=\"_blank\" title=\"Creating websites\">IT Works Better</a></p>'),
+('footer_bottom', '<p>Strona pokazowa skryptu ofert pracy JobNotice</p>\r\n<p class=\"small\">JobNotice 1.2 &copy; Project 2020 - 2022 by <a href=\"https://itworksbetter.net\" target=\"_blank\" title=\"Creating websites\">IT Works Better</a></p>'),
 ('footer_top', '<p>JobNotice to&nbsp;skrypt dla strony internetowej z ofertami pracy.&nbsp;Dzięki niemu w szybki spos&oacute;b stworzysz własną stronę www i dzięki temu swoje źr&oacute;dło dochodu.</p>\r\n\r\n<p>Dzięki dużej liczbie opcji konfiguracyjnych możesz dostosować skrypt do swoich indywidualnych wymagań. Skrypt umożliwia zarabianie na umieszczonych reklamach lub wprowadzenie opłat za wystawienie i dodawanie ogłoszenia.</p>\r\n\r\n<p>Kup skrypt JobNotice:&nbsp;<a class=\"main-color-1\" href=\"https://sklep.itworksbetter.net/skrypty-stron-www/8-skrypt-ofert-pracy-jobnotice.html\">sklep.itworksbetter.net/skrypty-stron-www/8-skrypt-ofert-pracy-jobnotice.html</a></p>\r\n'),
 ('generate_sitemap', '1'),
 ('google_id', ''),

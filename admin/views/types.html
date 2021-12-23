@@ -2,11 +2,11 @@
 {% extends "main.tpl" %}
 
 {% block content %}
-<div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="{{ 'Add type'|trans }}">
+<div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="modalAddTitle">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">{{ 'Add type'|trans }}</h5>
+				<h5 class="modal-title" id="modalAddTitle">{{ 'Add type'|trans }}</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			</div>
 			<form method="post">
@@ -62,11 +62,11 @@
 				<td class="text-center"><button class="btn btn-link fas fa-trash-alt text-danger" title="{{ 'Delete'|trans }}" data-toggle="modal" data-target="#remove_{{ item.id }}"></button></td>
 			</tr>
 
-			<div class="modal fade" id="edit_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Edit'|trans }}: {{ item.name }}">
+			<div class="modal fade" id="edit_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalEditTitle{{ item.id }}">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h5 class="modal-title">{{ 'Edit'|trans }}: {{ item.name }}</h5>
+							<h5 class="modal-title" id="modalEditTitle{{ item.id }}">{{ 'Edit'|trans }}: {{ item.name }}</h5>
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 						</div>
 						<form method="post">
@@ -86,11 +86,11 @@
 				</div>
 			</div>
 
-			<div class="modal fade" id="remove_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Delete type'|trans }}: {{ item.name }}">
+			<div class="modal fade" id="remove_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalDeleteTitle{{ item.id }}">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h5 class="modal-title">{{ 'Delete type'|trans }}</h5>
+							<h5 class="modal-title" id="modalDeleteTitle{{ item.id }}">{{ 'Delete type'|trans }}</h5>
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 						</div>
 						<form method="post">
@@ -113,11 +113,11 @@
 	</table>
 	<p><button class="btn btn-link" data-toggle="modal" data-target="#arrange_alphabetically">{{ 'Arrange alphabetically'|trans }}</button></p>
 
-	<div class="modal fade" id="arrange_alphabetically" tabindex="-1" role="dialog" aria-labelledby="{{ 'Arrange alphabetically'|trans }}">
+	<div class="modal fade" id="arrange_alphabetically" tabindex="-1" role="dialog" aria-labelledby="modalArrangeAlphabeticallyTitle">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title">{{ 'Arrange alphabetically'|trans }}</h5>
+					<h5 class="modal-title" id="modalArrangeAlphabeticallyTitle">{{ 'Arrange alphabetically'|trans }}</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				</div>
 				<form method="post" class="form">

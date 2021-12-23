@@ -191,7 +191,6 @@
 		<script src="js/jquery-3.5.1.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 		<script src="js/easy-autocomplete/jquery.easy-autocomplete.min.js"></script>
-  	<script src="js/jquery.lazy.min.js"></script>
 		<script>
 			var links = {};
 			links.classifieds = '{{ path('classifieds') }}';

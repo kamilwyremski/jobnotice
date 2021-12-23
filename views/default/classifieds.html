@@ -116,7 +116,7 @@
 								</h4>
 								<ul class="list-unstyled">
 								{% for cat in categories %}
-									<li {% if get.category==cat.id %}class="active"{% endif %}><a href="{{ cat.search_path }}" title="{{ 'Category'|trans }}: {{ cat.name }}">{% if cat.thumb %}<img src="views/{{ settings.template }}/images/no_image.png" data-src="{{ cat.thumb }}" class="lazy" alt="{{ cat.name }}"> {% endif %}{{ cat.name }}{% if settings.show_number_classifieds_in_categories and not get.search is defined and not get.state and not get.type %} <span class="badge badge-secondary">{{ cat.number_classifieds }}</span>{% endif %}</a></li>
+									<li {% if get.category==cat.id %}class="active"{% endif %}><a href="{{ cat.search_path }}" title="{{ 'Category'|trans }}: {{ cat.name }}">{% if cat.thumb %}<img src="{{ cat.thumb }}" loading="lazy" alt="{{ cat.name }}"> {% endif %}{{ cat.name }}{% if settings.show_number_classifieds_in_categories and not get.search is defined and not get.state and not get.type %} <span class="badge badge-secondary">{{ cat.number_classifieds }}</span>{% endif %}</a></li>
 								{% endfor %}
 								</ul>
 							</nav>

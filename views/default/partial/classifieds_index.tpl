@@ -13,8 +13,8 @@
 			<div class="row no-gutters">
 				<div class="col-5">
 					<a href="{{ path('classified',classified.id,classified.slug) }}" title="{{ classified.name }}">
-						<img {% if classified.thumb %}class="lazy" data-src="upload/photos/{{ classified.thumb }}"{% endif %} src="views/{{ settings.template }}/images/no_image.png"
-						alt="{{ classified.name }}" onerror="this.src='views/{{ settings.template }}/images/no_image.png'">
+						<img src="{% if classified.thumb %}upload/photos/{{ classified.thumb }}{% else %}views/{{ settings.template }}/images/no_image.png{% endif %}"
+						alt="{{ classified.name }}" onerror="this.src='views/{{ settings.template }}/images/no_image.png'" loading="lazy">
 					</a>
 				</div>
 				<div class="col-7 classifieds_index_right">

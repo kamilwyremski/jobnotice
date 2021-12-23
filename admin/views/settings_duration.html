@@ -2,11 +2,11 @@
 {% extends "main.tpl" %}
 
 {% block content %}
-<div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="{{ 'Add display length'|trans }}">
+<div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="modalAddTitle">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">{{ 'Add display length'|trans }}</h5>
+				<h5 class="modal-title" id="modalAddTitle">{{ 'Add display length'|trans }}</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			</div>
 			<form method="post" class="form">
@@ -67,11 +67,11 @@
 				<td class="text-center"><button class="btn btn-link fas fa-trash-alt text-danger" title="{{ 'Delete display length'|trans }}" data-toggle="modal" data-target="#remove_{{ item.id }}"></button></td>
 			</tr>
 
-			<div class="modal fade" id="edit_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Edit display length'|trans }}">
+			<div class="modal fade" id="edit_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalEditTitle{{ item.id }}">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h5 class="modal-title">{{ 'Edit display length'|trans }}</h5>
+							<h5 class="modal-title" id="modalEditTitle{{ item.id }}">{{ 'Edit display length'|trans }}</h5>
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 						</div>
 						<form method="post" class="form">
@@ -107,11 +107,11 @@
 				</div>
 			</div>
 
-			<div class="modal fade" id="remove_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Delete display length'|trans }}">
+			<div class="modal fade" id="remove_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalDeleteTitle{{ item.id }}">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h5 class="modal-title">{{ 'Delete display length'|trans }}</h5>
+							<h5 class="modal-title" id="modalDeleteTitle{{ item.id }}">{{ 'Delete display length'|trans }}</h5>
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 						</div>
 						<form method="post">

@@ -2,11 +2,11 @@
 {% extends "main.tpl" %}
 
 {% block content %}
-<div class="modal fade" id="modal_remove_logs" tabindex="-1" role="dialog" aria-labelledby="{{ 'Delete logs'|trans }}">
+<div class="modal fade" id="modal_remove_logs" tabindex="-1" role="dialog" aria-labelledby="modalDeleteTitle">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">{{ 'Delete logs'|trans }}</h5>
+				<h5 class="modal-title" id="modalDeleteTitle">{{ 'Delete logs'|trans }}</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			</div>
 			<form method="post">
@@ -24,11 +24,11 @@
 	</div>
 </div>
 
-<div class="modal fade" id="modal_logout" tabindex="-1" role="dialog" aria-labelledby="{{ 'Logout all users'|trans }}">
+<div class="modal fade" id="modal_logout" tabindex="-1" role="dialog" aria-labelledby="modalLogoutTitle">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">{{ 'Logout all users'|trans }}</h5>
+				<h5 class="modal-title" id="modalLogoutTitle">{{ 'Logout all users'|trans }}</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			</div>
 			<form method="post">
@@ -113,11 +113,11 @@
 								<td class="text-center">{% if item.id!=admin.id %}<button class="btn btn-link" data-toggle="modal" data-target="#remove_{{ item.id }}" title="{{ 'Delete user'|trans }}"><i class="fas fa-trash-alt text-danger"></i></button>{% endif %}</td>
 							</tr>
 {% if item.id!=admin.id %}
-	<div class="modal fade" id="remove_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Delete user'|trans }}">
+	<div class="modal fade" id="remove_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalDeleteTitle{{ item.id }}">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title">{{ 'Delete user'|trans }} {{ item.username }}</h5>
+					<h5 class="modal-title" id="modalDeleteTitle{{ item.id }}">{{ 'Delete user'|trans }} {{ item.username }}</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				</div>
 				<div class="modal-body">

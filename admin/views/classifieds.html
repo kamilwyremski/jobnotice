@@ -140,11 +140,11 @@
 					<td class="text-center"><button class="btn btn-link fas fa-trash-alt text-danger" title="{{ 'Delete classified'|trans }}" data-toggle="modal" data-target="#remove_{{ item.id }}"></button></td>
 				</tr>
 
-				<div class="modal fade" id="remove_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Delete classified'|trans }}: {{ item.name }}">
+				<div class="modal fade" id="remove_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalDeleteTitle{{ item.id }}">
 					<div class="modal-dialog" role="document">
 						<div class="modal-content">
 							<div class="modal-header">
-								<h5 class="modal-title">{{ 'Delete classified'|trans }}</h5>
+								<h5 class="modal-title" id="modalDeleteTitle{{ item.id }}">{{ 'Delete classified'|trans }}</h5>
 								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 							</div>
 							<form method="post">
@@ -168,11 +168,11 @@
 				</div>
 
 				{% if item.active %}
-					<div class="modal fade" id="deactivate_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Deactivate classified'|trans }}: {{ item.name }}">
+					<div class="modal fade" id="deactivate_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalDeactivateTitle{{ item.id }}">
 						<div class="modal-dialog" role="document">
 							<div class="modal-content">
 								<div class="modal-header">
-									<h5 class="modal-title">{{ 'Deactivate classified'|trans }}</h5>
+									<h5 class="modal-title" id="modalDeactivateTitle{{ item.id }}">{{ 'Deactivate classified'|trans }}</h5>
 									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 								</div>
 								<form method="post">
@@ -191,11 +191,11 @@
 						</div>
 					</div>
 				{% else %}
-					<div class="modal fade" id="activate_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Activate classified'|trans }}: {{ item.name }}">
+					<div class="modal fade" id="activate_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalActivateTitle{{ item.id }}">
 						<div class="modal-dialog" role="document">
 							<div class="modal-content">
 								<div class="modal-header">
-									<h5 class="modal-title">{{ 'Activate classified'|trans }}</h5>
+									<h5 class="modal-title" id="modalActivateTitle{{ item.id }}">{{ 'Activate classified'|trans }}</h5>
 									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 								</div>
 								<form method="post">
@@ -220,11 +220,11 @@
 				{% endif %}
 
 				{% if item.promoted %}
-					<div class="modal fade" id="disable_promote_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'No promote classified'|trans }}: {{ item.name }}">
+					<div class="modal fade" id="disable_promote_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalNoPromoteTitle{{ item.id }}">
 						<div class="modal-dialog" role="document">
 							<div class="modal-content">
 								<div class="modal-header">
-									<h5 class="modal-title">{{ 'No promote classified'|trans }}</h5>
+									<h5 class="modal-title" id="modalNoPromoteTitle{{ item.id }}">{{ 'No promote classified'|trans }}</h5>
 									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 								</div>
 								<form method="post">
@@ -243,11 +243,11 @@
 						</div>
 					</div>
 				{% else %}
-					<div class="modal fade" id="enable_promote_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Promote classified'|trans }}: {{ item.name }}">
+					<div class="modal fade" id="enable_promote_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalPromoteTitle{{ item.id }}">
 						<div class="modal-dialog" role="document">
 							<div class="modal-content">
 								<div class="modal-header">
-									<h5 class="modal-title">{{ 'Promote classified'|trans }}</h5>
+									<h5 class="modal-title" id="modalPromoteTitle{{ item.id }}">{{ 'Promote classified'|trans }}</h5>
 									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 								</div>
 								<form method="post">

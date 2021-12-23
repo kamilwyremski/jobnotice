@@ -190,11 +190,11 @@
 					<td class="text-center"><button class="btn btn-link fas fa-trash-alt text-danger" title="{{ 'Delete user'|trans }}" data-toggle="modal" data-target="#remove_{{ item.id }}"></button></td>
 				</tr>
 
-				<div class="modal fade" id="remove_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Delete user'|trans }}: {{ item.username }}">
+				<div class="modal fade" id="remove_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalDeleteTitle{{ item.id }}">
 					<div class="modal-dialog" role="document">
 						<div class="modal-content">
 							<div class="modal-header">
-								<h5 class="modal-title">{{ 'Delete user'|trans }}</h5>
+								<h5 class="modal-title" id="modalDeleteTitle{{ item.id }}">{{ 'Delete user'|trans }}</h5>
 								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 							</div>
 							<form method="post">

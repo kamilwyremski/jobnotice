@@ -142,7 +142,7 @@
 			<nav class="container">
 				<div class="row">
 					{% for item in categories %}
-						<div class="col-lg-3 col-md-4 col-sm-3 col-6 index_categories"><a href="{{ path('classifieds') }}?category={{ item.id }}" title="{{ 'Category'|trans }}: {{ item.name }}" class="{% if item.list_subcategories %}index_show_subcategories{% endif %}" data-id="{{ item.id }}" data-index="{{ loop.index }}">{% if item.thumb %}<img src="views/{{ settings.template }}/images/no_image.png" data-src="{{ item.thumb }}" alt="{{ item.name }}" class="lazy"> {% endif %}<span class="name">{{ item.name }}</span></a></div>
+						<div class="col-lg-3 col-md-4 col-sm-3 col-6 index_categories"><a href="{{ path('classifieds') }}?category={{ item.id }}" title="{{ 'Category'|trans }}: {{ item.name }}" class="{% if item.list_subcategories %}index_show_subcategories{% endif %}" data-id="{{ item.id }}" data-index="{{ loop.index }}">{% if item.thumb %}<img src="{{ item.thumb }}" alt="{{ item.name }}" loading="lazy"> {% endif %}<span class="name">{{ item.name }}</span></a></div>
 					{% endfor %}
 				</div>
 				{% for item in categories %}
@@ -196,9 +196,8 @@
 			{% for article in articles %}
 				<div class="col-lg-3 col-sm-6 col-12">
 					<a href="{{ path('article',article.id,article.slug) }}" title="{{ article.name }}">
-						<img {% if article.thumb %}data-src="{{ article.thumb }}"{% endif %}
-						src="views/{{ settings.template }}/images/no_image.png"
-						alt="{{ article.name }}" class="img-fluid {% if article.thumb %}lazy{% endif %}" onerror="this.src='views/{{ settings.template }}/images/no_image.png'">
+						<img src="{% if article.thumb %}{{ article.thumb }}{% else %}views/{{ settings.template }}/images/no_image.png{% endif %}"
+						alt="{{ article.name }}" class="img-fluid" onerror="this.src='views/{{ settings.template }}/images/no_image.png'">
 					</a>
 					<h5><a href="{{ path('article',article.id,article.slug) }}" class="main-color-2">{{ article.name }}</a></h5>
 					<p class="text-muted small mb-3">{{ article.lid }}</p>

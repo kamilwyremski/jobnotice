@@ -13,11 +13,11 @@
 
 {% if mails_queue %}
 
-	<div class="modal fade" id="modal_cancel_mailing" tabindex="-1" role="dialog" aria-labelledby="{{ 'Cancel mailing'|trans }}">
+	<div class="modal fade" id="modal_cancel_mailing" tabindex="-1" role="dialog" aria-labelledby="modalCancelMailingTitle">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title">{{ 'Cancel mailing'|trans }}</h5>
+					<h5 class="modal-title" id="modalCancelMailingTitle">{{ 'Cancel mailing'|trans }}</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				</div>
 				<form method="post">

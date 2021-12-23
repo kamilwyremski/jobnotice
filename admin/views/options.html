@@ -36,8 +36,8 @@
 							<input type="hidden" name="id" value="{{ item.id }}">
 							<input type="hidden" name="position" value="{{ item.position }}">
 							<input type="hidden" name="token" value="{{ generateToken('position_options') }}">
-							<button type="submit" class="btn btn-link fas fa-arrow-up {% if  loop.last or loop.first %}inactive{% endif %}"   name="+"></button>
-							<button type="submit" class="btn btn-link fas fa-arrow-down {% if loop.last or loop.first %}inactive{% endif %}" name="-"></button>
+							<button type="submit" class="btn btn-link fas fa-arrow-up {% if loop.first %}inactive{% endif %}" name="+"></button>
+							<button type="submit" class="btn btn-link fas fa-arrow-down {% if loop.last %}inactive{% endif %}" name="-"></button>
 						</form>
 					</td>
 					<td>{{ item.kindName }}</td>
@@ -49,11 +49,11 @@
 					<td class="text-center"><button class="btn btn-link fas fa-trash-alt text-danger" title="{{ 'Delete'|trans }}" data-toggle="modal" data-target="#remove_{{ item.id }}"></button></td>
 				</tr>
 
-				<div class="modal fade" id="remove_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="{{ 'Delete option'|trans }}: {{ item.name }}">
+				<div class="modal fade" id="remove_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalDeleteTitle{{ item.id }}">
 					<div class="modal-dialog" role="document">
 						<div class="modal-content">
 							<div class="modal-header">
-								<h5 class="modal-title">{{ 'Delete option'|trans }}</h5>
+								<h5 class="modal-title" id="modalDeleteTitle{{ item.id }}">{{ 'Delete option'|trans }}</h5>
 								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 							</div>
 							<form method="post">
