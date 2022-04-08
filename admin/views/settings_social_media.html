@@ -30,8 +30,9 @@
 	<div class="form-group row">
 		<div class="col-sm-9 offset-sm-3">
 			<label><input type="checkbox" name="facebook_side_panel" title="{{ 'Show side panel with Facebook'|trans }}" {% if settings.facebook_side_panel %}checked{% endif %} class="set_required" data-target="target_facebook_side_panel"> {{ 'Show side panel with Facebook'|trans }}</label><br>
-			<label><input type="checkbox" name="allow_comments_fb_profile" title="{{ 'Allow commenting user profile via Facebook account'|trans }}" {% if settings.allow_comments_fb_profile %}checked{% endif %}> {{ 'Allow commenting user profile via Facebook account'|trans }}</label>
-			<label><input type="checkbox" name="allow_comments_fb_article" title="{{ 'Allow comments on articles via Facebook account'|trans }}" {% if settings.allow_comments_fb_article %}checked{% endif %}> {{ 'Allow comments on articles via Facebook account'|trans }}</label>
+			<label><input type="checkbox" name="allow_comments_fb_profile" title="{{ 'Allow commenting user profile via Facebook account'|trans }}" {% if settings.allow_comments_fb_profile %}checked{% endif %}> {{ 'Allow commenting user profile via Facebook account'|trans }}</label><br>
+			<label><input type="checkbox" name="allow_comments_fb_article" title="{{ 'Allow comments on articles via Facebook account'|trans }}" {% if settings.allow_comments_fb_article %}checked{% endif %}> {{ 'Allow comments on articles via Facebook account'|trans }}</label><br>
+			<small class="form-text text-muted"><a href="https://developers.facebook.com/docs/plugins/comments/" title="Facebook Comments Documentation" target="_blank" rel="nofollow noopener">https://developers.facebook.com/docs/plugins/comments/</a></small>
 		</div>
 	</div>
 	<hr>
@@ -43,8 +44,8 @@
 	</div>
 	<div class="form-group row">
 		<div class="col-sm-9 offset-sm-3">
-			<label><input type="checkbox" name="facebook_login" title="{{ 'Allow login through Facebook'|trans }}" {% if settings.facebook_login %}checked{% endif %} class="set_required" data-target="target_facebook_login"> {{ 'Allow login through Facebook'|trans }}</label>
-			<p><a href="https://developers.facebook.com/apps/" target="_blank" title="Facebook Developers">https://developers.facebook.com/apps/</a></p>
+			<label><input type="checkbox" name="facebook_login" title="{{ 'Allow login through Facebook'|trans }}" {% if settings.facebook_login %}checked{% endif %} class="set_required" data-target="target_facebook_login"> {{ 'Allow login through Facebook'|trans }}</label><br>
+			<small class="form-text text-muted"><a href="https://developers.facebook.com/apps/" target="_blank" title="Facebook Developers">https://developers.facebook.com/apps/</a></small>
 		</div>
 	</div>
 	<div class="form-group row">
@@ -62,8 +63,8 @@
 	<hr>
 	<div class="form-group row">
 		<div class="col-sm-9 offset-sm-3">
-			<label><input type="checkbox" name="google_login" title="{{ 'Allow login through Google'|trans }}" {% if settings.google_login %}checked{% endif %} class="set_required" data-target="target_google_login"> {{ 'Allow login through Google'|trans }}</label>
-			<p><a href="https://console.developers.google.com/" target="_blank" title="Google API Console">https://console.developers.google.com/</a></p>
+			<label><input type="checkbox" name="google_login" title="{{ 'Allow login through Google'|trans }}" {% if settings.google_login %}checked{% endif %} class="set_required" data-target="target_google_login"> {{ 'Allow login through Google'|trans }}</label><br>
+			<small class="form-text text-muted"><a href="https://console.developers.google.com/" target="_blank" title="Google API Console">https://console.developers.google.com/</a></small>
 		</div>
 	</div>
 	<div class="form-group row">

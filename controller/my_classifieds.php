@@ -22,15 +22,16 @@ if(!empty($_GET['slug'])){
 	throw new noFoundException();
 }
 
-if($settings['add_classifieds']=='only_employer' and (!$user->getId() or $user->type!="Employer")){
-	$_SESSION['flash'] = 'classifieds_only_employer';
-	header("Location: ".path('login')."?redirect=".path('my_classifieds'));
-	die('redirect');
-}elseif($settings['add_classifieds']=='only_logged' and !$user->getId()){
+if(!$user->getId()){
 	header("Location: ".path('login')."?redirect=".path('my_classifieds'));
 	die('redirect');
 }
 
+if($settings['add_classifieds']=='only_employer' and $user->type!="Employer"){
+	$_SESSION['flash'] = 'classifieds_only_employer';
+	header("Location: ".path('login')."?redirect=".path('my_classifieds'));
+	die('redirect');
+}
 
 if(isset($_POST['action'])){
 	if($_POST['action']=='finish_classified' and isset($_POST['id']) and $_POST['id']>=0 and checkToken('finish_classified')){
