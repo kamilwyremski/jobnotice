@@ -14,13 +14,13 @@
  * LICENSE THE SCRIPT
  * *********************************************************************/
 
-function GetUsernameFromFacebookURL(string $url) {
-  $correctURLPattern = '/^https?:\/\/(?:www|m)\.facebook.com\/(?:profile\.php\?id=)?([a-zA-Z0-9\.]+)$/';
-		if (!preg_match($correctURLPattern, $url, $matches)) {
-				return '';
-		}
-  return $matches[1];
-}
+ function GetUsernameFromFacebookURL(string $url) {
+     $correctURLPattern = '/^https?:\/\/(?:www|m)\.facebook.com\/(?:profile\.php\?id=)?([a-zA-Z0-9\.]+)$/';
+     if (!preg_match($correctURLPattern, $url, $matches)) {
+         return '';
+     }
+     return $matches[1];
+ }
 
 function generateToken(string $name){
 	if(empty($_SESSION['token'])){

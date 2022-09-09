@@ -34,13 +34,14 @@ if($settings['add_classifieds']=='only_employer' and (!$user->getId() or $user->
 if(!empty($_GET['code'])){$code = $_GET['code'];}else{$code = '';}
 
 if(isset($_POST['action'])){
+	
 	if(($user->getId() or isset($_POST['rules']) or $_POST['action']=='edit') and
 		!empty($_POST['name']) and
 		!empty($_POST['email']) and filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) and
 		!empty($_POST['session_code']) and sessionClassified::check($_POST['session_code']) and
-		(!empty($_POST['phone'] or !$settings['required_phone'])) and
-		(!empty($_POST['address'] or !$settings['required_address'])) and
-		(!empty($_POST['salary'] or !$settings['required_salary'])) and
+		(!empty($_POST['phone']) or !$settings['required_phone']) and
+		(!empty($_POST['address']) or !$settings['required_address']) and
+		((isset($_POST['salary']) and $_POST['salary']>=0) or !$settings['required_salary']) and
 		((!empty($_POST['category_id']) and !empty(category::show($_POST['category_id'])) or !$settings['required_category'] or count(category::list())==0)) and
 		((!empty($_POST['type_id']) and !empty(type::showById($_POST['type_id'])) or !$settings['required_type'] or count(type::list())==0)) and
 		((!empty($_POST['state_id']) and !empty(state::showById($_POST['state_id'])) or !$settings['required_state'] or count(state::list())==0))
