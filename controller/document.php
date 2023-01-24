@@ -1,7 +1,7 @@
 <?php
 /************************************************************************
  * The script of website with job offers JobNotice
- * Copyright (c) 2020 - 2022 by IT Works Better https://itworksbetter.net
+ * Copyright (c) 2020 - 2023 by IT Works Better https://itworksbetter.net
  * Project by Kamil Wyremski https://wyremski.pl
  *
  * All right reserved
@@ -24,6 +24,9 @@ if(empty($_GET['slug'])){
 
 $document = document::show($_GET['slug']);
 if($document){
+	if(!document::checkPermissions($document['id'])){
+		throw new noFoundException();
+	}
 	$document_url = _FOLDER_DOCUMENTS_.'/'.$document['url'];
 	header('Content-Type: application/octet-stream');
 	header("Content-Transfer-Encoding: Binary"); 

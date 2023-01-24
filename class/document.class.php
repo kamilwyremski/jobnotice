@@ -1,7 +1,7 @@
 <?php
 /************************************************************************
  * The script of website with job offers JobNotice
- * Copyright (c) 2020 - 2022 by IT Works Better https://itworksbetter.net
+ * Copyright (c) 2020 - 2023 by IT Works Better https://itworksbetter.net
  * Project by Kamil Wyremski https://wyremski.pl
  *
  * All right reserved
@@ -69,7 +69,9 @@ class document {
 				$sth->bindValue(':user_id', $user->getId(), PDO::PARAM_INT);
 				$sth->bindValue(':id', $id, PDO::PARAM_INT);
 				$sth->execute();
-				if($sth->fetchColumn()){return true;}
+				if($sth->fetchColumn()){
+					return true;
+				}
 			}
 		}
 		return false;

@@ -682,8 +682,6 @@ $translate['show phone...'] = 'pokaż numer telefonu...';
 $translate['to negotiate'] = 'do negocjacji';
 $translate['unique'] = 'unikalne';
 
-
-
 $translate['My documents'] = 'Moje dokumenty';
 $translate['Add new document'] = 'Dodaj nowy dokument';
 $translate['Name of the document'] = 'Nazwa dokumentu';
@@ -693,6 +691,4 @@ $translate['There was an error adding the document'] = 'Wystąpił błąd przy d
 $translate['Filename'] = 'Nazwa pliku';
 $translate['You can easily add documents as an attachment to an email'] = 'Dokumenty możesz w łatwy sposób dodać jako załącznik do maila';
 $translate['Email template for the offer contact form'] = 'Szablon maila dla formularza kontaktowego oferty';
-$translate[''] = '';
-$translate[''] = '';
-$translate[''] = '';
+$translate['Delete document'] = 'Usuń dokument';

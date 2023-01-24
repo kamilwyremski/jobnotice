@@ -11,7 +11,7 @@ $(function(){
 
 });
 
-var add_classified = new Vue({
+new Vue({
 	el: '#add_classified',
 	data: {
 	  list_categories: [],
@@ -30,19 +30,19 @@ var add_classified = new Vue({
 	},
 	methods: {
 		loadCategories: function (category_id, next_category = [], load_options = true) {
-			var vm = this
+			const vm = this;
 			vm.waiting_for_load_categories = true;
-			let params = new URLSearchParams();
+			const params = new URLSearchParams();
 			params.append('action', 'get_categories_and_options' );
 			params.append('category_id', category_id );
 			params.append('load_options', load_options );
 			axios.post(
-			  location.href, params
+				location.href, params
 			)
 			.then((response) => {
-				let last_list_options = vm.list_options;
+				const last_list_options = vm.list_options;
 				vm.list_options = [];
-				if(response.data.options!==undefined && response.data.options.length){
+				if(response.data.options !== undefined && response.data.options.length){
 					let options = [];
 					response.data.options.forEach(function (option) {
 						option.value = "";
@@ -65,16 +65,21 @@ var add_classified = new Vue({
 					vm.list_options = options;
 				}
 				if(response.data.categories !== undefined && response.data.categories.length){
-					let d = {'categories':response.data.categories, 'parent_id': category_id, 'selected_id':category_id, 'required': (category_id) ? required_subcategory : required_category};
+					const d = {
+						'categories':response.data.categories, 
+						'parent_id': category_id, 
+						'selected_id':category_id, 
+						'required': (category_id) ? required_subcategory : required_category
+					};
 					if(vm.list_categories){
 						vm.list_categories.push(d);
 					}else{
 						vm.list_categories = d;
 					}
 					if(next_category.length){
-						let next_c = next_category.shift();
+						const next_c = next_category.shift();
 						vm.list_categories[vm.list_categories.length-1].selected_id = next_c;
-						let load_options = (next_category.length) ? 0 : 1;
+						const load_options = (next_category.length) ? 0 : 1;
 						vm.loadCategories(next_c, next_category, load_options);
 					}
 				}
@@ -85,7 +90,7 @@ var add_classified = new Vue({
 			} ) ;
 		},
 		selectCategories: function (parent_index) {
-			let category_id = this.list_categories[parent_index].selected_id;
+			const category_id = this.list_categories[parent_index].selected_id;
 			if(category_id != this.list_categories[parent_index].parent_id){
 				this.list_categories.splice(parent_index+1)
 				this.loadCategories(category_id, parent_index)
@@ -98,9 +103,9 @@ var add_classified = new Vue({
 			}
 		},
 		loadPhotos: function (event) {
-			var vm = this;
-			var files = event.target.files;
-			var files_length = files.length;
+			const vm = this;
+			const files = event.target.files;
+			const files_length = files.length;
 			if(files_length){
 				vm.photos_progress = 0;
 				vm.photos_length = vm.photos.length;
@@ -109,7 +114,7 @@ var add_classified = new Vue({
 					vm.photos_length++;
 					if(vm.photos_length <= photo_max){
 						vm.photos_is_loading = true;
-						let params = new FormData();
+						const params = new FormData();
 						params.append('action', 'add_photo' );
 						params.append('file', file);
 						axios.post(
@@ -121,7 +126,7 @@ var add_classified = new Vue({
 						)
 						.then((response) => {
 							photo_index++;
-							vm.photos_progress += Math.round(100/files_length);
+							vm.photos_progress += Math.round(100 / files_length);
 							if(response.data.status){
 								if(vm.photos){
 									vm.photos.push(response.data);
@@ -131,7 +136,7 @@ var add_classified = new Vue({
 							}else{
 								vm.photos_alert = response.data.info;
 							}
-							if(photo_index==files_length || vm.photos_length>=photo_max){
+							if(photo_index == files_length || vm.photos_length >= photo_max){
 								vm.photos_is_loading = false;
 							}
 						})
@@ -147,20 +152,20 @@ var add_classified = new Vue({
 			this.photos_alert = '';
 		},
 		getCoordinates: function () {
-			var vm = this;
+			const vm = this;
 			let address = document.getElementById('add_address').value;
 			if(!address){
-				let input_state_id = document.querySelector("#state_id");
+				const input_state_id = document.querySelector("#state_id");
 				if(input_state_id && input_state_id.selectedIndex){
-					address += " "+input_state_id.options[input_state_id.selectedIndex].text;
-					let input_state2_id = document.querySelector(".substate_"+input_state_id.value+" select.form-control");
+					address += " " + input_state_id.options[input_state_id.selectedIndex].text;
+					const input_state2_id = document.querySelector(".substate_"+input_state_id.value+" select.form-control");
 					if(input_state2_id && input_state2_id.selectedIndex){
-						address += " "+input_state2_id.options[input_state2_id.selectedIndex].text;
+						address += " " + input_state2_id.options[input_state2_id.selectedIndex].text;
 					}
 				}
 			}
 			if(address){
-				let params = new FormData();
+				const params = new FormData();
 				params.append('action', 'get_coordinates' );
 				params.append('address', address);
 				axios.post(
@@ -168,7 +173,7 @@ var add_classified = new Vue({
 				)
 				.then((response) => {
 					if(response.data.lat && response.data.long){
-						var latlng = new google.maps.LatLng(response.data.lat, response.data.long);
+						const latlng = new google.maps.LatLng(response.data.lat, response.data.long);
 						google_maps_marker.setPosition(latlng);
 						google_maps.setCenter(latlng);
 						vm.inputAddressLat = response.data.lat;
@@ -179,7 +184,7 @@ var add_classified = new Vue({
 		}		
 	},
 	beforeMount(){
-		let load_options = (list_categories.length) ? 0 : 1;
+		const load_options = (list_categories.length) ? 0 : 1;
 		this.loadCategories(0, list_categories, load_options);
 	}
 })

@@ -1,7 +1,7 @@
 $(document).ready(function(){
 
 	function select_account_type($this){
-		if($this.val()=='Employer'){
+		if($this.val() == 'Employer'){
 			$('.account_employer').show().find('input').prop("disabled", false);
 		}else{
 			$('.account_employer').hide().find('input').prop("disabled", true);
@@ -28,18 +28,20 @@ $(document).ready(function(){
 	})
 
 	$('.select_state').change(function(){
-		let $this = $(this);
+		const $this = $(this);
 		$('.substates').hide().find('select').prop("disabled", true);
 		$('.substate_'+$this.val()).show().find('select').prop("disabled", false);
 	})
 
 	$('.form-search').submit(function(){
-		let $form = $(this), $address = $form.find(':input[name="address"]'), flag = true;
-		if(!$address.length || $address.val()==''){
+		const $form = $(this);
+		const $address = $form.find(':input[name="address"]');
+		let flag = true;
+		if(!$address.length || $address.val() == ''){
 			$form.find(':input[name="distance"]').prop( "disabled",true);
 		}
 		$form.find(':input:enabled').not(':input[type=submit], [name=search]').each(function(){
-			$this = $(this);
+			const $this = $(this);
 			if($this.val()=='' && $this.prop("defaultValue")==''){
 				$this.prop( "disabled",true);
 			}else{
@@ -52,7 +54,7 @@ $(document).ready(function(){
 	})
 
 	function resize(){
-		if($(window).width()<992){
+		if($(window).width() < 992){
 			if($('#show_form_search_classifieds').hasClass('collapsed')){
 				$("#form_search_classifieds").removeClass("show");
 			}
@@ -86,13 +88,15 @@ $(document).ready(function(){
 	})
 
 	$('.show_hidden_data').on("click", function(){
-		let $this = $(this);
+		const $this = $(this);
 		if($this.hasClass('show_hidden_data_active')){
-			let type = $this.data('type'), data = href = '';
-			if(type=='phone'){
+			const type = $this.data('type');
+			let data = '';
+			let href = '';
+			if(type == 'phone'){
 				data = $this.data('data')
 				href = 'tel:'+data;
-			}else if(type=='email'){
+			}else if(type == 'email'){
 				data = $this.data('data_0')+'@'+$this.data('data_1');
 				href = 'mailto:'+data;
 			}else{
@@ -111,9 +115,9 @@ $(document).ready(function(){
 	);
 
 	$('.reset_form').click(function(){
-		let $form = $(this).parents('form');
+		const $form = $(this).parents('form');
 		$form.find('input').each(function(){
-			let $this = $(this);
+			const $this = $(this);
 			switch ($this.attr('type')) {
 				case 'text':
 				case 'number':
@@ -132,31 +136,34 @@ $(document).ready(function(){
 	})
 
 	$('.index_show_subcategories').click(function(){
-		let $this = $(this), active = $this.hasClass('active'), eq = 0, $subcategories = $('#index_subcategory_'+$this.data('id'));
+		const $this = $(this);
+		const active = $this.hasClass('active');
+		const $subcategories = $('#index_subcategory_'+$this.data('id'));
+		let eq = 0;
 		$('.index_subcategories').hide();
 		$('.index_show_subcategories').removeClass('active');
 		if(!active){
-			index = $this.data('index');
+			const index = $this.data('index');
 			eq = index;
-			window_width = $(window).width();
-			if(window_width<540){
-				if(index%2==0){
+			const window_width = $(window).width();
+			if(window_width < 540){
+				if(index%2 == 0){
 					eq = index-1;
 				}
-			}else if(window_width<992 && window_width>=768){
+			}else if(window_width < 992 && window_width >= 768){
 				mod = index%3;
-				if(mod==0){
+				if(mod == 0){
 					eq = index-1;
-				}else if(mod==1){
+				}else if(mod == 1){
 					eq = index+1;
 				}
 			}else{
 				mod = index%4;
-				if(mod==0){
+				if(mod ==0 ){
 					eq = index-1;
-				}else if(mod==1){
+				}else if(mod == 1){
 					eq = index+2;
-				}else if(mod==2){
+				}else if(mod == 2){
 					eq = index+1;
 				}
 			}
@@ -183,25 +190,25 @@ if (window.location.href.indexOf('#_=_') > 0) {
 }
 
 $(function(){
-	let options = {
+	const options = {
 		url: function(phrase) {
 			return links.classifieds + "?action=classifieds_sugested_keywords&keywords=" + encodeURI(phrase);
 		},
-	  list: {
-		match: {
-		  enabled: true
-		}
-	  },
-	  theme: "square"
+		list: {
+			match: {
+				enabled: true
+			}
+		},
+		theme: "square"
 	};
 	$("#search_keywords").easyAutocomplete(options);
 })
 
 $(window).on("load", function (){
-	let $js_scroll_page = $('#js_scroll_page')
-  	if($js_scroll_page.length>0){
-		position = $js_scroll_page.offset().top;
-		if($(window).scrollTop()+$(window).height()<position){
+	const $js_scroll_page = $('#js_scroll_page');
+  if($js_scroll_page.length > 0){
+		const position = $js_scroll_page.offset().top;
+		if($(window).scrollTop()+$(window).height() < position){
 			$('html, body').stop().animate({scrollTop: (position-110)}, 300);
 		}
 	}
@@ -211,7 +218,7 @@ function initGoogleMap() {
 	if(typeof displayMap == 'function') {
 		displayMap();
 	}else{
-		input = document.getElementById('search_main_address');
+		const input = document.getElementById('search_main_address');
 		if(input){
 			new google.maps.places.Autocomplete(input, {types: ['geocode']});
 		}
@@ -226,7 +233,7 @@ function checkCookies(){
 
 function closeCookiesWindow(){
 	localStorage.cookies_accepted = true;
-	var cookie_window = document.getElementById("cookies-message");
+	const cookie_window = document.getElementById("cookies-message");
   cookie_window.parentNode.removeChild(cookie_window);
 }
 

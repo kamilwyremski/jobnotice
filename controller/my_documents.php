@@ -1,7 +1,7 @@
 <?php
 /************************************************************************
  * The script of website with job offers JobNotice
- * Copyright (c) 2020 - 2022 by IT Works Better https://itworksbetter.net
+ * Copyright (c) 2020 - 2023 by IT Works Better https://itworksbetter.net
  * Project by Kamil Wyremski https://wyremski.pl
  *
  * All right reserved
@@ -35,7 +35,7 @@ if($user->logged_in){
 
 		}elseif($_POST['action']=='remove_document' and checkToken('remove_document') and isset($_POST['id']) and $_POST['id']>0){
 
-			if(document::checkPermision($_POST['id'])){
+			if(document::checkPermissions($_POST['id'])){
 				document::remove($_POST['id']);
 				$render_variables['alert_success'][] = trans('Successfully deleted');
 			}

@@ -22,10 +22,11 @@
 	<script src="views/{{ settings.template }}/js/add.js?{{ settings.assets_version }}"></script>
 	{% if settings.google_maps %}
 		<script>
-			var google_maps, google_maps_marker;
+			var google_maps;
+			var google_maps_marker;
 			function displayMap() {
 				new google.maps.places.Autocomplete((document.getElementById('add_address')), {types: ['geocode']});
-				google.maps.event.addDomListener(window, "load", function() {
+				window.addEventListener('load', function() {
 					{% if classified and (classified.address_lat!=0 or classified.address_long!=0) %}var myLatlng = new google.maps.LatLng({{ classified.address_lat }},{{ classified.address_long }});{% endif %}
 					google_maps = new google.maps.Map(document.getElementById("google_maps"), {
 						center: new google.maps.LatLng( {% if classified and (classified.address_lat!=0 or classified.address_long!=0) %}{{ classified.address_lat }},{{ classified.address_long }}{% else %}{{ settings.google_maps_lat }},{{ settings.google_maps_long }}{% endif %}),

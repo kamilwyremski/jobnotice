@@ -18,6 +18,7 @@
 						<th>{{ 'Name of the document'|trans }}</th>
 						<th>{{ 'Filename'|trans }}</th>
 						<th>{{ 'Date'|trans }}</th>
+						<th  class="text-center">{{ 'Delete'|trans }}</th>
 					</tr>
 					{% for item in documents %}
 						<tr>
@@ -25,7 +26,31 @@
 							<td>{{ item.name }}</td>
 							<td><a href="{{ path('document',item.id) }}" title="{{ item.filename }}" download>{{ item.filename }}</a></td>
 							<td>{{ item.date|date('Y-m-d H:i') }}</td>
+							<td class="text-center"><button class="btn btn-link text-danger p-0" data-toggle="modal" data-target="#remove_document_{{ item.id }}"><i class="fas fa-trash"></i></button></td>
 						</tr>
+
+						<div class="modal fade" id="remove_document_{{ item.id }}">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title">{{ 'Delete document'|trans }}: {{ item.name }}</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+									</div>
+									<form method="post" class="form">
+										<input type="hidden" name="action" value="remove_document">
+										<input type="hidden" name="id" value="{{ item.id }}">
+										<input type="hidden" name="token" value="{{ generateToken('remove_document') }}">
+										<div class="modal-body">
+											<p>{{ 'Do you really want to delete'|trans }} {{ item.name }}?</p>
+										</div>
+										<div class="modal-footer">
+											<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
+											<input type="submit" class="btn btn-danger" value="{{ 'Delete'|trans }}">
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
 					{% endfor %}
 				</table>
 			</div>

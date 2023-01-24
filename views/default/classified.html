@@ -21,15 +21,15 @@
 	{% if settings.google_maps and classified.address_lat!=0 and classified.address_long!=0 %}
 		<script>
 			function displayMap() {
-				google.maps.event.addDomListener(window, "load", function() {
-					var myLatlng = new google.maps.LatLng({{ classified.address_lat }},{{ classified.address_long }});
-					var map = new google.maps.Map(document.getElementById("google_maps"), {
+				window.addEventListener('load', function() {
+					const myLatlng = new google.maps.LatLng({{ classified.address_lat }},{{ classified.address_long }});
+					const map = new google.maps.Map(document.getElementById("google_maps"), {
 						zoom: {{ settings.google_maps_zoom_classified|default(10) }},
 						center: myLatlng,
 						mapTypeId: google.maps.MapTypeId.ROADMAP,
 						scrollwheel:  false
 					});
-					var marker = new google.maps.Marker({
+					new google.maps.Marker({
 						position: myLatlng,
 						map: map,
 						title: '{{ classified.name }}'

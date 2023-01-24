@@ -1,7 +1,7 @@
 <?php
 /************************************************************************
  * The script of website with job offers JobNotice
- * Copyright (c) 2020 - 2022 by IT Works Better https://itworksbetter.net
+ * Copyright (c) 2020 - 2023 by IT Works Better https://itworksbetter.net
  * Project by Kamil Wyremski https://wyremski.pl
  *
  * All right reserved
@@ -177,23 +177,19 @@ class photo {
 				imagedestroy($new_image);
 			}
 
-			if ($width > $height) {
-				$y = 0;
-				$x = ($width - $height) / 2;
-				$smallestSide = $height;
-			} else {
-				$x = 0;
-				$y = ($height - $width) / 2;
-				$smallestSide = $width;
+			if($height >= 200){
+				$newheight = 200;
+			}else{
+				$newheight = $height;
 			}
-			$newwidth = $newheight = 400;
+			$newwidth = round($newheight / $height * $width);
 			$tmp = imagecreatetruecolor($newwidth,$newheight);
 			if($path_parts['extension']=="png"){
 				imagesavealpha($tmp, true);
 				$color = imagecolorallocatealpha($tmp, 0, 0, 0, 127);
 				imagefill($tmp, 0, 0, $color);
 			}
-			imagecopyresampled($tmp,$src,0,0,$x,$y,$newwidth,$newheight,$smallestSide,$smallestSide);
+			imagecopyresampled($tmp,$src,0,0,0,0,$newwidth,$newheight, $width,$height);
 			$thumb = explode('.', $url)[0].'_thumb.'.$path_parts['extension'];
 
 			if($path_parts['extension']=="jpg" || $path_parts['extension']=="jpeg"){

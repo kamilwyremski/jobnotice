@@ -1,4 +1,3 @@
-
 <div class="row">
 {% for classified in classifieds %}
 	<div class="col-xl-3 col-lg-4 col-sm-6">
@@ -13,8 +12,11 @@
 			<div class="row no-gutters">
 				<div class="col-5">
 					<a href="{{ path('classified',classified.id,classified.slug) }}" title="{{ classified.name }}">
-						<img src="{% if classified.thumb %}upload/photos/{{ classified.thumb }}{% else %}views/{{ settings.template }}/images/no_image.png{% endif %}"
-						alt="{{ classified.name }}" onerror="this.src='views/{{ settings.template }}/images/no_image.png'" loading="lazy">
+						<div class="embed-responsive embed-responsive-1by1">
+						 	<div class="embed-responsive-item">
+								<img src="{% if classified.thumb %}upload/photos/{{ classified.thumb }}{% else %}views/{{ settings.template }}/images/no_image.png{% endif %}" alt="{{ classified.name }}" onerror="this.src='views/{{ settings.template }}/images/no_image.png'" loading="lazy">
+							</div>
+						</div>
 					</a>
 				</div>
 				<div class="col-7 classifieds_index_right">
