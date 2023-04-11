@@ -18,7 +18,7 @@ if(!isset($settings['base_url'])){
 	die('Access denied!');
 }
 
-if(isset($_GET['id']) and $_GET['id']>0 and !empty($_GET['slug'])){
+if(isset($_GET['id']) and is_numeric($_GET['id']) and !empty($_GET['slug'])){
 
 	$info_page = info::show($_GET['id']);
 	if($info_page!=''){

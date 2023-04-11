@@ -93,6 +93,7 @@
 				<img data-roxy_name="watermark" src="{% if settings.watermark %}{{ settings.watermark }}{% else %}images/no_image.png{% endif %}" onerror="this.src='images/no_image.png'" alt="{{ 'Watermark'|trans }}" style="max-height: 100px">
 			</button><br><br>
 			<input type="text" name="watermark" value="{{ settings.watermark }}" placeholder="{{ 'Watermark'|trans }}" title="{{ 'Watermark'|trans }}" class="form-control" pattern="[a-z0-9-_/\.]+">
+			<p class="small text-danger mt-1 mb-0">{{ 'The path can only contain lowercase letters of the English alphabet, numbers, and the characters _ and -'|trans }}</p>
 		</div>
 	</div>
 	<div class="form-group row">

@@ -1,6 +1,6 @@
 <?php
 /************************************************************************
- * The script of website with job offers JobNotice v1.2
+ * The script of website with job offers JobNotice v1.2.2
  * Copyright (c) 2020 - 2023 by IT Works Better https://itworksbetter.net
  * Project by Kamil Wyremski https://wyremski.pl
  *
@@ -64,7 +64,7 @@ try{
 				if($pos_dash){
 					$_GET['id'] = substr($_GET['slug'], 0, $pos_dash);
 					$_GET['slug'] = substr($_GET['slug'], $pos_dash+1, strlen($_GET['slug']));
-					if(!$controller and intval($_GET['id'])>0 and $_GET['slug']){
+					if(!$controller and is_numeric($_GET['id']) and $_GET['slug']){
 						$controller = 'classified';
 					}
 				}

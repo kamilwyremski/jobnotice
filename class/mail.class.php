@@ -120,7 +120,10 @@ class mail {
 				}
 				if(isset($data['email'])){
 					$header = 'Reply-To: <'.$data['email']."> \r\n";
-					if($settings['smtp']){$mail_smtp->AddReplyTo($data['email']);}
+					if($settings['smtp']){
+						$mail_smtp->clearReplyTos();
+						$mail_smtp->AddReplyTo($data['email']);
+					}
 					$message = str_replace("{email}",$data['email'],$message);
 					$subject = str_replace("{email}",$data['email'],$subject);
 				}

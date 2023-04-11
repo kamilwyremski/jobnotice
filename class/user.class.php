@@ -17,10 +17,10 @@
 class user {
 
 	public static $types = ['Worker','Employer'];
+	public $logged_in = false;
 
 	public function __construct () {
 		global $db, $settings;
-		$this->logged_in = false;
 
 		if(isset($_GET['log_out']) and !empty($_GET['token']) and checkToken('logout',$_GET['token'])){
 			$this->logOut();
@@ -250,21 +250,26 @@ class user {
 				$data['address'] = '';
 			}
 
-			mail::send('register',$data['email'],['activation_code'=>$activation_code, 'password'=>$data['password'], 'username'=>$data['username'], 'email'=>$data['email']]);
+			if(mail::send('register',$data['email'],['activation_code'=>$activation_code, 'password'=>$data['password'], 'username'=>$data['username'], 'email'=>$data['email']])){
 
-			$sth = $db->prepare('INSERT INTO `'._DB_PREFIX_.'user`(`type`, `username`, `email`, `password`, `name`, `nip`, `address`, `activation_code`, `register_ip`) VALUES (:type,:username,:email,:password,:name,:nip,:address,:activation_code,:register_ip)');
-			$sth->bindValue(':type', $data['type'], PDO::PARAM_STR);
-			$sth->bindValue(':username', $data['username'], PDO::PARAM_STR);
-			$sth->bindValue(':email', $data['email'], PDO::PARAM_STR);
-			$sth->bindValue(':password', $this->createPassword($data['password']), PDO::PARAM_STR);
-			$sth->bindValue(':name', strip_tags($data['name']), PDO::PARAM_STR);
-			$sth->bindValue(':nip', strip_tags($data['nip']), PDO::PARAM_STR);
-			$sth->bindValue(':address', strip_tags($data['address']), PDO::PARAM_STR);
-			$sth->bindValue(':activation_code', $activation_code, PDO::PARAM_STR);
-			$sth->bindValue(':register_ip', getClientIp(), PDO::PARAM_STR);
-			$sth->execute();
+				$sth = $db->prepare('INSERT INTO `'._DB_PREFIX_.'user`(`type`, `username`, `email`, `password`, `name`, `nip`, `address`, `activation_code`, `register_ip`) VALUES (:type,:username,:email,:password,:name,:nip,:address,:activation_code,:register_ip)');
+				$sth->bindValue(':type', $data['type'], PDO::PARAM_STR);
+				$sth->bindValue(':username', $data['username'], PDO::PARAM_STR);
+				$sth->bindValue(':email', $data['email'], PDO::PARAM_STR);
+				$sth->bindValue(':password', $this->createPassword($data['password']), PDO::PARAM_STR);
+				$sth->bindValue(':name', strip_tags($data['name']), PDO::PARAM_STR);
+				$sth->bindValue(':nip', strip_tags($data['nip']), PDO::PARAM_STR);
+				$sth->bindValue(':address', strip_tags($data['address']), PDO::PARAM_STR);
+				$sth->bindValue(':activation_code', $activation_code, PDO::PARAM_STR);
+				$sth->bindValue(':register_ip', getClientIp(), PDO::PARAM_STR);
+				$sth->execute();
 
-			return ['status'=>true];
+				return ['status'=>true];
+			}else{
+
+				$error['info'] = trans('The message was not sent');
+				return ['status'=>false,'error'=>$error];
+			}
 		}
 	}
 
@@ -291,12 +296,14 @@ class user {
 
 		$code = bin2hex(random_bytes(32));
 
-		$sth = $db->prepare('INSERT INTO `'._DB_PREFIX_.'reset_password`(`user_id`, `active`, `code`) VALUES (:user_id,1,:code)');
-		$sth->bindValue(':user_id', $user_data['id'], PDO::PARAM_INT);
-		$sth->bindValue(':code', $code, PDO::PARAM_STR);
-		$sth->execute();
-
-		mail::send('reset_password',$user_data['email'], ['reset_password_code'=>$code, 'username'=>$user_data['username']]);
+		if(mail::send('reset_password',$user_data['email'], ['reset_password_code'=>$code, 'username'=>$user_data['username']])){
+			$sth = $db->prepare('INSERT INTO `'._DB_PREFIX_.'reset_password`(`user_id`, `active`, `code`) VALUES (:user_id,1,:code)');
+			$sth->bindValue(':user_id', $user_data['id'], PDO::PARAM_INT);
+			$sth->bindValue(':code', $code, PDO::PARAM_STR);
+			$sth->execute();
+		}else{
+			throw new Exception(trans('The message was not sent'));
+		}
 	}
 
 	public function resetPasswordNew(string $code){
