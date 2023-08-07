@@ -1,6 +1,6 @@
 <?php
 /************************************************************************
- * The script of website with job offers JobNotice v1.2.2
+ * The script of website with job offers JobNotice v1.2.3
  * Copyright (c) 2020 - 2023 by IT Works Better https://itworksbetter.net
  * Project by Kamil Wyremski https://wyremski.pl
  *

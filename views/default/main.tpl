@@ -12,7 +12,11 @@
 	<!-- CSS style -->
 	{% block css %}
 		<link rel="stylesheet" href="views/{{ settings.template }}/css/bootstrap.min.css"/>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+	
+		<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" media="print" onload="this.media='all'" />
+
 		<link rel="stylesheet" href="js/easy-autocomplete/easy-autocomplete.min.css">
 		<link rel="stylesheet" href="views/{{ settings.template }}/css/style.css?{{ settings.assets_version }}"/>
 		{% if settings.favicon %}<link rel="shortcut icon" href="{{ settings.favicon }}">{% endif %}
@@ -133,21 +137,21 @@
 					<div class="col-md-4">
 						<h4>{{ 'Sitemap'|trans }}</h4>
 						<ul class="list-unstyled">
-							<li><a class="main-color-2" href="{{ settings.base_url }}" title="{{ settings.title }}">{{ 'Home'|trans }}</a></li>
+							<li class="mb-1"><a class="main-color-2" href="{{ settings.base_url }}" title="{{ settings.title }}">{{ 'Home'|trans }}</a></li>
 							{% if can_add_classifieds %}
-								<li><a class="main-color-2" href="{{ path('add') }}" title="{{ 'Add classified'|trans }}">{{ 'Add classified'|trans }}</a></li>
-								<li><a class="main-color-2" href="{{ path('my_classifieds') }}" title="{{ 'My classifieds'|trans }}">{{ 'My classifieds'|trans }}</a></li>
+								<li class="mb-1"><a class="main-color-2" href="{{ path('add') }}" title="{{ 'Add classified'|trans }}">{{ 'Add classified'|trans }}</a></li>
+								<li class="mb-1"><a class="main-color-2" href="{{ path('my_classifieds') }}" title="{{ 'My classifieds'|trans }}">{{ 'My classifieds'|trans }}</a></li>
 							{% endif %}
-							<li><a class="main-color-2" href="{{ path('clipboard') }}" title="{{ 'Clipboard'|trans }}">{{ 'Clipboard'|trans }}</a></li>
-							<li><a class="main-color-2" href="{{ path('classifieds') }}" title="{{ 'Search the best classifieds'|trans }}">{{ 'Classifieds'|trans }}</a></li>
-							<li><a class="main-color-2" href="{{ path('login') }}" title="{{ 'Log in on the website'|trans }}">{{ 'Log in'|trans }}</a></li>
-							<li><a class="main-color-2" href="{{ path('my_documents') }}" title="{{ 'My documents'|trans }}">{{ 'My documents'|trans }}</a></li>
-							<li><a class="main-color-2" href="{{ path('rules') }}" title="{{ 'Terms of service'|trans }}">{{ 'Terms of service'|trans }}</a></li>
-							<li><a class="main-color-2" href="{{ path('privacy_policy') }}" title="{{ 'Privacy policy'|trans }}">{{ 'Privacy policy'|trans }}</a></li>
-							<li><a class="main-color-2" href="{{ path('contact') }}" title="{{ 'Contact us'|trans }}">{{ 'Contact'|trans }}</a></li>
-							<li><a class="main-color-2" href="{{ path('info') }}" title="{{ 'Info about us'|trans }}">{{ 'Info'|trans }}</a></li>
-							{% if settings.enable_articles %}<li><a class="main-color-2" href="{{ path('articles') }}" title="{{ 'Articles'|trans }}">{{ 'Articles'|trans }}</a></li>{% endif %}
-							{% if settings.rss %}<li><a class="main-color-2" href="{{ path('feed') }}{% if pagination.page_url.page %}?{{ pagination.page_url.page }}{% endif %}" title="{{ 'RSS feed'|trans }}" target="_blank">{{ 'RSS feed'|trans }}</a></li>{% endif %}
+							<li class="mb-1"><a class="main-color-2" href="{{ path('clipboard') }}" title="{{ 'Clipboard'|trans }}">{{ 'Clipboard'|trans }}</a></li>
+							<li class="mb-1"><a class="main-color-2" href="{{ path('classifieds') }}" title="{{ 'Search the best classifieds'|trans }}">{{ 'Classifieds'|trans }}</a></li>
+							<li class="mb-1"><a class="main-color-2" href="{{ path('login') }}" title="{{ 'Log in on the website'|trans }}">{{ 'Log in'|trans }}</a></li>
+							<li class="mb-1"><a class="main-color-2" href="{{ path('my_documents') }}" title="{{ 'My documents'|trans }}">{{ 'My documents'|trans }}</a></li>
+							<li class="mb-1"><a class="main-color-2" href="{{ path('rules') }}" title="{{ 'Terms of service'|trans }}">{{ 'Terms of service'|trans }}</a></li>
+							<li class="mb-1"><a class="main-color-2" href="{{ path('privacy_policy') }}" title="{{ 'Privacy policy'|trans }}">{{ 'Privacy policy'|trans }}</a></li>
+							<li class="mb-1"><a class="main-color-2" href="{{ path('contact') }}" title="{{ 'Contact us'|trans }}">{{ 'Contact'|trans }}</a></li>
+							<li class="mb-1"><a class="main-color-2" href="{{ path('info') }}" title="{{ 'Info about us'|trans }}">{{ 'Info'|trans }}</a></li>
+							{% if settings.enable_articles %}<li class="mb-1"><a class="main-color-2" href="{{ path('articles') }}" title="{{ 'Articles'|trans }}">{{ 'Articles'|trans }}</a></li>{% endif %}
+							{% if settings.rss %}<li class="mb-1"><a class="main-color-2" href="{{ path('feed') }}{% if pagination.page_url.page %}?{{ pagination.page_url.page }}{% endif %}" title="{{ 'RSS feed'|trans }}" target="_blank">{{ 'RSS feed'|trans }}</a></li>{% endif %}
 						</ul>
 						<br><br>
 					</div>
@@ -166,7 +170,7 @@
 	{% if settings.facebook_side_panel %}
 		<div id="facebook_side" class="d-none d-sm-block d-print-none">
 			<div id="facebook_side_image"><img src="{{ settings.base_url }}/views/{{ settings.template }}/images/facebook-side.png" alt="Facebook" width="10" height="21"></div>
-			<div class="fb-page" data-href="{{ settings.url_facebook }}" data-tabs="timeline" data-width="300" data-height="350" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="{{ settings.url_facebook }}" class="fb-xfbml-parse-ignore"><a href="{{ settings.url_facebook }}">Facebook</a></blockquote></div>
+			<div class="fb-page" data-href="{{ settings.url_facebook }}" data-show-posts="true" data-width="300" data-height="350" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="{{ settings.url_facebook }}" class="fb-xfbml-parse-ignore"><a href="{{ settings.url_facebook }}">Facebook</a></blockquote></div>
 		</div>
 	{% endif %}
 
@@ -188,7 +192,7 @@
 	<!-- JS javascript -->
 	{% block javascript %}
 
-		<script src="js/jquery-3.5.1.min.js"></script>
+		<script src="js/jquery-3.7.0.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 		<script src="js/easy-autocomplete/jquery.easy-autocomplete.min.js"></script>
 		<script>
@@ -211,14 +215,17 @@
 			</script>
 		{% endif %}
 
-		<script>(function(d, s, id) {
-			var js, fjs = d.getElementsByTagName(s)[0];
-			if (d.getElementById(id)) return;
-			js = d.createElement(s); js.id = id;
-			js.src = "//connect.facebook.net/{{ settings.facebook_lang|default(en_US) }}/all.js#xfbml=1";
-			fjs.parentNode.insertBefore(js, fjs);
-			}(document, 'script', 'facebook-jssdk'));
+		<script>
+		  window.fbAsyncInit = function() {
+			FB.init({
+			  appId            : '{{ settings.facebook_api }}',
+			  autoLogAppEvents : true,
+			  xfbml            : true,
+			  version          : 'v17.0'
+			});
+		  };
 		</script>
+		<script async defer crossorigin="anonymous" src="https://connect.facebook.net/{{ settings.facebook_lang|default('en_US') }}/sdk.js"></script>
 
 		{{ settings.analytics|raw }}
 
