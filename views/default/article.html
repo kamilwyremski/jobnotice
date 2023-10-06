@@ -15,21 +15,23 @@
 			{{ article.content|raw }}
 		</div>
 		<div class="d-print-none">
-			<div class="social_share_box">
-				<small>{{ 'Share'|trans }}: </small>
-				{% if settings.social_facebook %}
-					<a href="https://www.facebook.com/sharer/sharer.php?u={{ absolutePath('article',article.id,article.slug) }}" title="{{ 'Share'|trans }} Facebook" rel="nofollow" target="_blank"><i class="fab fa-facebook"></i></a>
-				{% endif %}
-				{% if settings.social_twitter %}
-					<a href="https://twitter.com/intent/tweet?text={{ article.name }} {{ absolutePath('article',article.id,article.slug) }}" title="{{ 'Share'|trans }} Twitter" rel="nofollow" target="_blank"><i class="fab fa-twitter"></i></a>
-				{% endif %}
-				{% if settings.social_pinterest %}
-					<a href="https://pinterest.com/pin/create/button/?url={{ absolutePath('article',article.id,article.slug) }}&media={{ settings.logo_facebook }}" title="{{ 'Share'|trans }} Pinterest" rel="nofollow" target="_blank"><i class="fab fa-pinterest"></i></a>
-				{% endif %}
-				{% if settings.social_linkedin %}
-					<a href="https://www.linkedin.com/shareArticle?mini=true&url={{ absolutePath('article',article.id,article.slug) }}&title={{ article.title }}" title="{{ 'Share'|trans }} LInkedIn" rel="nofollow" target="_blank"><i class="fab fa-linkedin"></i></a>
-				{% endif %}
-			</div>
+			{% if settings.social_facebook or settings.social_twitter or settings.social_pinterest or settings.social_linkedin %}
+				<div class="social_share_box">
+					<small>{{ 'Share'|trans }}: </small>
+					{% if settings.social_facebook %}
+						<a href="https://www.facebook.com/sharer/sharer.php?u={{ absolutePath('article',article.id,article.slug) }}" title="{{ 'Share'|trans }} Facebook" rel="nofollow" target="_blank"><i class="fab fa-facebook"></i></a>
+					{% endif %}
+					{% if settings.social_twitter %}
+						<a href="https://twitter.com/intent/tweet?text={{ article.name }} {{ absolutePath('article',article.id,article.slug) }}" title="{{ 'Share'|trans }} Twitter" rel="nofollow" target="_blank"><i class="fab fa-twitter"></i></a>
+					{% endif %}
+					{% if settings.social_pinterest %}
+						<a href="https://pinterest.com/pin/create/button/?url={{ absolutePath('article',article.id,article.slug) }}&media={{ settings.logo_facebook }}" title="{{ 'Share'|trans }} Pinterest" rel="nofollow" target="_blank"><i class="fab fa-pinterest"></i></a>
+					{% endif %}
+					{% if settings.social_linkedin %}
+						<a href="https://www.linkedin.com/shareArticle?mini=true&url={{ absolutePath('article',article.id,article.slug) }}&title={{ article.title }}" title="{{ 'Share'|trans }} LInkedIn" rel="nofollow" target="_blank"><i class="fab fa-linkedin"></i></a>
+					{% endif %}
+				</div>
+			{% endif %}
 			{% if settings.allow_comments_fb_article %}
 				<br>
 				<div class="fb-comments" data-href="{{ absolutePath('article',article.id,article.slug) }}" data-numposts="15"></div>

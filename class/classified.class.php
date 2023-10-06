@@ -238,8 +238,7 @@ class classified {
 			$join .= 'LEFT JOIN '._DB_PREFIX_.'category cat ON c.category_id = cat.id
 			LEFT JOIN '._DB_PREFIX_.'state s ON c.state_id = s.id
 			LEFT JOIN '._DB_PREFIX_.'state s2 ON c.state2_id = s2.id
-			LEFT JOIN '._DB_PREFIX_.'type t ON c.type_id = t.id
-			LEFT JOIN '._DB_PREFIX_.'user u ON c.user_id = u.id ';
+			LEFT JOIN '._DB_PREFIX_.'type t ON c.type_id = t.id ';
 		}
 		if($type=='index_page'){
 			$select .= ', s.name AS state_name, s.slug AS state_slug, s2.name AS state2_name, s2.slug AS state2_slug, u.name AS company_name, u.username ';

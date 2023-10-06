@@ -188,21 +188,23 @@
 							</table>
 						</div>
 						<div class="d-print-none" id="classified_bottom_share_abuse">
-							<div class="social_share_box">
-								<small>{{ 'Share'|trans }}: </small>
-								{% if settings.social_facebook %}
-									<a href="https://www.facebook.com/sharer/sharer.php?u={{ absolutePath('classified',classified.id,classified.slug) }}" title="{{ 'Share'|trans }} Facebook" rel="nofollow" target="_blank"><i class="fab fa-facebook"></i></a>
-								{% endif %}
-								{% if settings.social_twitter %}
-									<a href="https://twitter.com/intent/tweet?text={{ classified.name }} {{ absolutePath('classified',classified.id,classified.slug) }}" title="{{ 'Share'|trans }} Twitter" rel="nofollow" target="_blank"><i class="fab fa-twitter"></i></a>
-								{% endif %}
-								{% if settings.social_pinterest %}
-									<a href="https://pinterest.com/pin/create/button/?url={{ absolutePath('classified',classified.id,classified.slug) }}&media={{ settings.logo_facebook }}" title="{{ 'Share'|trans }} Pinterest" rel="nofollow" target="_blank"><i class="fab fa-pinterest"></i></a>
-								{% endif %}
-								{% if settings.social_linkedin %}
-									<a href="https://www.linkedin.com/shareArticle?mini=true&url={{ absolutePath('classified',classified.id,classified.slug) }}&title={{ classified.title }}" title="{{ 'Share'|trans }} LInkedIn" rel="nofollow" target="_blank"><i class="fab fa-linkedin"></i></a>
-								{% endif %}
-							</div>
+							{% if settings.social_facebook or settings.social_twitter or settings.social_pinterest or settings.social_linkedin %}
+								<div class="social_share_box">
+									<small>{{ 'Share'|trans }}: </small>
+									{% if settings.social_facebook %}
+										<a href="https://www.facebook.com/sharer/sharer.php?u={{ absolutePath('classified',classified.id,classified.slug) }}" title="{{ 'Share'|trans }} Facebook" rel="nofollow" target="_blank"><i class="fab fa-facebook"></i></a>
+									{% endif %}
+									{% if settings.social_twitter %}
+										<a href="https://twitter.com/intent/tweet?text={{ classified.name }} {{ absolutePath('classified',classified.id,classified.slug) }}" title="{{ 'Share'|trans }} Twitter" rel="nofollow" target="_blank"><i class="fab fa-twitter"></i></a>
+									{% endif %}
+									{% if settings.social_pinterest %}
+										<a href="https://pinterest.com/pin/create/button/?url={{ absolutePath('classified',classified.id,classified.slug) }}&media={{ settings.logo_facebook }}" title="{{ 'Share'|trans }} Pinterest" rel="nofollow" target="_blank"><i class="fab fa-pinterest"></i></a>
+									{% endif %}
+									{% if settings.social_linkedin %}
+										<a href="https://www.linkedin.com/shareArticle?mini=true&url={{ absolutePath('classified',classified.id,classified.slug) }}&title={{ classified.title }}" title="{{ 'Share'|trans }} LInkedIn" rel="nofollow" target="_blank"><i class="fab fa-linkedin"></i></a>
+									{% endif %}
+								</div>
+							{% endif %}
 							<button class="btn btn-link main-color-1" data-toggle="modal" data-target="#modal_report_abuse"><small>{{ 'Report abuse'|trans }}</small></button>
 						</div>
 					</div>
