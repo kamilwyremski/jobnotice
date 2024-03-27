@@ -1,11 +1,11 @@
 {
     "type": "project",
     "license": "proprietary",
-	"name": "kamilwyremski/jobnotice",
-	"description": "JobNotice is a website script with job advertisements for employers and employees",
-	"version": "1.2.3",
-	"homepage": "https://jobnotice.itworksbetter.net",
-	"authors": [
+    "name": "kamilwyremski/jobnotice",
+    "description": "JobNotice is a website script with job advertisements for employers and employees",
+    "version": "1.2.4",
+    "homepage": "https://jobnotice.itworksbetter.net",
+    "authors": [
         {
             "name": "Kamil Wyremski",
             "email": "kamil@wyremski.pl",
@@ -13,18 +13,20 @@
             "role": "Developer"
         }
     ],
-	"support": {
+    "support": {
         "docs": "https://blog.wyremski.pl/skrypt-ofert-pracy-jobnotice/"
     },
     "require": {
-        "twig/twig": "^3.5.1",
+        "twig/twig": "^3.7.0",
         "phpmailer/phpmailer": "~6.8.0",
         "ezyang/htmlpurifier": "~4.16.0"
     },
-	"autoload": {
-    "classmap": ["class/"],
-		"files": [
+    "autoload": {
+        "classmap": [
+            "class/"
+        ],
+        "files": [
             "php/global.php"
         ]
-	}
+    }
 }

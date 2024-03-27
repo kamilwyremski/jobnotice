@@ -1,310 +1,302 @@
-
-{% extends "main.tpl" %}
-
-{% block css %}
-	{{ parent() }}
-	{% if classified.photos %}
-		<link rel="stylesheet" href="views/{{ settings.template }}/css/lightbox.min.css"/>
-	{% endif %}
-{% endblock %}
-
-{% block javascript %}
-	{{ parent() }}
-	{% if classified.photos %}
-		<script src="views/{{ settings.template }}/js/lightbox.min.js"></script>
-		<script>
-			lightbox.option({
-				'albumLabel': "%1 / %2"
-			})
-		</script>
-	{% endif %}
-	{% if settings.google_maps and classified.address_lat!=0 and classified.address_long!=0 %}
-		<script>
-			function displayMap() {
-				window.addEventListener('load', function() {
-					const myLatlng = new google.maps.LatLng({{ classified.address_lat }},{{ classified.address_long }});
-					const map = new google.maps.Map(document.getElementById("google_maps"), {
-						zoom: {{ settings.google_maps_zoom_classified|default(10) }},
-						center: myLatlng,
-						mapTypeId: google.maps.MapTypeId.ROADMAP,
-						scrollwheel:  false
-					});
-					new google.maps.Marker({
-						position: myLatlng,
-						map: map,
-						title: '{{ classified.name }}'
-					});
-				})
-			}
-		</script>
-		<script src="https://maps.googleapis.com/maps/api/js?key={{ settings.google_maps_api }}&v=3.exp&libraries=places&callback=initGoogleMap" async defer></script>
-	{% endif %}
-{% endblock %}
-
-{% block content %}
+{% extends "main.tpl" %} {% block css %} {{ parent() }} {% if classified.photos %}
+<link rel="stylesheet" href="views/{{ settings.template }}/css/lightbox.min.css" />
+{% endif %} {% endblock %} {% block javascript %} {{ parent() }} {% if classified.photos %}
+<script src="views/{{ settings.template }}/js/lightbox.min.js"></script>
+<script>
+  lightbox.option({
+    albumLabel: "%1 / %2",
+  });
+</script>
+{% endif %} {% if settings.google_maps and classified.address_lat!=0 and classified.address_long!=0 %}
+<script>
+  function displayMap() {
+  	window.addEventListener('load', function() {
+  		const myLatlng = new google.maps.LatLng({{ classified.address_lat }},{{ classified.address_long }});
+  		const map = new google.maps.Map(document.getElementById("google_maps"), {
+  			zoom: {{ settings.google_maps_zoom_classified|default(10) }},
+  			center: myLatlng,
+  			mapTypeId: google.maps.MapTypeId.ROADMAP,
+  			scrollwheel:  false
+  		});
+  		new google.maps.Marker({
+  			position: myLatlng,
+  			map: map,
+  			title: '{{ classified.name }}'
+  		});
+  	})
+  }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ settings.google_maps_api }}&v=3.exp&libraries=places&callback=initGoogleMap" async defer></script>
+{% endif %} {% endblock %} {% block content %}
 
 <div class="background_grey page_box">
-	<div class="container" id="classified">
-		<div class="background_white">
-			<div class="d-flex">
-				<h1>{{ classified.name }}</h1>
-				<form method="post" class="d-print-none" id="add_to_clipboard_form">
-					{% if classified.clipboard %}
-						<input type="hidden" name="action" value="clipboard_remove">
-						<input type="hidden" name="token" value="{{ generateToken('clipboard_remove') }}">
-						<button type="submit"class="btn btn-link"><i class="fas fa-star"></i></button>
-					{% else %}
-						<input type="hidden" name="action" value="clipboard_add">
-						<input type="hidden" name="token" value="{{ generateToken('clipboard_add') }}">
-						<button type="submit"class="btn btn-link"><i class="far fa-star"></i></button>
-					{% endif %}
-				</form>
-			</div>
-			<p>
-				{% if classified.type_name %}[<a href="{{ path('classifieds') }}?type={{ classified.type_slug }}" title="{{ 'Classified type'|trans }}: {{ classified.type_name }}" class="main-color-2">{{ classified.type_name }}</a>]{% endif %}
-				{% if classified.categories %}
-					{% for category in classified.categories %}
-						<a href="{{ path('classifieds') }}?category={{ category.id }}" title="{{ 'Category'|trans }}: {{ item.name }}" class="main-color-2">{{ category.name }}</a>
-						{% if not loop.last %} > {% endif %}
-					{% endfor %}
-				{% endif %}
-			</p>
-			{% if not classified.active %}
-				<h5 class="text-danger">{{ 'Classified is inactive'|trans }}</h5>
-				{% if classified_cost.total %}
-					<table class="table table-hover">
-						{% for item in classified_cost.list %}
-							<tr><td>{{ item.name }}: </td><td class="text-right">{{ item.value|showCurrency }}</td></tr>
-						{% endfor %}
-						<tr><td><b>{{ 'Total'|trans }}: </b></td><td class="text-right"><b>{{ classified_cost.total|showCurrency }}</b></td></tr>
-					</table>
-					<div class="text-center classified_payments">
-						{% include 'partial/payment.tpl' with {'payment_item_id': classified.id, 'payment_type': 'add_classified'} %}
-					<br><br>
-					</div>
-				{% elseif not classified.email_confirmed and not user.moderator %}
-					<h4 class="text-danger">{{ 'You must confirm your email address'|trans }}</h4><br>
-				{% elseif not (settings.automatically_activate_classifieds or classified.admin_confirmed) and not user.moderator %}
-					<h4 class="text-danger">{{ 'It must be approved by an administrator'|trans }}</h4><br>
-				{% else %}
-					<form method="post">
-						<input type="hidden" name="action" value="activate_classified">
-						<input type="hidden" name="token" value="{{ generateToken('activate_classified') }}">
-						<input type="submit" value="{{ 'Activate classified'|trans }}" class="btn btn-primary">
-					</form>
-					<br>
-				{% endif %}
-			{% endif %}
-			{% if user.id==classified.user_id or user.moderator %}
-				<h6>
-					<a href="{{ path('edit',classified.id,classified.slug) }}" title="{{ 'Edit classified'|trans }}: {{ classified.name }}" class="text-primary">{{ 'Edit classified'|trans }}</a> |
-					<a href="#" data-toggle="modal" data-target="#remove_classified" class="text-danger" title="{{ 'Delete similar'|trans }}: {{ classified.name }}">{{ 'Delete classified'|trans }}</a> |
-					<a href="{{ path('add') }}/?add_similar={{ classified.id }}" title="{{ 'Add similar'|trans }}: {{ classified.name }}" class="text-success">{{ 'Add similar'|trans }}</a>
-				</h6><br>
+  <div class="container" id="classified">
+    <div class="background_white">
+      <div class="d-flex">
+        <h1>{{ classified.name }}</h1>
+        <form method="post" class="d-print-none" id="add_to_clipboard_form">
+          {% if classified.clipboard %}
+          <input type="hidden" name="action" value="clipboard_remove" />
+          <input type="hidden" name="token" value="{{ generateToken('clipboard_remove') }}" />
+          <button type="submit" class="btn btn-link"><i class="fas fa-star"></i></button>
+          {% else %}
+          <input type="hidden" name="action" value="clipboard_add" />
+          <input type="hidden" name="token" value="{{ generateToken('clipboard_add') }}" />
+          <button type="submit" class="btn btn-link"><i class="far fa-star"></i></button>
+          {% endif %}
+        </form>
+      </div>
+      <p>
+        {% if classified.type_name %}[<a href="{{ path('classifieds') }}?type={{ classified.type_slug }}" title="{{ 'Classified type'|trans }}: {{ classified.type_name }}" class="main-color-2">{{ classified.type_name }}</a>]{% endif %} {% if classified.categories %} {% for category in classified.categories %}
+        <a href="{{ path('classifieds') }}?category={{ category.id }}" title="{{ 'Category'|trans }}: {{ item.name }}" class="main-color-2">{{ category.name }}</a>
+        {% if not loop.last %} > {% endif %} {% endfor %} {% endif %}
+      </p>
+      {% if not classified.active %}
+      <h5 class="text-danger">{{ 'Classified is inactive'|trans }}</h5>
+      {% if classified_cost.total %}
+      <table class="table table-hover">
+        {% for item in classified_cost.list %}
+        <tr>
+          <td>{{ item.name }}:</td>
+          <td class="text-right">{{ item.value|showCurrency }}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+          <td><b>{{ 'Total'|trans }}: </b></td>
+          <td class="text-right"><b>{{ classified_cost.total|showCurrency }}</b></td>
+        </tr>
+      </table>
+      <div class="text-center classified_payments">
+        {% include 'partial/payment.tpl' with {'payment_item_id': classified.id, 'payment_type': 'add_classified'} %}
+        <br /><br />
+      </div>
+      {% elseif not classified.email_confirmed and not user.moderator %}
+      <h4 class="text-danger">{{ 'You must confirm your email address'|trans }}</h4>
+      <br />
+      {% elseif not (settings.automatically_activate_classifieds or classified.admin_confirmed) and not user.moderator %}
+      <h4 class="text-danger">{{ 'It must be approved by an administrator'|trans }}</h4>
+      <br />
+      {% else %}
+      <form method="post">
+        <input type="hidden" name="action" value="activate_classified" />
+        <input type="hidden" name="token" value="{{ generateToken('activate_classified') }}" />
+        <input type="submit" value="{{ 'Activate classified'|trans }}" class="btn btn-primary" />
+      </form>
+      <br />
+      {% endif %} {% endif %} {% if user.id==classified.user_id or user.moderator %}
+      <h6>
+        <a href="{{ path('edit',classified.id,classified.slug) }}" title="{{ 'Edit classified'|trans }}: {{ classified.name }}" class="text-primary">{{ 'Edit classified'|trans }}</a> | <a href="#" data-toggle="modal" data-target="#remove_classified" class="text-danger" title="{{ 'Delete similar'|trans }}: {{ classified.name }}">{{ 'Delete classified'|trans }}</a> |
+        <a href="{{ path('add') }}/?add_similar={{ classified.id }}" title="{{ 'Add similar'|trans }}: {{ classified.name }}" class="text-success">{{ 'Add similar'|trans }}</a>
+      </h6>
+      <br />
 
-				<div class="modal fade" id="remove_classified">
-					<div class="modal-dialog" role="document">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title">{{ 'Delete classified'|trans }}: {{ classified.name }}</h5>
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-							</div>
-							<form method="post" class="form">
-								<input type="hidden" name="action" value="remove_classified">
-								<input type="hidden" name="id" value="{{ classified.id }}">
-								<input type="hidden" name="token" value="{{ generateToken('remove_classified') }}">
-								<div class="modal-body">
-									<p>{{ 'Do you really want to delete'|trans }} {{ classified.name }}?</p>
-								</div>
-								<div class="modal-footer">
-									<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
-									<input type="submit" class="btn btn-danger" value="{{ 'Delete'|trans }}">
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			{% endif %}
-			{% include 'partial/alert.tpl' %}
-			<div class="row">
-				<div class="col-md-5">
-					{% if classified.photos %}
-						<div id="classified_photos">
-							{% for photo in classified.photos %}
-								{% if loop.index==1 %}
-									<a href="upload/photos/{{ photo.folder }}{{ photo.url }}" title="{{ classified.name }}" data-lightbox="classified_photos" data-title="{{ classified.name }}"><img src="upload/photos/{{ photo.folder }}{{ photo.url }}" alt="{{ classified.name }}" onerror="this.src='{{ settings.base_url }}/views/{{ settings.template }}/images/no_image.png'" class="big"></a><br>
-								{% else %}
-									<a href="upload/photos/{{ photo.folder }}{{ photo.url }}" title="{{ classified.name }}" data-lightbox="classified_photos" data-title="{{ classified.name }}"><img src="upload/photos/{{ photo.folder }}{{ photo.thumb }}" alt="{{ classified.name }}" onerror="this.src='{{ settings.base_url }}/views/{{ settings.template }}/images/no_image.png'"></a>
-								{% endif %}
-							{% endfor %}
-						</div>
-					{% else %}
-						<img src="{{ settings.base_url }}/views/{{ settings.template }}/images/no_image.png" alt="No photo" class="img-thumbnail"><br><br>
-					{% endif %}
-				</div>
-				<div class="col-md-7">
-					<div id="classified_panel">
-						<p class="text-muted small mb-0">{{ 'Published'|trans }}: {{ classified.date|date("d-m-Y") }} | {{ 'Expire'|trans }}: {{ classified.date_finish|date("d-m-Y") }}</p>
-						{% if not settings.hide_views %}<p class="text-muted small">{{ 'View count'|trans }}: {{ classified.view_all }} ({{ 'unique'|trans }}: {{ classified.view_unique }})</p>{% endif %}
-						{% if classified.salary>0 %}
-							<h3 class="main-color-1"><span>{{ classified.salary|showCurrency }}{% if classified.salary_net %} {{ classified.salary_net|trans }}{% endif %}</span> {% if classified.salary_negotiate %}<span class="small">({{ 'to negotiate'|trans }})</span>{% endif %}</h3>
-						{% endif %}
-						<br>
-						{% if settings.hide_data_not_logged and not user.id %}
-							<p><a href="{{ path('login') }}?redirect={{ path('classified',classified.id,classified.slug) }}" title="{{ 'Log in on the website'|trans }}" class="main-color-1">{{ 'You must be logged in to view contact details'|trans }}</a></p>
-						{% else %}
-							{% if classified.phone %}
-								<p><a href="{% if not settings.hide_phone %}tel:{{ classified.phone }}{% endif %}" title="{{ 'Call us'|trans }}" class="btn btn-success btn-block {% if settings.hide_phone %}show_hidden_data show_hidden_data_active{% endif %}" {% if settings.hide_phone %}data-type="phone" data-data="{{ classified.phone }}"{% endif %}><i class="fas fa-phone"></i> {% if settings.hide_phone %}<span class="show_hidden_data_target">{{ 'show phone...'|trans }}</span>{% else %}{{ classified.phone }}{% endif %}</a></p>
-							{% endif %}
-							{% if not settings.hide_email %}
-								<p><a href="" title="{{ 'Contact us'|trans }}" class="btn btn-1 btn-block show_hidden_data show_hidden_data_active" data-type="email" data-data_0="{{ classified.email_part_0 }}" data-data_1="{{ classified.email_part_1 }}"><i class="fas fa-envelope"></i> <span class="show_hidden_data_target">{{ 'show e-mail...'|trans }}</span></a></p>
-							{% endif %}
-							{% if classified.messenger_profile_id %}
-								<p><a href="https://m.me/{{ classified.messenger_profile_id }}" title="{{ 'Contact by Messenger'|trans }}" class="btn btn-fb btn-block" target="_blank"><i class="fab fa-facebook-f"></i> {{ 'Contact by Messenger'|trans }}</a></p>
-							{% endif %}
-						{% endif %}
-						<div class="table-responsive">
-							<table class="table table-sm table-hover">
-								{% if classified.username %}<tr><td>{{ 'Added by'|trans }}: </td><td><a href="{{ path('profile',0,classified.username) }}" title="{{ 'Profile of'|trans }}: {{ classified.username }}" class="main-color-2">{% if classified.user_avatar %}<img src="upload/avatars/{{ classified.user_avatar }}" alt="{{ 'Avatar'|trans }}" class="img-fluid"> {% endif %}{{ classified.username }}</a></td></tr>{% endif %}
-								{% if classified.company_name %}
-									<tr><td>{{ 'Company name'|trans }}:</td><td>{{ classified.company_name }}</td></tr>
-								{% endif %}
-								{% if classified.user_nip %}
-									<tr><td>{{ 'Tax ID number'|trans }}:</td><td>{{ classified.user_nip }}</td></tr>
-								{% endif %}
-								{% if classified.state_name %}
-									<tr>
-										<td>{{ 'State'|trans }}: </td>
-										<td><a href="{{ path('classifieds') }}?state={{ classified.state_slug }}" title="{{ 'State'|trans }}: {{ classified.state_name }}" class="main-color-2">{{ classified.state_name }}</a>
-											{% if classified.state2_name %}
-												<a href="{{ path('classifieds') }}?state={{ classified.state_slug }}&state2={{ classified.state2_slug }}" title="{{ 'State'|trans }}: {{ classified.state2.name }}" class="main-color-2">{{ classified.state2_name }}</a>
-											{% endif %}
-										</td>
-									</tr>
-								{% endif %}
-								{% if (not settings.hide_data_not_logged or user.id) and classified.address %}
-									<tr><td>{{ 'Address'|trans }}:</td><td>{{ classified.address }}</td></tr>
-								{% endif %}
-							</table>
-						</div>
-						<div class="d-print-none" id="classified_bottom_share_abuse">
-							{% if settings.social_facebook or settings.social_twitter or settings.social_pinterest or settings.social_linkedin %}
-								<div class="social_share_box">
-									<small>{{ 'Share'|trans }}: </small>
-									{% if settings.social_facebook %}
-										<a href="https://www.facebook.com/sharer/sharer.php?u={{ absolutePath('classified',classified.id,classified.slug) }}" title="{{ 'Share'|trans }} Facebook" rel="nofollow" target="_blank"><i class="fab fa-facebook"></i></a>
-									{% endif %}
-									{% if settings.social_twitter %}
-										<a href="https://twitter.com/intent/tweet?text={{ classified.name }} {{ absolutePath('classified',classified.id,classified.slug) }}" title="{{ 'Share'|trans }} Twitter" rel="nofollow" target="_blank"><i class="fab fa-twitter"></i></a>
-									{% endif %}
-									{% if settings.social_pinterest %}
-										<a href="https://pinterest.com/pin/create/button/?url={{ absolutePath('classified',classified.id,classified.slug) }}&media={{ settings.logo_facebook }}" title="{{ 'Share'|trans }} Pinterest" rel="nofollow" target="_blank"><i class="fab fa-pinterest"></i></a>
-									{% endif %}
-									{% if settings.social_linkedin %}
-										<a href="https://www.linkedin.com/shareArticle?mini=true&url={{ absolutePath('classified',classified.id,classified.slug) }}&title={{ classified.title }}" title="{{ 'Share'|trans }} LInkedIn" rel="nofollow" target="_blank"><i class="fab fa-linkedin"></i></a>
-									{% endif %}
-								</div>
-							{% endif %}
-							<button class="btn btn-link main-color-1" data-toggle="modal" data-target="#modal_report_abuse"><small>{{ 'Report abuse'|trans }}</small></button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		
-		{% if classified.options %}
-			<div class="background_white">
-				<h4>{{ 'Additional information'|trans }}</h4>
-				<table class="table table-sm table-hover">
-					{% for key,option in classified.options %}
-						<tr><td><small>{{ key }}: </small></td><td><small>{% for key2, item in option %}{% if key2 %}, {% endif %}{{ item }}{% endfor %}</small></td></tr>
-					{% endfor %}
-				</table>
-			</div>
-		{% endif %}
+      <div class="modal fade" id="remove_classified">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">{{ 'Delete classified'|trans }}: {{ classified.name }}</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form method="post" class="form">
+              <input type="hidden" name="action" value="remove_classified" />
+              <input type="hidden" name="id" value="{{ classified.id }}" />
+              <input type="hidden" name="token" value="{{ generateToken('remove_classified') }}" />
+              <div class="modal-body">
+                <p>{{ 'Do you really want to delete'|trans }} {{ classified.name }}?</p>
+              </div>
+              <div class="modal-footer">
+                <input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}" />
+                <input type="submit" class="btn btn-danger" value="{{ 'Delete'|trans }}" />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endif %} {% include 'partial/alert.tpl' %}
+      <div class="row">
+        <div class="col-md-5">
+          {% if classified.photos %}
+          <div id="classified_photos">
+            {% for photo in classified.photos %} {% if loop.index==1 %}
+            <a href="upload/photos/{{ photo.folder }}{{ photo.url }}" title="{{ classified.name }}" data-lightbox="classified_photos" data-title="{{ classified.name }}"><img src="upload/photos/{{ photo.folder }}{{ photo.url }}" alt="{{ classified.name }}" onerror="this.src='{{ settings.base_url }}/views/{{ settings.template }}/images/no_image.png'" class="big" /></a><br />
+            {% else %}
+            <a href="upload/photos/{{ photo.folder }}{{ photo.url }}" title="{{ classified.name }}" data-lightbox="classified_photos" data-title="{{ classified.name }}"><img src="upload/photos/{{ photo.folder }}{{ photo.thumb }}" alt="{{ classified.name }}" onerror="this.src='{{ settings.base_url }}/views/{{ settings.template }}/images/no_image.png'" /></a>
+            {% endif %} {% endfor %}
+          </div>
+          {% else %}
+          <img src="{{ settings.base_url }}/views/{{ settings.template }}/images/no_image.png" alt="No photo" class="img-thumbnail" /><br /><br />
+          {% endif %}
+        </div>
+        <div class="col-md-7">
+          <div id="classified_panel">
+            <p class="text-muted small mb-0">{{ 'Published'|trans }}: {{ classified.date|date("d-m-Y") }} | {{ 'Expire'|trans }}: {{ classified.date_finish|date("d-m-Y") }}</p>
+            {% if not settings.hide_views %}
+            <p class="text-muted small">{{ 'View count'|trans }}: {{ classified.view_all }} ({{ 'unique'|trans }}: {{ classified.view_unique }})</p>
+            {% endif %} {% if classified.salary>0 %}
+            <h3 class="main-color-1"><span>{{ classified.salary|showCurrency }}{% if classified.salary_net %} {{ classified.salary_net|trans }}{% endif %}</span> {% if classified.salary_negotiate %}<span class="small">({{ 'to negotiate'|trans }})</span>{% endif %}</h3>
+            {% endif %}
+            <br />
+            {% if settings.hide_data_not_logged and not user.id %}
+            <p><a href="{{ path('login') }}?redirect={{ path('classified',classified.id,classified.slug) }}" title="{{ 'Log in on the website'|trans }}" class="main-color-1">{{ 'You must be logged in to view contact details'|trans }}</a></p>
+            {% else %} {% if classified.phone %}
+            <p>
+              <a href="{% if not settings.hide_phone %}tel:{{ classified.phone }}{% endif %}" title="{{ 'Call us'|trans }}" class="btn btn-success btn-block {% if settings.hide_phone %}show_hidden_data show_hidden_data_active{% endif %}" {% if settings.hide_phone %}data-type="phone" data-data="{{ classified.phone }}" {% endif %}><i class="fas fa-phone"></i> {% if settings.hide_phone %}<span class="show_hidden_data_target">{{ 'show phone...'|trans }}</span>{% else %}{{ classified.phone }}{% endif %}</a>
+            </p>
+            {% endif %} {% if not settings.hide_email %}
+            <p>
+              <a href="" title="{{ 'Contact us'|trans }}" class="btn btn-1 btn-block show_hidden_data show_hidden_data_active" data-type="email" data-data_0="{{ classified.email_part_0 }}" data-data_1="{{ classified.email_part_1 }}"><i class="fas fa-envelope"></i> <span class="show_hidden_data_target">{{ 'show e-mail...'|trans }}</span></a>
+            </p>
+            {% endif %} {% if classified.messenger_profile_id %}
+            <p>
+              <a href="https://m.me/{{ classified.messenger_profile_id }}" title="{{ 'Contact by Messenger'|trans }}" class="btn btn-fb btn-block" target="_blank"><i class="fab fa-facebook-f"></i> {{ 'Contact by Messenger'|trans }}</a>
+            </p>
+            {% endif %} {% endif %}
+            <div class="table-responsive">
+              <table class="table table-sm table-hover">
+                {% if classified.username %}
+                <tr>
+                  <td>{{ 'Added by'|trans }}:</td>
+                  <td>
+                    <a href="{{ path('profile',0,classified.username) }}" title="{{ 'Profile of'|trans }}: {{ classified.username }}" class="main-color-2">{% if classified.user_avatar %}<img src="upload/avatars/{{ classified.user_avatar }}" alt="{{ 'Avatar'|trans }}" class="img-fluid" /> {% endif %}{{ classified.username }}</a>
+                  </td>
+                </tr>
+                {% endif %} {% if classified.company_name %}
+                <tr>
+                  <td>{{ 'Company name'|trans }}:</td>
+                  <td>{{ classified.company_name }}</td>
+                </tr>
+                {% endif %} {% if classified.user_nip %}
+                <tr>
+                  <td>{{ 'Tax ID number'|trans }}:</td>
+                  <td>{{ classified.user_nip }}</td>
+                </tr>
+                {% endif %} {% if classified.state_name %}
+                <tr>
+                  <td>{{ 'State'|trans }}:</td>
+                  <td>
+                    <a href="{{ path('classifieds') }}?state={{ classified.state_slug }}" title="{{ 'State'|trans }}: {{ classified.state_name }}" class="main-color-2">{{ classified.state_name }}</a>
+                    {% if classified.state2_name %}
+                    <a href="{{ path('classifieds') }}?state={{ classified.state_slug }}&state2={{ classified.state2_slug }}" title="{{ 'State'|trans }}: {{ classified.state2.name }}" class="main-color-2">{{ classified.state2_name }}</a>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endif %} {% if (not settings.hide_data_not_logged or user.id) and classified.address %}
+                <tr>
+                  <td>{{ 'Address'|trans }}:</td>
+                  <td>{{ classified.address }}</td>
+                </tr>
+                {% endif %}
+              </table>
+            </div>
+            <div class="d-print-none" id="classified_bottom_share_abuse">
+              {% if settings.social_facebook or settings.social_twitter or settings.social_pinterest or settings.social_linkedin %}
+              <div class="social_share_box">
+                <small>{{ 'Share'|trans }}: </small>
+                {% if settings.social_facebook %}
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ absolutePath('classified',classified.id,classified.slug) }}" title="{{ 'Share'|trans }} Facebook" rel="nofollow" target="_blank"><i class="fab fa-facebook"></i></a>
+                {% endif %} {% if settings.social_twitter %}
+                <a href="https://twitter.com/intent/tweet?text={{ classified.name }} {{ absolutePath('classified',classified.id,classified.slug) }}" title="{{ 'Share'|trans }} X (Twitter)" rel="nofollow" target="_blank"><i class="fab fa-twitter"></i></a>
+                {% endif %} {% if settings.social_pinterest %}
+                <a href="https://pinterest.com/pin/create/button/?url={{ absolutePath('classified',classified.id,classified.slug) }}&media={{ settings.logo_facebook }}" title="{{ 'Share'|trans }} Pinterest" rel="nofollow" target="_blank"><i class="fab fa-pinterest"></i></a>
+                {% endif %} {% if settings.social_linkedin %}
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ absolutePath('classified',classified.id,classified.slug) }}&title={{ classified.title }}" title="{{ 'Share'|trans }} LinkedIn" rel="nofollow" target="_blank"><i class="fab fa-linkedin"></i></a>
+                {% endif %}
+              </div>
+              {% endif %}
+              <button class="btn btn-link main-color-1" data-toggle="modal" data-target="#modal_report_abuse"><small>{{ 'Report abuse'|trans }}</small></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-		{% if classified.description %}
-			<div class="background_white">
-				<h4>{{ 'Description'|trans }}</h4>
-				{{ classified.description|raw }}
-			</div>
-		{% endif %}
-
-		{% if settings.show_contact_form_classified %}
-			<div class="background_white">
-				<h4>{{ 'Contact form'|trans }}</h4>
-				{% include 'partial/contact_form.tpl' %}
-			</div>
-		{% endif %}
-				
-		{% if (not settings.promote_only_by_author or (classified.user_id==user.id and user.id)) and (settings.pay_by_dotpay or settings.pay_by_paypal or settings.pay_by_p24) %}
-			<div class="background_white">
-				<h4>{{ 'Promote'|trans }}</h4>
-				{% if classified.active %}
-					{% if classified.promoted %}
-						<h6 class="text-success">{{ 'Classified is promoted to'|trans }} {{ classified.promoted_date_finish|date("d-m-Y") }}</h6>
-					{% else %}
-						<h6 class="text-danger">{{ 'Classified is no promoted'|trans }}</h6>
-					{% endif %}
-					<h5>{{ 'Promote classified'|trans }}: {{ (settings.promote_cost*100)|showCurrency }} / {{ settings.promote_days }} {{ 'days'|trans }}</h5>
-					<br>
-					<div class="classified_payments">
-						{% include 'partial/payment.tpl' with {'payment_item_id': classified.id, 'payment_type': 'promote'} %}
-					</div>
-					<br>
-				{% else %}
-					<h6 class="text-danger">{{ 'To promote classified it must be active!'|trans }}</h6>
-				{% endif %}
-			</div>
-		{% endif %}
-	</div>
+    {% if classified.options %}
+    <div class="background_white">
+      <h4>{{ 'Additional information'|trans }}</h4>
+      <table class="table table-sm table-hover">
+        {% for key,option in classified.options %}
+        <tr>
+          <td><small>{{ key }}: </small></td>
+          <td><small>{% for key2, item in option %}{% if key2 %}, {% endif %}{{ item }}{% endfor %}</small></td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+    {% endif %} {% if classified.description %}
+    <div class="background_white">
+      <h4>{{ 'Description'|trans }}</h4>
+      {{ classified.description|raw }}
+    </div>
+    {% endif %} {% if settings.show_contact_form_classified %}
+    <div class="background_white">
+      <h4>{{ 'Contact form'|trans }}</h4>
+      {% include 'partial/contact_form.tpl' %}
+    </div>
+    {% endif %} {% if (not settings.promote_only_by_author or (classified.user_id==user.id and user.id)) and (settings.pay_by_dotpay or settings.pay_by_paypal or settings.pay_by_p24) %}
+    <div class="background_white">
+      <h4>{{ 'Promote'|trans }}</h4>
+      {% if classified.active %} {% if classified.promoted %}
+      <h6 class="text-success">{{ 'Classified is promoted to'|trans }} {{ classified.promoted_date_finish|date("d-m-Y") }}</h6>
+      {% else %}
+      <h6 class="text-danger">{{ 'Classified is no promoted'|trans }}</h6>
+      {% endif %}
+      <h5>{{ 'Promote classified'|trans }}: {{ (settings.promote_cost*100)|showCurrency }} / {{ settings.promote_days }} {{ 'days'|trans }}</h5>
+      <br />
+      <div class="classified_payments">{% include 'partial/payment.tpl' with {'payment_item_id': classified.id, 'payment_type': 'promote'} %}</div>
+      <br />
+      {% else %}
+      <h6 class="text-danger">{{ 'To promote classified it must be active!'|trans }}</h6>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
 </div>
 {% if settings.google_maps and classified.address_lat!=0 and classified.address_long!=0 %}
-	<div id="google_maps"></div>
-{% endif %}
-{% if classifieds %}
-	<div class="container">
-		<br>
-		<h2 class="text-center">{{ 'Similar classifieds'|trans }}</h2><br>
-		{% include 'partial/classifieds_index.tpl' %}
-	</div>
-	<br>
+<div id="google_maps"></div>
+{% endif %} {% if classifieds %}
+<div class="container">
+  <br />
+  <h2 class="text-center">{{ 'Similar classifieds'|trans }}</h2>
+  <br />
+  {% include 'partial/classifieds_index.tpl' %}
+</div>
+<br />
 {% endif %}
 
 <div class="modal fade" id="modal_report_abuse">
-	<div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">{{ 'Report abuse'|trans }}</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			</div>
-			<form method="post" class="form">
-				<input type="hidden" name="action" value="report_abuse">
-				<div class="modal-body">
-					<div class="form-group">
-				    <label for="report_abuse_email">{{ 'E-mail address'|trans }}</label>
-			      	<input type="email" class="form-control" id="report_abuse_email" name="email" placeholder="{{ 'example@example.com'|trans }}" required value="{% if report_abuse.email %}{{ report_abuse.email }}{% elseif user.id %}{{ user.email }}{% endif %}" title="{{ 'E-mail address'|trans }}" {% if user.id %}readonly{% endif %}>
-				  </div>
-				  <div class="form-group">
-				    <label for="report_abuse_message">{{ 'Message'|trans }}</label>
-				     <textarea class="form-control" rows="4" name="message" id="report_abuse_message" required placeholder="{{ 'Message'|trans }}" title="{{ 'Message'|trans }}">{{ report_abuse.message }}</textarea>
-				  </div>
-					<div class="form-group">
-						{% if settings.recaptcha_site_key and settings.recaptcha_secret_key %}
-   							<input type="hidden" name="recaptcha_response" class="recaptchaResponse">
-						{% else %}
-							<label for="captcha">{{ 'Captcha'|trans }}</label>
-							<img src="{{ path('captcha') }}" alt="captcha"><br>
-							<input type="text" class="form-control" placeholder="abc123" title="{{ 'Enter the code Captcha'|trans }}" name="captcha" id="captcha" required maxlength="32">
-						{% endif %}
-					</div>
-				</div>
-				<div class="modal-footer">
-					<input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}">
-					<input type="submit" class="btn btn-danger" value="{{ 'Send!'|trans }}">
-				</div>
-			</form>
-		</div>
-	</div>
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ 'Report abuse'|trans }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <form method="post" class="form">
+        <input type="hidden" name="action" value="report_abuse" />
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="report_abuse_email">{{ 'E-mail address'|trans }}</label>
+            <input type="email" class="form-control" id="report_abuse_email" name="email" placeholder="{{ 'example@example.com'|trans }}" required value="{% if report_abuse.email %}{{ report_abuse.email }}{% elseif user.id %}{{ user.email }}{% endif %}" title="{{ 'E-mail address'|trans }}" {% if user.id %}readonly{% endif %} />
+          </div>
+          <div class="form-group">
+            <label for="report_abuse_message">{{ 'Message'|trans }}</label>
+            <textarea class="form-control" rows="4" name="message" id="report_abuse_message" required placeholder="{{ 'Message'|trans }}" title="{{ 'Message'|trans }}">{{ report_abuse.message }}</textarea>
+          </div>
+          <div class="form-group">
+            {% if settings.recaptcha_site_key and settings.recaptcha_secret_key %}
+            <input type="hidden" name="recaptcha_response" class="recaptchaResponse" />
+            {% else %}
+            <label for="captcha">{{ 'Captcha'|trans }}</label>
+            <img src="{{ path('captcha') }}" alt="captcha" /><br />
+            <input type="text" class="form-control" placeholder="abc123" title="{{ 'Enter the code Captcha'|trans }}" name="captcha" id="captcha" required maxlength="32" />
+            {% endif %}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <input type="button" class="btn btn-secondary" data-dismiss="modal" value="{{ 'Cancel'|trans }}" />
+          <input type="submit" class="btn btn-danger" value="{{ 'Send!'|trans }}" />
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}
