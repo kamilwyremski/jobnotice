@@ -14,7 +14,7 @@
  * LICENSE THE SCRIPT
  * *********************************************************************/
 
-require_once ('../config/config.php');
+require_once('../config/config.php');
 
 if (!$settings['pay_by_p24']) {
 	die();
@@ -49,7 +49,7 @@ if (isset($_POST['action']) and $_POST['action'] == 'new_payment' and isset($_PO
 		echo ($form);
 	}
 
-} elseif (($_SERVER['REMOTE_ADDR'] == '91.216.191.181' or $_SERVER['REMOTE_ADDR'] == '91.216.191.182' or $_SERVER['REMOTE_ADDR'] == '91.216.191.183' or $_SERVER['REMOTE_ADDR'] == '91.216.191.184' or $_SERVER['REMOTE_ADDR'] == '91.216.191.185' or $_SERVER['REMOTE_ADDR'] == '5.252.202.255') && !empty($_POST)) {
+} elseif (($_SERVER['REMOTE_ADDR'] == '91.216.191.181' or $_SERVER['REMOTE_ADDR'] == '91.216.191.182' or $_SERVER['REMOTE_ADDR'] == '91.216.191.183' or $_SERVER['REMOTE_ADDR'] == '91.216.191.184' or $_SERVER['REMOTE_ADDR'] == '91.216.191.185' or $_SERVER['REMOTE_ADDR'] == '5.252.202.255' or $_SERVER['REMOTE_ADDR'] == '5.252.202.254' or $_SERVER['REMOTE_ADDR'] == '20.215.81.124') && !empty($_POST)) {
 
 	$sth = $db->prepare('SELECT * FROM ' . _DB_PREFIX_ . 'payment WHERE id=:id AND status="new" LIMIT 1');
 	$sth->bindValue(':id', $_POST['p24_session_id'], PDO::PARAM_STR);

@@ -33,7 +33,7 @@ if (!is_writable('../config/db.php')) {
 }
 
 $install = true;
-require_once ('../config/db.php');
+require_once('../config/db.php');
 
 if (isset($mysql_server)) {
 	header('location: ../admin');
@@ -41,7 +41,7 @@ if (isset($mysql_server)) {
 }
 
 $settings['base_url'] = true;
-require_once ('../php/global.php');
+require_once('../php/global.php');
 
 if (isset($_GET['lang']) and $_GET['lang'] != '') {
 	$settings['lang'] = langLoad($_GET['lang']);
@@ -99,7 +99,7 @@ define("_DB_PREFIX_", "' . _DB_PREFIX_ . '");
 
 			$db->exec($sql);
 
-			require_once ('../class/admin.class.php');
+			require_once('../class/admin.class.php');
 			$admin = new admin();
 			$password_admin = $admin->createPassword($_POST['password_admin']);
 
@@ -142,7 +142,7 @@ define("_DB_PREFIX_", "' . _DB_PREFIX_ . '");
 
 			chmod("../config/db.php", 0644);
 
-			header('location: ' . $_POST['base_url'] . '');
+			header('location: ' . webAddress($_POST['base_url']) . '');
 			die('redirect...');
 		}
 	}

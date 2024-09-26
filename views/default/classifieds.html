@@ -57,10 +57,10 @@
 				});
 				map.initialZoom = true;
 				map.fitBounds(bounds);
-				var markerCluster = new MarkerClusterer(map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+				new markerClusterer.MarkerClusterer({map, markers});
 			}
 		</script>
-		<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+		<script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
 		<script src="https://maps.googleapis.com/maps/api/js?key={{ settings.google_maps_api }}&v=3.exp&libraries=places&callback=initGoogleMap&language={{ settings.lang }}" async defer></script>
 	{% endif %}
 {% endblock %}

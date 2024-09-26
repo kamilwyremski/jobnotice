@@ -16,6 +16,7 @@
 
 class admin
 {
+	public $user_data = [];
 
 	public function __construct()
 	{
