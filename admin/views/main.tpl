@@ -10,13 +10,13 @@
 
 	<link rel="stylesheet" href="views/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-	<link rel="stylesheet" href="views/css/style.css">
+	<link rel="stylesheet" href="views/css/style.css?{{ settings.assets_version }}">
 	<link rel="shortcut icon" href="images/favicon.png"/>
 
 	<script src="../js/jquery-3.7.0.min.js"></script>
 	<script src="../js/bootstrap.min.js"></script>
 	<script src="js/ckeditor/ckeditor.js"></script>
-	<script src="js/engine_admin.js"></script>
+	<script src="js/engine_admin.js?{{ settings.assets_version }}"></script>
 </head>
 <body>
 

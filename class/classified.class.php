@@ -31,20 +31,20 @@ class classified
 		}
 		if (!empty($data['type'])) {
 			$where_statement .= ' AND c.type_id = (SELECT id FROM ' . _DB_PREFIX_ . 'type WHERE slug=:type LIMIT 1) ';
-			$bind_values['type'] = $data['type'];
+			$bind_values['type'] = trim($data['type']);
 		}
 		if (!empty($data['state'])) {
 			$where_statement .= ' AND c.state_id = (SELECT id FROM ' . _DB_PREFIX_ . 'state WHERE slug=:state LIMIT 1) ';
-			$bind_values['state'] = $data['state'];
+			$bind_values['state'] = trim($data['state']);
 			if (!empty($data['state2'])) {
 				$where_statement .= ' AND c.state2_id = (SELECT id FROM ' . _DB_PREFIX_ . 'state WHERE slug=:state2 LIMIT 1) ';
-				$bind_values['state2'] = $data['state2'];
+				$bind_values['state2'] = trim($data['state2']);
 			}
 		}
 		if (isset($data['search'])) {
-			if (isset($data['id']) and $data['id'] > 0) {
-				$where_statement .= ' AND c.id = :id ';
-				$bind_values['id'] = $data['id'];
+			if (isset($data['classified_id']) and $data['classified_id'] > 0) {
+				$where_statement .= ' AND c.id = :classified_id ';
+				$bind_values['classified_id'] = $data['classified_id'];
 			}
 			if (isset($data['not_id']) and $data['not_id'] > 0) {
 				$where_statement .= ' AND c.id != :not_id ';
@@ -52,11 +52,11 @@ class classified
 			}
 			if (!empty($data['username'])) {
 				$where_statement .= ' AND c.user_id = (SELECT id FROM ' . _DB_PREFIX_ . 'user WHERE username=:username LIMIT 1) ';
-				$bind_values['username'] = $data['username'];
+				$bind_values['username'] = trim($data['username']);
 			}
 			if (!empty($data['username_or_email'])) {
 				$where_statement .= ' AND c.user_id in (SELECT id FROM ' . _DB_PREFIX_ . 'user WHERE username LIKE :username_or_email OR email LIKE :username_or_email) ';
-				$bind_values['username_or_email'] = '%' . $data['username_or_email'] . '%';
+				$bind_values['username_or_email'] = '%' . trim($data['username_or_email']) . '%';
 			}
 			if (!empty($data['name'])) {
 				$names = explode(' ', $data['name']);
@@ -74,11 +74,11 @@ class classified
 				if (isset($data['exact_phrase'])) {
 					$where_statement .= ' AND (c.slug LIKE :keywords_slug OR c.description LIKE :keywords) ';
 					$bind_values['keywords_slug'] = '%' . slug($data['keywords']) . '%';
-					$bind_values['keywords'] = '%' . $data['keywords'] . '%';
+					$bind_values['keywords'] = '%' . trim($data['keywords']) . '%';
 				} else {
 					$select .= ', MATCH(c.name,c.slug,c.description) AGAINST(:keywords) AS score';
 					$bind_values['keywords'] = slug($data['keywords']) . ' ' . $data['keywords'];
-					$having_statement .= ' AND score>0 ';
+					$having_statement .= ' AND score > 0 ';
 				}
 			}
 			if (isset($data['active'])) {
@@ -104,7 +104,7 @@ class classified
 					$bind_values['distance'] = $data['distance'];
 				} else {
 					$where_statement .= ' AND c.address LIKE :address ';
-					$bind_values['address'] = '%' . $data['address'] . '%';
+					$bind_values['address'] = '%' . trim($data['address']) . '%';
 				}
 			}
 			if (isset($data['salary_from']) and $data['salary_from'] > 0) {
@@ -134,7 +134,7 @@ class classified
 								if (isset($value['from']) and $value['from'] >= 0) {
 									$where_statement .= ' (SELECT count(1) FROM ' . _DB_PREFIX_ . 'option_value ov, `' . _DB_PREFIX_ . 'option` op WHERE op.id=ov.option_id AND ov.option_id=:option_id_' . $i . '_key AND ov.classified_id=c.id AND CAST(ov.value AS UNSIGNED) >=:option_id_' . $i . '_from LIMIT 1) > 0 ';
 									$bind_values['option_id_' . $i . '_key'] = $key;
-									$bind_values['option_id_' . $i . '_from'] = $value['from'];
+									$bind_values['option_id_' . $i . '_from'] = trim($value['from']);
 								}
 								if (isset($value['from']) and $value['from'] >= 0 and isset($value['to']) and $value['to'] >= 0) {
 									$where_statement .= ' AND ';
@@ -150,7 +150,7 @@ class classified
 								foreach ($value as $key2 => $value2) {
 									$where_statement .= ' (SELECT count(1) FROM ' . _DB_PREFIX_ . 'option_value ov, `' . _DB_PREFIX_ . 'option` op WHERE op.id=ov.option_id AND ov.option_id=:option_id_' . $i . '_' . $j . '_key AND ov.classified_id=c.id AND ov.value=:option_id_' . $i . '_' . $j . '_value LIMIT 1) > 0 ';
 									$bind_values['option_id_' . $i . '_' . $j . '_key'] = $key;
-									$bind_values['option_id_' . $i . '_' . $j . '_value'] = $value2;
+									$bind_values['option_id_' . $i . '_' . $j . '_value'] = trim($value2);
 									if ($j != $last2 - 1) {
 										$where_statement .= ' OR ';
 									}
@@ -161,7 +161,7 @@ class classified
 						} else {
 							$where_statement .= ' (SELECT count(1) FROM ' . _DB_PREFIX_ . 'option_value ov, `' . _DB_PREFIX_ . 'option` op WHERE op.id=ov.option_id AND ov.option_id=:option_id_' . $i . '_key AND ov.classified_id=o.id AND ov.value LIKE :option_id_' . $i . '_value LIMIT 1) > 0 ';
 							$bind_values['option_id_' . $i . '_key'] = $key;
-							$bind_values['option_id_' . $i . '_value'] = $value;
+							$bind_values['option_id_' . $i . '_value'] = trim($value);
 						}
 						if ($i != $last - 1) {
 							$where_statement .= ' AND ';
@@ -173,26 +173,26 @@ class classified
 			}
 			if (!empty($data['date_from'])) {
 				$where_statement .= ' AND c.date >= :date_from ';
-				$bind_values['date_from'] = $data['date_from'];
+				$bind_values['date_from'] = trim($data['date_from']);
 			}
 			if (!empty($data['date_to'])) {
 				$where_statement .= ' AND c.date <= :date_to ';
-				$bind_values['date_to'] = $data['date_to'] . ' 23:59:59 ';
+				$bind_values['date_to'] = trim($data['date_to']) . ' 23:59:59 ';
 			}
 			if (!empty($data['date_finish_from'])) {
 				$where_statement .= ' AND c.date_finish >= :date_finish_from ';
-				$bind_values['date_finish_from'] = $data['date_finish_from'];
+				$bind_values['date_finish_from'] = trim($data['date_finish_from']);
 			}
 			if (!empty($data['date_finish_to'])) {
 				$where_statement .= ' AND c.date_finish <= :date_finish_to';
-				$bind_values['date_finish_to'] = $data['date_finish_to'];
+				$bind_values['date_finish_to'] = trim($data['date_finish_to']);
 			}
 			if (!empty($data['ip'])) {
 				$where_statement .= ' AND c.ip like :ip ';
-				$bind_values['ip'] = '%' . $data['ip'] . '%';
+				$bind_values['ip'] = '%' . trim($data['ip']) . '%';
 			}
 			if (isset($data['classifieds_with_photos'])) {
-				$having_statement .= ' AND thumb!="" ';
+				$having_statement .= ' AND thumb != "" ';
 			}
 		}
 

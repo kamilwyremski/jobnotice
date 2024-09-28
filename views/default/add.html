@@ -95,7 +95,7 @@
 				</div>
 			{% endif %}
 			
-			<div v-show="list_categories">
+			<div v-show="list_categories?.length"> 
 				<label for="category_id">{{ 'Category'|trans }}:{% if settings.required_category or settings.required_subcategory %}<span class="text-danger">&nbsp;*</span>{% endif %}</label>
 				<div class="row">
 					<div class="col-lg-4 col-md-6 form-group" v-for="(cat,parent_index) in list_categories">

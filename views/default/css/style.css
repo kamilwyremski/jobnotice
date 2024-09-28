@@ -633,6 +633,21 @@ body.dragging * {
   }
 }
 @media (max-width: 768px) {
+  body {
+    font-size: 0.85rem;
+  }
+  h1 {
+    font-size: 1.6rem;
+  }
+  h2 {
+    font-size: 1.45rem;
+  }
+  h3 {
+    font-size: 1.3rem;
+  }
+  h4 {
+    font-size: 1.25rem;
+  }
   #search_box.search_box_slider {
     margin-top: 0px;
   }
