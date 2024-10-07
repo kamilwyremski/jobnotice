@@ -62,7 +62,7 @@ if ($admin->is_logged()) {
 		if ($result === '.' or $result === '..')
 			continue;
 		if (is_dir($path . '/' . $result)) {
-			$templates[] .= $result;
+			$templates[] = $result;
 		}
 	}
 	$render_variables['templates'] = $templates;
