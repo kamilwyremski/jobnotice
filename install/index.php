@@ -32,6 +32,10 @@ if (!is_writable('../config/db.php')) {
 	die('The file /config/db.php is not writable!');
 }
 
+if (!file_exists('../vendor/autoload.php')) {
+    die('Error: Missing vendor directory or autoload.php file.<br>Please run <code>composer install</code> before starting the installation.');
+}
+
 $install = true;
 require_once('../config/db.php');
 
